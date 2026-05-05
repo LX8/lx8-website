@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light, Gravity & Time: The 3-Channel Taxonomy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #030308; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e2e8f0; }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
+
+        #ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            perspective: 1200px;
+        }
+
+        .spatial-panel {
+            pointer-events: auto;
+            background: linear-gradient(135deg, rgba(6, 11, 25, 0.8), rgba(15, 25, 50, 0.9));
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-top: 1px solid rgba(147, 197, 253, 0.6);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 20px rgba(59, 130, 246, 0.15);
+            transform-style: preserve-3d;
+            border-radius: 12px;
+        }
+
+        header { padding: 1.25rem; text-align: center; border-bottom: 1px solid rgba(100, 150, 255, 0.15); border-radius: 0; }
+        h1 { margin: 0; font-size: 1.25rem; font-weight: 400; letter-spacing: 3px; color: #93c5fd; text-transform: uppercase; text-shadow: 0 0 10px rgba(147, 197, 253, 0.5); }
+        h2 { margin: 0.25rem 0 0 0; font-size: 0.8rem; font-weight: 400; color: #94a3b8; }
+
+        #controls { display: flex; justify-content: center; gap: 0.5rem; padding: 0.75rem; flex-wrap: wrap; background: rgba(6, 11, 25, 0.4); border-top: none; }
+        .nav-btn {
+            background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(59, 130, 246, 0.4); color: #bfdbfe;
+            padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; transition: all 0.3s ease;
+            font-size: 0.8rem; letter-spacing: 1px; font-weight: 600; text-transform: uppercase;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .nav-btn:hover { background: rgba(59, 130, 246, 0.3); box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); transform: translateY(-2px); }
+        .nav-btn.active { background: rgba(59, 130, 246, 0.8); color: #fff; box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); border-color: #93c5fd; }
+
+        .action-btn { border-color: #10b981; color: #a7f3d0; margin-left: 0.5rem;}
+        .action-btn:hover { background: rgba(16, 185, 129, 0.2); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+
+        .history-btn { border-color: #f59e0b; color: #fde68a; }
+        .history-btn.active { background: #f59e0b; color: #fff; box-shadow: 0 0 20px #f59e0b; border-color: #fde68a; }
+
+        #info-panel-container {
+            position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 950px;
+            perspective: 1500px;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+        }
+
+        #info-panel-container.hidden {
+            transform: translateX(-50%) translateY(150%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #info-panel {
+            width: 100%; padding: 1.5rem 2rem;
+            max-height: 50vh; overflow-y: auto;
+            transition: transform 0.1s ease-out;
+        }
+
+        #info-panel::-webkit-scrollbar { width: 6px; }
+        #info-panel::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+        #info-panel::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.6); border-radius: 4px; }
+
+        #text-content {
+            transform: translateZ(30px);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .topic-title { font-size: 1.25rem; font-weight: 700; color: #60a5fa; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;}
+        .topic-badge { background: rgba(96, 165, 250, 0.2); padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.7rem; color: #93c5fd; border: 1px solid rgba(147, 197, 253, 0.3); }
+        .section-header { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; border-bottom: 1px solid rgba(148, 163, 184, 0.3); padding-bottom: 0.2rem; margin-top: 1rem; margin-bottom: 0.5rem; }
+        .topic-content { font-size: 0.95rem; line-height: 1.6; color: #cbd5e1; }
+        .topic-content p { margin-bottom: 0.5rem; }
+        .highlight { color: #facc15; font-weight: 600; text-shadow: 0 0 8px rgba(250, 204, 21, 0.4); }
+        .highlight-green { color: #34d399; font-weight: 600; text-shadow: 0 0 8px rgba(52, 211, 153, 0.4); }
+        .math { font-family: 'Courier New', Courier, monospace; background: rgba(0,0,0,0.5); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.9em; border: 1px solid rgba(255,255,255,0.2); color: #fff;}
+
+        .simple-box { background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10b981; padding: 0.75rem; border-radius: 0 8px 8px 0; margin-top: 0.5rem; font-size: 0.9rem; }
+        .simple-box strong { color: #34d399; }
+
+        #loading {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #030308; display: flex; justify-content: center; align-items: center;
+            z-index: 100; color: #60a5fa; font-size: 1.5rem; letter-spacing: 3px; transition: opacity 1s;
+        }
+
+        .instruction {
+            position: absolute; right: 1.5rem; bottom: 1.5rem; text-align: right;
+            color: #94a3b8; font-size: 0.8rem; padding: 1rem;
+            border-right: 3px solid #3b82f6;
+            pointer-events: none;
+            transform: translateZ(20px);
+        }
+
+        @media (max-width: 768px) {
+            .instruction { display: none; }
+            #info-panel { padding: 1rem; max-height: 55vh; }
+            #controls { padding: 0.5rem; gap: 0.4rem; }
+            .nav-btn { padding: 0.4rem 0.6rem; font-size: 0.65rem; }
+            .action-btn { margin-left: 0; }
+            #info-panel { transform: none !important; }
+            #text-content { transform: translateZ(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading">INITIALIZING UNIVERSE...</div>
+
+    <div id="canvas-container"></div>
+
+    <div id="ui-layer">
+        <div style="transform-style: preserve-3d; transform: translateZ(10px);">
+            <header class="spatial-panel" style="border-radius: 0 0 12px 12px; border-top: none;">
+                <h1>Light, Gravity & Time</h1>
+                <h2>The Bipartite Theory Corpus - Alexei Lemos Cavalcante Ferreira (2026)</h2>
+            </header>
+
+            <div id="controls" class="spatial-panel" style="border-radius: 0 0 12px 12px; border-top: none; margin-top: -5px;">
+                <button class="nav-btn history-btn active" onclick="switchScene(0)">Prologue: History</button>
+                <button class="nav-btn" onclick="switchScene(1)">1. Gravitoelectric</button>
+                <button class="nav-btn" onclick="switchScene(2)">2. Gravitomagnetic</button>
+                <button class="nav-btn" onclick="switchScene(3)">3. Λ-Cosmological</button>
+                <button class="nav-btn" onclick="switchScene(4)">4. Time Dimension</button>
+
+                <button id="toggle-info-btn" class="nav-btn action-btn" onclick="toggleInfoPanel()">
+                    <span id="toggle-icon">▼</span> Hide HUD
+                </button>
+            </div>
+        </div>
+
+        <div id="info-panel-container">
+            <div id="info-panel" class="spatial-panel">
+                <div id="text-content">
+                    <!-- Content injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="instruction spatial-panel">
+            <p class="mb-1 text-blue-400 font-semibold uppercase tracking-wider" style="font-size: 0.7rem;">Spatial Controls</p>
+            <p>Drag to rotate</p>
+            <p>Scroll to zoom</p>
+        </div>
+    </div>
+
+    <script>
+        const contentData = {
+            0: {
+                title: "Prologue: How Did We Get Here?",
+                badge: "The History of Gravity",
+                html: `
+                    <div class="simple-box">
+                        <strong>For Kids & Teens:</strong> Imagine trying to understand how the universe holds itself together. First, we thought gravity was an invisible rope pulling things (Newton). Then, we realized space is like a bouncy trampoline that heavy things bend (Einstein). Finally, we discovered a mysterious energy pushing the trampoline apart (Dark Energy). Today, we combine all three into one organized system!
+                    </div>
+
+                    <div class="section-header">The Timeline of Foundational Physics</div>
+                    <p><strong>1687 (Newton):</strong> Gravity is modeled as an attractive force pulling masses together. <em>(The Apple)</em></p>
+                    <p><strong>1915 (Einstein):</strong> General Relativity replaces the "pull" with geometry. Mass and rotation warp spacetime, and light follows the curves. <em>(The Warped Grid)</em></p>
+                    <p><strong>1998 (Perlmutter, Riess):</strong> Discovering the accelerating universe. The cosmological constant ($\Lambda$) proves space has an inherent repulsive energy. <em>(The Expanding Void)</em></p>
+                    <p><strong>2026 (Alexei Ferreira):</strong> The <strong>Bipartite Reading</strong> cleanly organizes Einstein's complex mathematics into 3 independent, testable "Channels" of light-gravity interaction. <em>(The Prism of Channels)</em></p>
+
+                    <div class="section-header">Didactic Visualization</div>
+                    <p>Pan across the 3D timeline. Watch how our understanding evolved from a simple falling apple to a complex, multi-channeled universe.</p>
+                `
+            },
+            1: {
+                title: "Channel 1: Gravitoelectric Coupling",
+                badge: "Source: Mass Density (T₀₀) | Status: Proven Theorem",
+                html: `
+                    <div class="simple-box">
+                        <strong>The Simple Idea:</strong> If you put a heavy bowling ball on a bed, the mattress sinks. This is what stars do to space. When light tries to travel past the star, it rolls down into the dip, changing its path. Time also moves slower inside that dip!
+                    </div>
+
+                    <div class="section-header">The Physics & Applicability</div>
+                    <p>Generated by ordinary mass (<span class="math">T₀₀</span>), creating an isotropic potential well. This channel is responsible for <span class="highlight-green">mass-induced time dilation</span>.</p>
+                    <p><strong>Real-World Impact (GPS):</strong> Because gravity is weaker in orbit, satellite clocks run faster than ground clocks by ~45 microseconds per day. Without Channel 1 relativistic corrections, global GPS systems would fail entirely, accumulating errors of 10 km per day.</p>
+
+                    <div class="section-header">Didactic Visualization</div>
+                    <p>Observe the <strong>two physical clocks</strong>: the surface clock deep in the gravity well ticks visibly slower than the GPS satellite clock in orbit. The photon's path shows the solid GR deflection curve is exactly twice the magnitude of the dashed Newtonian curve.</p>
+                `
+            },
+            2: {
+                title: "Channel 2: Gravitomagnetic Coupling",
+                badge: "Source: Angular Momentum (T₀ᵢ) | Status: Novel Prediction",
+                html: `
+                    <div class="simple-box">
+                        <strong>The Simple Idea:</strong> Imagine turning on a blender in thick syrup. The spinning blades drag the syrup around with them. When black holes spin, they literally drag the fabric of space around like syrup. Light passing through gets physically twisted!
+                    </div>
+
+                    <div class="section-header">The Physics & Applicability</div>
+                    <p>Sourced by rotational mass-current density (<span class="math">T₀ᵢ</span>). Linearised Lorentz force analogue: <span class="math">F = m(g_E + 4(v/c) × g_B)</span>.</p>
+                    <p><strong>Real-World Impact (Fusion):</strong> Maps directly to magnetic-confinement fusion. The <span class="highlight-green">Tokamak analogue</span> (single Kerr-class compact object) is the only physically optimal geometry, informing theoretical bounds for plasma reactors.</p>
+                    <p><strong>Observational Programme:</strong> Predicts a precise <span class="highlight">~35 μrad Skrotskii-Mashhoon polarisation rotation</span> for photons passing spinning black holes.</p>
+
+                    <div class="section-header">Didactic Visualization</div>
+                    <p>The spinning black hole twists the photon's polarization vector (yellow arrow). The <strong>Targeting Reticle</strong> represents the multi-decade observational programme needed to measure this trace effect.</p>
+                `
+            },
+            3: {
+                title: "Channel 3: Λ-Cosmological Coupling",
+                badge: "Source: Cosmological Constant (Λ) | Status: Live Hypothesis",
+                html: `
+                    <div class="simple-box">
+                        <strong>The Simple Idea:</strong> The entire universe is made of a dough that is constantly rising and expanding in the oven. As light travels across this expanding dough, the light waves get stretched out, turning their color from blue to red!
+                    </div>
+
+                    <div class="section-header">The Physics & Applicability</div>
+                    <p>Sourced by the cosmological constant (<span class="math">h^(Λ)_μν</span>), establishing the repulsive <strong>de Sitter horizon</strong> (~2.66 × 10⁻³⁰ K).</p>
+                    <p><strong>Real-World Impact (Observatories):</strong> This channel is the baseline for observatories like <span class="highlight-green">DESI and the Euclid space telescope</span>. By modeling the Late Integrated Sachs-Wolfe effect and redshift, physicists differentiate between standard $\Lambda$ and alternative hypotheses.</p>
+
+                    <div class="section-header">Didactic Visualization</div>
+                    <p>A cosmological probe observes galaxies drifting apart within the <span class="highlight">de Sitter Thermal Horizon (1/H₀)</span>. The photon's wave trail physically stretches out, directly demonstrating cosmological redshift.</p>
+                `
+            },
+            4: {
+                title: "Time is a Dimension, Not a Property of Λ",
+                badge: "Metaphysics vs Physics | Status: Rejected Conjecture",
+                html: `
+                    <div class="simple-box">
+                        <strong>The Simple Idea:</strong> Does the expansion of the universe *create* time? No. Time is just the ticking of the clock. Whether the universe is standing still or blowing up like a balloon, the clock ticks exactly the same way.
+                    </div>
+
+                    <div class="section-header">The Conceptual Falsification</div>
+                    <p>Time is a fundamental dimension for ordering events. Dark energy merely provides a timescale (1/H = 14 Gyr), it does not *generate* time.</p>
+
+                    <div class="section-header">Applicability & Real-World Impact</div>
+                    <p><strong>Directing Research Resources:</strong> By falsifying the conjecture that dark energy generates gravity/time (e.g., Verlinde 2017), this framework <span class="highlight-green">prevents the misallocation of physics funding</span>. It redirects focus to established "emergent time" substrates (Wheeler-DeWitt) which rely on spatial geometry/entanglement, not dark energy.</p>
+
+                    <div class="section-header">Didactic Visualization</div>
+                    <p>Time flows identically in both the Static (Early Universe) and Expanding universes. The red "X" explicitly denies a causal link between Expanding Space and the ticking of the clock.</p>
+                `
+            }
+        };
+
+        let scene, camera, renderer, controls;
+        let activeScene = 0;
+        let time = 0;
+        let isInfoVisible = true;
+
+        const groups = {
+            0: new THREE.Group(),
+            1: new THREE.Group(),
+            2: new THREE.Group(),
+            3: new THREE.Group(),
+            4: new THREE.Group()
+        };
+
+        let s0Apple, s0Grid, s0Expander, s0Prism;
+        let s1Photon, s1Grid, s1NewtonianPath, s1ClockNear, s1ClockFar, s1Sat;
+        let s2Photon, s2Polarization, s2BlackHole, s2Accretion, s2PolTrail = [], s2Reticle;
+        let s3Galaxies = [], s3Photon, s3Waves = [], s3Horizon, s3Probe, s3Grid;
+        let s4Clock1Hand, s4Clock2Hand, s4GridExpand;
+
+        function init() {
+            setTimeout(() => {
+                const loader = document.getElementById('loading');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 1000);
+            }, 1000);
+
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x030308, 0.02);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 150;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0x60a5fa, 1.5, 100);
+            pointLight.position.set(10, 20, 10);
+            scene.add(pointLight);
+
+            buildScene0();
+            buildScene1();
+            buildScene2();
+            buildScene3();
+            buildScene4();
+
+            for (let i = 0; i <= 4; i++) {
+                scene.add(groups[i]);
+                groups[i].visible = false;
+            }
+
+            switchScene(0);
+
+            window.addEventListener('resize', onWindowResize, false);
+            setupParallaxHUD();
+            animate();
+        }
+
+        function createClock(color, radius) {
+            const clockGroup = new THREE.Group();
+            const clockGeo = new THREE.RingGeometry(radius, radius + 0.3, 32);
+            const clockMat = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
+            const clockFrame = new THREE.Mesh(clockGeo, clockMat);
+
+            const handGeo = new THREE.CylinderGeometry(0.05, 0.05, radius - 0.2);
+            handGeo.translate(0, (radius - 0.2)/2, 0);
+            const handMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const clockHand = new THREE.Mesh(handGeo, handMat);
+
+            clockGroup.add(clockFrame);
+            clockGroup.add(clockHand);
+            clockGroup.userData.hand = clockHand;
+            return clockGroup;
+        }
+
+        function createSatellite(primaryColor) {
+            const satGroup = new THREE.Group();
+            const bodyGeo = new THREE.CylinderGeometry(0.3, 0.3, 1, 16);
+            const bodyMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8 });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+
+            const panelGeo = new THREE.BoxGeometry(3, 0.1, 0.5);
+            const panelMat = new THREE.MeshBasicMaterial({ color: 0x1e3a8a, wireframe: true });
+            const panels = new THREE.Mesh(panelGeo, panelMat);
+
+            const lensGeo = new THREE.SphereGeometry(0.4, 16, 16, 0, Math.PI);
+            const lensMat = new THREE.MeshBasicMaterial({ color: primaryColor, transparent: true, opacity: 0.8 });
+            const lens = new THREE.Mesh(lensGeo, lensMat);
+            lens.position.y = 0.5;
+
+            satGroup.add(body);
+            satGroup.add(panels);
+            satGroup.add(lens);
+            return satGroup;
+        }
+
+        function createTextSprite(message, color = "#ffffff", bgColor = "rgba(10, 15, 30, 0.8)") {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 600; canvas.height = 128;
+
+            if (bgColor !== 'transparent') {
+                context.fillStyle = bgColor;
+                if (context.roundRect) {
+                    context.roundRect(10, 10, 580, 108, 16);
+                } else {
+                    context.fillRect(10, 10, 580, 108);
+                }
+                context.fill();
+                context.strokeStyle = color;
+                context.lineWidth = 4;
+                context.stroke();
+            }
+
+            context.font = "Bold 24px 'Segoe UI', Arial, sans-serif";
+            context.fillStyle = color;
+            context.textAlign = "center";
+            context.textBaseline = "middle";
+            context.fillText(message, 300, 64);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthTest: false, transparent: true });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(18, 4, 1);
+            sprite.renderOrder = 999;
+            return sprite;
+        }
+
+        function buildScene0() {
+            const group = groups[0];
+
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.5 });
+            const lineGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-30, 0, 0),
+                new THREE.Vector3(30, 0, 0)
+            ]);
+            group.add(new THREE.Line(lineGeo, lineMat));
+
+            const n1 = new THREE.Group();
+            n1.position.set(-25, 0, 0);
+            const appleGeo = new THREE.SphereGeometry(2, 32, 32);
+            const appleMat = new THREE.MeshPhongMaterial({ color: 0xef4444, shininess: 100 });
+            s0Apple = new THREE.Mesh(appleGeo, appleMat);
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1), new THREE.MeshBasicMaterial({color: 0x8b4513}));
+            stem.position.y = 2;
+            s0Apple.add(stem);
+            n1.add(s0Apple);
+            n1.add(createTextSprite("1687: Newton (Pulling Force)", "#ef4444"));
+            n1.children[n1.children.length - 1].position.set(0, -5, 0);
+            group.add(n1);
+
+            const n2 = new THREE.Group();
+            n2.position.set(-8, 0, 0);
+            const gridGeo = new THREE.PlaneGeometry(8, 8, 10, 10);
+            const pos = gridGeo.attributes.position;
+            for(let i=0; i<pos.count; i++) {
+                let dist = Math.sqrt(pos.getX(i)**2 + pos.getY(i)**2);
+                pos.setZ(i, dist < 3 ? -2 + dist/1.5 : 0);
+            }
+            gridGeo.computeVertexNormals();
+            s0Grid = new THREE.LineSegments(new THREE.WireframeGeometry(gridGeo), new THREE.LineBasicMaterial({color: 0x3b82f6}));
+            s0Grid.rotation.x = -Math.PI/2;
+            const miniStar = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial({color: 0xfacc15}));
+            miniStar.position.y = -1;
+            n2.add(s0Grid);
+            n2.add(miniStar);
+            const lbl2 = createTextSprite("1915: Einstein (Geometry)", "#3b82f6");
+            lbl2.position.set(0, -5, 0);
+            n2.add(lbl2);
+            group.add(n2);
+
+            const n3 = new THREE.Group();
+            n3.position.set(8, 0, 0);
+            s0Expander = new THREE.Group();
+            for(let i=0; i<12; i++) {
+                const arr = new THREE.ArrowHelper(
+                    new THREE.Vector3(Math.cos(i*Math.PI/6), Math.sin(i*Math.PI/6), 0),
+                    new THREE.Vector3(0,0,0), 2, 0x10b981
+                );
+                arr.line.material.transparent = true;
+                arr.cone.material.transparent = true;
+                s0Expander.add(arr);
+            }
+            s0Expander.add(new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({color: 0x10b981})));
+            n3.add(s0Expander);
+            const lbl3 = createTextSprite("1998: Dark Energy (Push)", "#10b981");
+            lbl3.position.set(0, -5, 0);
+            n3.add(lbl3);
+            group.add(n3);
+
+            const n4 = new THREE.Group();
+            n4.position.set(25, 0, 0);
+            const prismGeo = new THREE.ConeGeometry(2, 4, 3);
+            const prismMat = new THREE.MeshBasicMaterial({ color: 0xc084fc, wireframe: true, transparent: true, opacity: 0.8 });
+            s0Prism = new THREE.Mesh(prismGeo, prismMat);
+            n4.add(s0Prism);
+            n4.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(3,3,0)]), new THREE.LineBasicMaterial({color: 0xfacc15})));
+            n4.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(4,0,0)]), new THREE.LineBasicMaterial({color: 0x6ee7b7})));
+            n4.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(3,-3,0)]), new THREE.LineBasicMaterial({color: 0x3b82f6})));
+            const lbl4 = createTextSprite("2026: The 3 Channels", "#c084fc");
+            lbl4.position.set(0, -5, 0);
+            n4.add(lbl4);
+            group.add(n4);
+        }
+
+        function buildScene1() {
+            const group = groups[1];
+            const label = createTextSprite("Source: T₀₀ Mass Density", "#facc15");
+            label.position.set(0, 6, 0);
+            group.add(label);
+
+            const starGeo = new THREE.SphereGeometry(3, 32, 32);
+            const starMat = new THREE.MeshBasicMaterial({ color: 0xfacc15, wireframe: true });
+            group.add(new THREE.Mesh(starGeo, starMat));
+            group.add(new THREE.Mesh(new THREE.SphereGeometry(3.5, 32, 32), new THREE.MeshBasicMaterial({ color: 0xfacc15, transparent: true, opacity: 0.2 })));
+
+            s1ClockNear = createClock(0xef4444, 1.5);
+            s1ClockNear.position.set(4, 0, 0);
+            group.add(s1ClockNear);
+            const labelNear = createTextSprite("Surface Clock (Slow)", "#ef4444", "rgba(0,0,0,0.5)");
+            labelNear.scale.set(8, 2, 1);
+            labelNear.position.set(4, -2, 0);
+            group.add(labelNear);
+
+            s1ClockFar = createClock(0x10b981, 1.5);
+            s1ClockFar.position.set(15, 5, 0);
+            group.add(s1ClockFar);
+            const labelFar = createTextSprite("GPS Orbit Clock (Fast)", "#10b981", "rgba(0,0,0,0.5)");
+            labelFar.scale.set(8, 2, 1);
+            labelFar.position.set(15, 3, 0);
+            group.add(labelFar);
+
+            s1Sat = createSatellite(0x10b981);
+            s1Sat.position.set(17, 5, 0);
+            s1Sat.rotation.z = Math.PI / 4;
+            group.add(s1Sat);
+
+            const planeGeo = new THREE.PlaneGeometry(40, 40, 40, 40);
+            const pos = planeGeo.attributes.position;
+            for(let i=0; i<pos.count; i++) {
+                let x = pos.getX(i), y = pos.getY(i);
+                pos.setZ(i, -15 / (Math.sqrt(x*x + y*y) + 2));
+            }
+            planeGeo.computeVertexNormals();
+            s1Grid = new THREE.LineSegments(new THREE.WireframeGeometry(planeGeo), new THREE.LineBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.3 }));
+            s1Grid.rotation.x = -Math.PI / 2;
+            s1Grid.position.y = -2;
+            group.add(s1Grid);
+
+            s1Photon = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+            const trail = new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(300 * 3), 3)), new THREE.LineBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.5 }));
+            s1Photon.userData.trail = trail;
+            s1Photon.userData.trailPoints = [];
+            group.add(s1Photon);
+            group.add(trail);
+
+            s1NewtonianPath = new THREE.Line(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(300 * 3), 3)), new THREE.LineDashedMaterial({ color: 0xef4444, dashSize: 0.5, gapSize: 0.5 }));
+            s1NewtonianPath.computeLineDistances();
+            group.add(s1NewtonianPath);
+            const newtonLabel = createTextSprite("Newtonian (Dashed) vs GR (Solid)", "#ef4444", "rgba(20,5,5,0.8)");
+            newtonLabel.position.set(0, -6, 10);
+            group.add(newtonLabel);
+        }
+
+        function buildScene2() {
+            const group = groups[2];
+            group.add(createTextSprite("Tokamak Analogue: Kerr Black Hole", "#c084fc")).position.set(0, 9, 0);
+            const labelEq = createTextSprite("F = m(g_E + 4(v/c) × g_B)", "#facc15", "rgba(30,20,5,0.8)");
+            labelEq.position.set(0, 6.5, 0);
+            group.add(labelEq);
+
+            s2BlackHole = new THREE.Mesh(new THREE.SphereGeometry(3, 32, 32), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+            group.add(s2BlackHole);
+
+            s2Accretion = new THREE.Group();
+            for(let i=1; i<=5; i++) {
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(3 + i*1.2, 0.05, 8, 64), new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.8 - i*0.1 }));
+                ring.userData.speed = 0.05 / i;
+                s2Accretion.add(ring);
+            }
+            s2Accretion.rotation.x = Math.PI / 2;
+            group.add(s2Accretion);
+
+            const swirlPoints = [];
+            for(let i=0; i<500; i++) {
+                let t = i * 0.1, r = 3 + t*0.05;
+                swirlPoints.push(new THREE.Vector3(r * Math.cos(t), (Math.random()-0.5)*2, r * Math.sin(t)));
+            }
+            group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(swirlPoints), new THREE.LineBasicMaterial({ color: 0x4c1d95, transparent: true, opacity: 0.3 })));
+
+            s2Photon = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), new THREE.MeshBasicMaterial({ color: 0x6ee7b7 }));
+            group.add(s2Photon);
+
+            const dir = new THREE.Vector3(0, 1, 0);
+            s2Polarization = new THREE.ArrowHelper(dir, new THREE.Vector3(0,0,0), 2, 0xfacc15, 0.5, 0.5);
+            s2Photon.add(s2Polarization);
+
+            for(let i=0; i<40; i++) {
+                const trailArrow = new THREE.ArrowHelper(dir, new THREE.Vector3(0,0,0), 1.5, 0xca8a04, 0.3, 0.3);
+                trailArrow.visible = false;
+                s2PolTrail.push(trailArrow);
+                group.add(trailArrow);
+            }
+
+            s2Reticle = new THREE.Mesh(new THREE.RingGeometry(2, 2.2, 4), new THREE.MeshBasicMaterial({ color: 0xef4444, side: THREE.DoubleSide, wireframe: true }));
+            s2Reticle.position.set(15, 0, -5);
+            s2Reticle.rotation.y = -Math.PI / 4;
+            group.add(s2Reticle);
+
+            const labelStatus = createTextSprite("OBSERVATIONAL PROGRAMME TARGET", "#ef4444", "rgba(20,5,5,0.8)");
+            labelStatus.position.set(15, 3, -5);
+            labelStatus.scale.set(12, 2, 1);
+            group.add(labelStatus);
+
+            const pathPoints = [];
+            for(let x=-20; x<=20; x+=0.5) pathPoints.push(new THREE.Vector3(x, 0, -5 + 20 / Math.sqrt(x*x + 25)));
+            group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pathPoints), new THREE.LineBasicMaterial({ color: 0x6ee7b7, transparent: true, opacity: 0.2 })));
+        }
+
+        function buildScene3() {
+            const group = groups[3];
+            const label = createTextSprite("Cosmological Constant (Λ)", "#3b82f6");
+            label.position.set(0, 15, -10);
+            group.add(label);
+
+            const labelHorizon = createTextSprite("de Sitter Horizon (1/H₀)", "#ef4444", "rgba(40,10,10,0.8)");
+            labelHorizon.position.set(20, 15, 0);
+            group.add(labelHorizon);
+
+            s3Horizon = new THREE.Mesh(new THREE.SphereGeometry(30, 32, 32), new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.05, wireframe: true }));
+            group.add(s3Horizon);
+
+            const galMat = new THREE.MeshBasicMaterial({ color: 0xf8fafc, transparent: true, opacity: 0.8 });
+            for(let i=0; i<30; i++) {
+                const mesh = new THREE.Mesh(new THREE.SphereGeometry(1 + Math.random() * 2, 8, 8), galMat);
+                mesh.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 40);
+                mesh.userData.basePos = mesh.position.clone();
+                s3Galaxies.push(mesh);
+                group.add(mesh);
+            }
+
+            s3Photon = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshBasicMaterial({ color: 0x3b82f6 }));
+            group.add(s3Photon);
+
+            for(let i=0; i<20; i++) {
+                const wave = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.6, 32), new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0, side: THREE.DoubleSide }));
+                wave.rotation.x = Math.PI / 2;
+                s3Waves.push({mesh: wave, active: false, birthTime: 0, x: 0});
+                group.add(wave);
+            }
+
+            s3Probe = createSatellite(0x3b82f6);
+            s3Probe.position.set(15, -5, 10);
+            s3Probe.rotation.set(Math.PI/4, -Math.PI/4, 0);
+            s3Probe.scale.set(1.5, 1.5, 1.5);
+            group.add(s3Probe);
+            const probeLabel = createTextSprite("Cosmological Survey Probe (e.g. Euclid)", "#3b82f6", "rgba(5,15,30,0.8)");
+            probeLabel.position.set(15, -8, 10);
+            probeLabel.scale.set(14, 2, 1);
+            group.add(probeLabel);
+
+            s3Grid = new THREE.GridHelper(50, 20, 0x334155, 0x1e293b);
+            group.add(s3Grid);
+        }
+
+        function buildScene4() {
+            const group = groups[4];
+            const labelBridge = createTextSprite("ds² = -c²dt² + a(t)²(dx²+dy²+dz²)", "#10b981", "rgba(6,25,15,0.8)");
+            labelBridge.position.set(0, 10, 0);
+            group.add(labelBridge);
+
+            const handGeo = new THREE.CylinderGeometry(0.1, 0.1, 2.5);
+            handGeo.translate(0, 1.25, 0);
+            const handMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+            const clockMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+            const clockGeo = new THREE.RingGeometry(3, 3.2, 32);
+
+            const leftGroup = new THREE.Group();
+            leftGroup.position.x = -15;
+            leftGroup.add(new THREE.GridHelper(20, 10, 0x3b82f6, 0x1e293b));
+            const clockFrame1 = new THREE.Mesh(clockGeo, clockMat);
+            clockFrame1.rotation.x = Math.PI / 2;
+            clockFrame1.position.y = 2;
+            leftGroup.add(clockFrame1);
+            s4Clock1Hand = new THREE.Mesh(handGeo, handMat);
+            s4Clock1Hand.position.y = 2;
+            s4Clock1Hand.rotation.x = Math.PI / 2;
+            leftGroup.add(s4Clock1Hand);
+            const lLabel = createTextSprite("STATIC (Early Universe, No Λ)");
+            lLabel.position.set(0, 5, 0);
+            leftGroup.add(lLabel);
+            const lblSub1 = createTextSprite("Substrate: Spatial Geometry / Entanglement", "#94a3b8", "transparent");
+            lblSub1.scale.set(16, 2, 1);
+            lblSub1.position.set(0, -3, 0);
+            leftGroup.add(lblSub1);
+            group.add(leftGroup);
+
+            const rightGroup = new THREE.Group();
+            rightGroup.position.x = 15;
+            s4GridExpand = new THREE.GridHelper(20, 10, 0xef4444, 0x7f1d1d);
+            rightGroup.add(s4GridExpand);
+            const clockFrame2 = clockFrame1.clone();
+            rightGroup.add(clockFrame2);
+            s4Clock2Hand = new THREE.Mesh(handGeo, handMat);
+            s4Clock2Hand.position.y = 2;
+            s4Clock2Hand.rotation.x = Math.PI / 2;
+            rightGroup.add(s4Clock2Hand);
+            const rLabel = createTextSprite("EXPANDING (Late Universe, With Λ)");
+            rLabel.position.set(0, 5, 0);
+            rightGroup.add(rLabel);
+            const lblSub2 = createTextSprite("Substrate: Dark Energy (Contested)", "#ef4444", "transparent");
+            lblSub2.scale.set(16, 2, 1);
+            lblSub2.position.set(0, -3, 0);
+            rightGroup.add(lblSub2);
+            const crossGeo1 = new THREE.BoxGeometry(4, 0.5, 0.5);
+            const crossMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+            const cross1 = new THREE.Mesh(crossGeo1, crossMat);
+            const cross2 = new THREE.Mesh(crossGeo1, crossMat);
+            cross1.rotation.z = Math.PI / 4;
+            cross2.rotation.z = -Math.PI / 4;
+            const crossGroup = new THREE.Group();
+            crossGroup.add(cross1, cross2);
+            crossGroup.position.set(0, 2, 0);
+            rightGroup.add(crossGroup);
+            group.add(rightGroup);
+        }
+
+        function setupParallaxHUD() {
+            document.addEventListener('mousemove', (e) => {
+                if (!isInfoVisible || window.innerWidth <= 768) return;
+                const panel = document.getElementById('info-panel');
+                const xAxis = (e.clientX / window.innerWidth - 0.5) * 2;
+                const yAxis = (e.clientY / window.innerHeight - 0.5) * 2;
+                panel.style.transform = `rotateX(${-yAxis * 8}deg) rotateY(${xAxis * 8}deg)`;
+            });
+            document.addEventListener('mouseleave', () => {
+                const panel = document.getElementById('info-panel');
+                if (panel && window.innerWidth > 768) panel.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            });
+        }
+
+        function toggleInfoPanel() {
+            isInfoVisible = !isInfoVisible;
+            const container = document.getElementById('info-panel-container');
+            const btn = document.getElementById('toggle-info-btn');
+            if (isInfoVisible) {
+                container.classList.remove('hidden');
+                btn.innerHTML = '<span id="toggle-icon">▼</span> Hide HUD';
+            } else {
+                container.classList.add('hidden');
+                btn.innerHTML = '<span id="toggle-icon">▲</span> Show HUD';
+            }
+        }
+
+        function switchScene(id) {
+            activeScene = id;
+            time = 0;
+            document.querySelectorAll('.nav-btn:not(.action-btn)').forEach(btn => btn.classList.remove('active'));
+            const btns = document.querySelectorAll('.nav-btn:not(.action-btn)');
+            if(btns[id]) btns[id].classList.add('active');
+            for (let i = 0; i <= 4; i++) groups[i].visible = (i === id);
+
+            if(id === 0) camera.position.set(0, 20, 50);
+            if(id === 1) camera.position.set(0, 20, 35);
+            if(id === 2) camera.position.set(0, 15, 30);
+            if(id === 3) camera.position.set(0, 30, 45);
+            if(id === 4) camera.position.set(0, 30, 40);
+            controls.target.set(0, 0, 0);
+
+            const data = contentData[id];
+            const contentDiv = document.getElementById('text-content');
+            contentDiv.style.opacity = 0;
+
+            setTimeout(() => {
+                contentDiv.innerHTML = `
+                    <div class="topic-title">
+                        ${data.title}
+                        <span class="topic-badge">${data.badge}</span>
+                    </div>
+                    <div class="topic-content">
+                        ${data.html}
+                    </div>
+                `;
+                contentDiv.style.opacity = 1;
+            }, 200);
+
+            if(!isInfoVisible) toggleInfoPanel();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+            controls.update();
+            switch(activeScene) {
+                case 0: animateScene0(); break;
+                case 1: animateScene1(); break;
+                case 2: animateScene2(); break;
+                case 3: animateScene3(); break;
+                case 4: animateScene4(); break;
+            }
+            renderer.render(scene, camera);
+        }
+
+        function animateScene0() {
+            if(s0Apple) s0Apple.position.y = Math.sin(time * 3) * 1 + 2;
+            if(s0Grid) s0Grid.rotation.z += 0.01;
+            if(s0Expander) {
+                let scale = 1 + (time % 2);
+                s0Expander.scale.set(scale, scale, scale);
+                let currentOpacity = 1 - (time % 2)/2;
+                s0Expander.children.forEach(c => {
+                    if(c.type === "ArrowHelper") {
+                        if (c.line) c.line.material.opacity = currentOpacity;
+                        if (c.cone) c.cone.material.opacity = currentOpacity;
+                    }
+                });
+            }
+            if(s0Prism) {
+                s0Prism.rotation.y += 0.02;
+                s0Prism.rotation.z = Math.sin(time)*0.2;
+            }
+        }
+
+        function animateScene1() {
+            let t = (time * 15) % 60 - 30;
+            let x = t;
+            let r = Math.sqrt(x*x + 9);
+            let z = -10 + 30 / r;
+            let y = -2 + (-15 / (r + 2));
+            s1Photon.position.set(x, y + 0.5, z);
+
+            let pts = s1Photon.userData.trailPoints;
+            pts.push(new THREE.Vector3(x, y + 0.5, z));
+            if(pts.length > 50) pts.shift();
+
+            let posArray = s1Photon.userData.trail.geometry.attributes.position.array;
+            let newtonArray = s1NewtonianPath.geometry.attributes.position.array;
+
+            for(let i=0; i<pts.length; i++) {
+                posArray[i*3] = pts[i].x;
+                posArray[i*3+1] = pts[i].y;
+                posArray[i*3+2] = pts[i].z;
+                let histX = pts[i].x;
+                let histR = Math.sqrt(histX*histX + 9);
+                newtonArray[i*3] = histX;
+                newtonArray[i*3+1] = pts[i].y;
+                newtonArray[i*3+2] = -10 + 15 / histR;
+            }
+            for(let i=pts.length; i<100; i++) {
+                let last = pts.length - 1;
+                posArray[i*3] = pts[last].x;
+                posArray[i*3+1] = pts[last].y;
+                posArray[i*3+2] = pts[last].z;
+                newtonArray[i*3] = newtonArray[last*3];
+                newtonArray[i*3+1] = newtonArray[last*3+1];
+                newtonArray[i*3+2] = newtonArray[last*3+2];
+            }
+            s1Photon.userData.trail.geometry.attributes.position.needsUpdate = true;
+            s1NewtonianPath.geometry.attributes.position.needsUpdate = true;
+            s1NewtonianPath.computeLineDistances();
+
+            if (s1ClockNear && s1ClockFar) {
+                s1ClockNear.lookAt(camera.position);
+                s1ClockFar.lookAt(camera.position);
+                s1ClockNear.userData.hand.rotation.z -= 0.01;
+                s1ClockFar.userData.hand.rotation.z -= 0.05;
+            }
+            if (s1Sat) s1Sat.rotation.y += 0.01;
+        }
+
+        function animateScene2() {
+            s2BlackHole.rotation.y += 0.05;
+            s2Accretion.children.forEach(ring => { ring.rotation.z -= ring.userData.speed; });
+            if (s2Reticle) s2Reticle.rotation.z += 0.02;
+
+            let t = (time * 10) % 40 - 20;
+            let x = t;
+            let z = -5 + 20 / Math.sqrt(x*x + 25);
+            s2Photon.position.set(x, 0, z);
+
+            let rotationAngle = 0;
+            if(x > -10 && x < 10) {
+                let factor = (10 - Math.abs(x)) / 10;
+                rotationAngle = factor * Math.PI;
+            } else if (x >= 10) {
+                rotationAngle = Math.PI;
+            }
+            let currentDir = new THREE.Vector3(Math.sin(rotationAngle), Math.cos(rotationAngle), 0).normalize();
+            s2Polarization.setDirection(currentDir);
+
+            let trailIndex = Math.floor((t + 20) / 1);
+            if (trailIndex >= 0 && trailIndex < 40) {
+                let arrow = s2PolTrail[trailIndex];
+                if (!arrow.visible) {
+                    arrow.visible = true;
+                    arrow.position.set(x, 0, z);
+                    arrow.setDirection(currentDir);
+                }
+            }
+            if (t < -19) s2PolTrail.forEach(a => a.visible = false);
+        }
+
+        function animateScene3() {
+            let expansionFactor = 1 + Math.sin(time * 0.5) * 0.5;
+            if (s3Horizon) s3Horizon.rotation.y += 0.002;
+            s3Galaxies.forEach(gal => {
+                let base = gal.userData.basePos;
+                gal.position.set(base.x * expansionFactor, base.y * expansionFactor, base.z * expansionFactor);
+            });
+            s3Grid.scale.set(expansionFactor, 1, expansionFactor);
+
+            let t = (time * 10) % 40 - 20;
+            s3Photon.position.set(t, 5, 0);
+
+            let colorRatio = (t + 20) / 40;
+            let r = 0x3b + (0xef - 0x3b) * colorRatio;
+            let g = 0x82 - (0x82 - 0x44) * colorRatio;
+            let b = 0xf6 - (0xf6 - 0x44) * colorRatio;
+            s3Photon.material.color.setHex((Math.floor(r) << 16) | (Math.floor(g) << 8) | Math.floor(b));
+
+            if (s3Probe) s3Probe.lookAt(s3Photon.position);
+
+            if (Math.random() < 0.1) {
+                let inactiveWave = s3Waves.find(w => !w.active);
+                if (inactiveWave) {
+                    inactiveWave.active = true;
+                    inactiveWave.birthTime = time;
+                    inactiveWave.x = t;
+                    inactiveWave.mesh.position.set(t, 5, 0);
+                    inactiveWave.mesh.material.opacity = 0.8;
+                    inactiveWave.mesh.scale.set(1, 1, 1);
+                    inactiveWave.mesh.material.color.copy(s3Photon.material.color);
+                }
+            }
+
+            s3Waves.forEach(w => {
+                if (w.active) {
+                    let age = time - w.birthTime;
+                    w.mesh.scale.set(1 + age * 2 * expansionFactor, 1 + age * 2, 1);
+                    w.mesh.position.x = w.x - age * 5;
+                    w.mesh.material.opacity = 0.8 - age;
+                    if (age > 0.8) w.active = false;
+                }
+            });
+        }
+
+        function animateScene4() {
+            let expansion = 1 + Math.abs(Math.sin(time)) * 0.5;
+            s4GridExpand.scale.set(expansion, 1, expansion);
+            let angle = -time * 2;
+            s4Clock1Hand.rotation.z = angle;
+            s4Clock2Hand.rotation.z = angle;
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
