@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lx8 Labs — DevOps · AI · Research</title>
-  <meta name="description" content="lx8 Labs — DevOps consulting, AI-powered tools, courses, and research. Founded by Alexei Ferreira." />
+  <title>Lx8 Labs — DevOps · AI · Research</title>
+  <meta name="description" content="Lx8 Labs — DevOps consulting, AI-powered tools, courses, and research. Founded by Alexei Ferreira." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -56,8 +56,8 @@
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 2.5rem; transition: all 0.3s; }
     nav.solid { background: rgba(0,0,0,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 2.5rem; }
     .logo-a { display: flex; align-items: center; gap: 9px; text-decoration: none; }
-    .logo-img { width: 34px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .logo-img svg { width: 34px; height: 34px; }
+    .logo-img { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1.5px solid rgba(129,140,248,0.5); box-shadow: 0 0 10px rgba(99,102,241,0.35); background: #111; }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: #fff; }
     .logo-txt span { color: var(--ind4); }
     .nav-links { display: flex; align-items: center; gap: 0.2rem; }
@@ -195,8 +195,8 @@
     /* ── FOOTER ── */
     footer { position: relative; z-index: 1; background: var(--bg); border-top: 1px solid var(--border); padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
     .ft-left { display: flex; align-items: center; gap: 9px; }
-    .ft-logo { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
-    .ft-logo svg { width: 24px; height: 24px; }
+    .ft-logo { width: 24px; height: 24px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); background: #111; }
+    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .ft-copy { font-size: 0.77rem; color: var(--text3); }
     .ft-links { display: flex; gap: 1.25rem; }
     .ft-links a { font-size: 0.77rem; color: var(--text3); text-decoration: none; transition: color 0.2s; }
@@ -245,30 +245,9 @@
 <nav id="nav">
   <a href="#hero" class="logo-a">
     <div class="logo-img">
-      <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="lg-nav" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#818cf8"/>
-            <stop offset="100%" stop-color="#6366f1"/>
-          </linearGradient>
-        </defs>
-        <rect width="34" height="34" rx="8" fill="url(#lg-nav)"/>
-        <!-- L -->
-        <rect x="6" y="9" width="2.5" height="14" rx="1.2" fill="white"/>
-        <rect x="6" y="20.5" width="8" height="2.5" rx="1.2" fill="white"/>
-        <!-- x -->
-        <line x1="16.5" y1="13" x2="21.5" y2="23" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
-        <line x1="21.5" y1="13" x2="16.5" y2="23" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
-        <!-- 8 (octagonal dot cluster) -->
-        <circle cx="28" cy="12" r="1.4" fill="white"/>
-        <circle cx="25.2" cy="14.8" r="1.4" fill="white"/>
-        <circle cx="25.2" cy="19.2" r="1.4" fill="white"/>
-        <circle cx="28" cy="22" r="1.4" fill="white"/>
-        <circle cx="30.8" cy="19.2" r="1.4" fill="white"/>
-        <circle cx="30.8" cy="14.8" r="1.4" fill="white"/>
-      </svg>
+      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" />
     </div>
-    <span class="logo-txt">lx8 <span>Labs</span></span>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
   </a>
   <div class="nav-links">
     <a href="#about"      class="nl">About</a>
@@ -284,7 +263,7 @@
 <section id="hero">
   <div class="chip"><div class="chip-dot"></div>DevOps · AI · Research</div>
   <h1 class="hero-h">
-    <span class="t1">lx8 Labs</span>
+    <span class="t1">Lx8 Labs</span>
     <span class="t2">Beautiful minds,<br/>world impact.</span>
   </h1>
   <p class="hero-sub">
@@ -339,7 +318,7 @@
 <section id="about" class="section">
   <div class="inner">
     <div class="lbl r">The founder</div>
-    <h2 class="sh r d1">Behind lx8 Labs</h2>
+    <h2 class="sh r d1">Behind Lx8 Labs</h2>
     <div class="about-grid">
       <div class="about-card r d1">
         <div class="about-avatar">⚡</div>
@@ -357,7 +336,7 @@
       <div class="about-body r d2">
         <p>
           I'm a <strong>DevOps engineer</strong> who crossed into <strong>AI and theoretical physics</strong>,
-          and decided to build a lab around those intersections. lx8 Labs is the company I'm putting together —
+          and decided to build a lab around those intersections. Lx8 Labs is the company I'm putting together —
           piece by piece, project by project.
         </p>
         <p>
@@ -366,7 +345,7 @@
           which is why every course and product I build starts from first principles.
         </p>
         <p>
-          <em>lx8 Labs is inspired by Bell Labs</em>: a place where scientific curiosity and
+          <em>Lx8 Labs is inspired by Bell Labs</em>: a place where scientific curiosity and
           engineering excellence coexist. We're just getting started.
         </p>
       </div>
@@ -681,27 +660,9 @@
 <footer>
   <div class="ft-left">
     <div class="ft-logo">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="lg-ft" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#818cf8"/>
-            <stop offset="100%" stop-color="#6366f1"/>
-          </linearGradient>
-        </defs>
-        <rect width="24" height="24" rx="6" fill="url(#lg-ft)"/>
-        <rect x="4" y="6" width="1.8" height="10" rx="0.9" fill="white"/>
-        <rect x="4" y="14.2" width="5.5" height="1.8" rx="0.9" fill="white"/>
-        <line x1="11.5" y1="9" x2="15" y2="15" stroke="white" stroke-width="1.7" stroke-linecap="round"/>
-        <line x1="15" y1="9" x2="11.5" y2="15" stroke="white" stroke-width="1.7" stroke-linecap="round"/>
-        <circle cx="19.5" cy="8.5" r="1" fill="white"/>
-        <circle cx="17.5" cy="10.5" r="1" fill="white"/>
-        <circle cx="17.5" cy="13.5" r="1" fill="white"/>
-        <circle cx="19.5" cy="15.5" r="1" fill="white"/>
-        <circle cx="21.5" cy="13.5" r="1" fill="white"/>
-        <circle cx="21.5" cy="10.5" r="1" fill="white"/>
-      </svg>
+      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" />
     </div>
-    <span class="ft-copy">© 2013–2026 Alexei Lemos Cavalcante Ferreira · lx8 Labs</span>
+    <span class="ft-copy">© 2013–2026 Alexei Lemos Cavalcante Ferreira · Lx8 Labs</span>
   </div>
   <div class="ft-links">
     <a href="#about">About</a>
