@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Algorithm Lab — Lx8 Labs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #040411; color: #e2e8f0; font-family: 'Inter', sans-serif; overflow: hidden; }
+
+    #app { display: flex; height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      width: 210px; min-width: 210px; height: 100vh;
+      background: #06060e; border-right: 1px solid #18183a;
+      display: flex; flex-direction: column; overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: #2a2a50 transparent;
+    }
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-thumb { background: #2a2a50; border-radius: 2px; }
+
+    .sb-logo {
+      padding: 0.85rem 1rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem; font-weight: 700; color: #818cf8;
+      letter-spacing: 0.06em; border-bottom: 1px solid #18183a;
+    }
+
+    .sb-section { padding: 0.6rem 0.4rem 0.1rem; }
+    .sb-section-title {
+      font-size: 0.6rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #3a3a6a;
+      padding: 0 0.6rem; margin-bottom: 0.2rem;
+    }
+
+    .sb-btn {
+      display: block; width: 100%; background: none; border: none; cursor: pointer;
+      text-align: left; padding: 0.38rem 0.75rem;
+      font-family: 'Inter', sans-serif; font-size: 0.78rem;
+      color: #7070a0; border-radius: 6px; transition: all 0.15s;
+    }
+    .sb-btn:hover { background: #10102a; color: #c0c0e0; }
+    .sb-btn.active { background: rgba(99,102,241,0.18); color: #a5b4fc; font-weight: 600; }
+
+    /* ── INFO PANEL ── */
+    .algo-info {
+      margin-top: auto; padding: 0.75rem;
+      border-top: 1px solid #18183a; font-size: 0.71rem; color: #5c5c8a;
+    }
+    .algo-info-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.84rem; font-weight: 700; color: #a5b4fc; margin-bottom: 0.55rem;
+    }
+    .cx-row { display: flex; justify-content: space-between; margin-bottom: 0.22rem; }
+    .cx-lbl { color: #3a3a6a; }
+    .cx-val { color: #c0c0e8; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; }
+    .algo-desc { margin-top: 0.55rem; color: #4c4c80; line-height: 1.55; font-size: 0.68rem; }
+
+    /* ── MAIN ── */
+    #main { flex: 1; display: flex; flex-direction: column; height: 100vh; min-width: 0; }
+    #canvas-wrap { flex: 1; position: relative; overflow: hidden; }
+    #three-canvas { display: block; width: 100%; height: 100%; }
+
+    /* overlay labels */
+    #algo-label {
+      position: absolute; top: 0.9rem; left: 50%; transform: translateX(-50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem; font-weight: 700;
+      color: rgba(165,180,252,0.65); pointer-events: none; white-space: nowrap;
+    }
+
+    #legend {
+      position: absolute; bottom: 0.5rem; right: 0.75rem;
+      display: flex; gap: 0.65rem; flex-wrap: wrap; justify-content: flex-end;
+    }
+    .leg { display: flex; align-items: center; gap: 4px; font-size: 0.62rem; color: #4c4c7a; }
+    .leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+    /* ── CONTROL BAR ── */
+    #ctrl-bar {
+      height: 68px; min-height: 68px; background: #06060e;
+      border-top: 1px solid #18183a;
+      display: flex; align-items: center; gap: 0.75rem; padding: 0 1.2rem;
+      flex-wrap: nowrap; overflow-x: auto;
+    }
+
+    .ctrl-btn {
+      background: rgba(99,102,241,0.14); border: 1px solid rgba(99,102,241,0.35);
+      color: #a5b4fc; padding: 0.42rem 1rem;
+      border-radius: 8px; font-size: 0.76rem; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+    }
+    .ctrl-btn:hover { background: rgba(99,102,241,0.28); transform: translateY(-1px); }
+    .ctrl-btn.run  { background: #6366f1; color: #fff; border-color: #6366f1; }
+    .ctrl-btn.run:hover { background: #4f52e8; }
+    .ctrl-btn.stop { background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.35); color: #fca5a5; }
+
+    .speed-wrap { display: flex; align-items: center; gap: 0.45rem; flex-shrink: 0; }
+    .speed-lbl { font-size: 0.7rem; color: #4c4c7a; white-space: nowrap; }
+    input[type=range] { accent-color: #6366f1; width: 80px; cursor: pointer; }
+
+    #target-wrap {
+      display: none; align-items: center; gap: 0.45rem;
+      font-size: 0.76rem; color: #4c4c7a; flex-shrink: 0;
+    }
+    #target-input {
+      background: #10102a; border: 1px solid #2a2a50; color: #c0c0e8;
+      padding: 0.28rem 0.55rem; border-radius: 6px; font-size: 0.76rem;
+      width: 56px; font-family: 'Inter', sans-serif;
+    }
+
+    .stats-wrap { margin-left: auto; display: flex; gap: 1.2rem; flex-shrink: 0; }
+    .stat { text-align: center; }
+    .stat-n {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem; font-weight: 700; color: #a5b4fc;
+    }
+    .stat-l { font-size: 0.58rem; color: #3a3a6a; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 1px; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside id="sidebar">
+    <div class="sb-logo">⚗ Algorithm Lab</div>
+
+    <div class="sb-section">
+      <div class="sb-section-title">Sorting</div>
+      <button class="sb-btn active" data-cat="sort" data-algo="bubble">Bubble Sort</button>
+      <button class="sb-btn" data-cat="sort" data-algo="selection">Selection Sort</button>
+      <button class="sb-btn" data-cat="sort" data-algo="insertion">Insertion Sort</button>
+      <button class="sb-btn" data-cat="sort" data-algo="quick">Quick Sort</button>
+      <button class="sb-btn" data-cat="sort" data-algo="merge">Merge Sort</button>
+      <button class="sb-btn" data-cat="sort" data-algo="heap">Heap Sort</button>
+      <button class="sb-btn" data-cat="sort" data-algo="shell">Shell Sort</button>
+      <button class="sb-btn" data-cat="sort" data-algo="counting">Counting Sort</button>
+      <button class="sb-btn" data-cat="sort" data-algo="radix">Radix Sort</button>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-section-title">Searching</div>
+      <button class="sb-btn" data-cat="search" data-algo="linear">Linear Search</button>
+      <button class="sb-btn" data-cat="search" data-algo="binary">Binary Search</button>
+      <button class="sb-btn" data-cat="search" data-algo="jump">Jump Search</button>
+      <button class="sb-btn" data-cat="search" data-algo="interpolation">Interpolation Search</button>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-section-title">Graph</div>
+      <button class="sb-btn" data-cat="graph" data-algo="bfs">BFS</button>
+      <button class="sb-btn" data-cat="graph" data-algo="dfs">DFS</button>
+      <button class="sb-btn" data-cat="graph" data-algo="dijkstra">Dijkstra's</button>
+      <button class="sb-btn" data-cat="graph" data-algo="astar">A* Search</button>
+      <button class="sb-btn" data-cat="graph" data-algo="prim">Prim's MST</button>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-section-title">Trees</div>
+      <button class="sb-btn" data-cat="tree" data-algo="bst">BST Search</button>
+      <button class="sb-btn" data-cat="tree" data-algo="inorder">In-order Traversal</button>
+      <button class="sb-btn" data-cat="tree" data-algo="preorder">Pre-order Traversal</button>
+      <button class="sb-btn" data-cat="tree" data-algo="postorder">Post-order Traversal</button>
+    </div>
+
+    <div class="algo-info" id="algo-info">
+      <div class="algo-info-name" id="info-name">Bubble Sort</div>
+      <div class="cx-row"><span class="cx-lbl">Time (avg)</span><span class="cx-val" id="info-time">O(n²)</span></div>
+      <div class="cx-row"><span class="cx-lbl">Space</span><span class="cx-val" id="info-space">O(1)</span></div>
+      <div class="cx-row"><span class="cx-lbl">Stable</span><span class="cx-val" id="info-stable">Yes</span></div>
+      <div class="algo-desc" id="info-desc">Repeatedly compare adjacent elements and swap if out of order.</div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div id="main">
+    <div id="canvas-wrap">
+      <canvas id="three-canvas"></canvas>
+      <div id="algo-label">Bubble Sort</div>
+      <div id="legend"></div>
+    </div>
+
+    <div id="ctrl-bar">
+      <button class="ctrl-btn run" id="btn-run">▶ Run</button>
+      <button class="ctrl-btn" id="btn-reset">⟳ Reset</button>
+      <div id="target-wrap">
+        <span>Target:</span>
+        <input type="number" id="target-input" value="12" min="1" max="30"/>
+      </div>
+      <div class="speed-wrap">
+        <span class="speed-lbl">Speed</span>
+        <input type="range" id="speed-slider" min="1" max="10" value="5"/>
+      </div>
+      <div class="stats-wrap">
+        <div class="stat"><div class="stat-n" id="stat-cmp">0</div><div class="stat-l">Comparisons</div></div>
+        <div class="stat"><div class="stat-n" id="stat-swp">0</div><div class="stat-l">Swaps/Moves</div></div>
+        <div class="stat"><div class="stat-n" id="stat-time">0ms</div><div class="stat-l">Time</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ── THREE.JS CORE ─────────────────────────────────────────────────────────────
+const canvas = document.getElementById('three-canvas');
+const wrap   = document.getElementById('canvas-wrap');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x040411, 1);
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x040411, 0.018);
+
+const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 500);
+
+const ambLight = new THREE.AmbientLight(0x8899ff, 0.4);
+scene.add(ambLight);
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.1);
+dirLight.position.set(10, 20, 10);
+dirLight.castShadow = true;
+scene.add(dirLight);
+const fillLight = new THREE.DirectionalLight(0x6366f1, 0.35);
+fillLight.position.set(-10, -5, -10);
+scene.add(fillLight);
+
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 2;
+controls.maxDistance = 100;
+
+function resizeRenderer() {
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resizeRenderer);
+resizeRenderer();
+
+(function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera); })();
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let isRunning = false, stopFlag = false;
+let currentCat = 'sort', currentAlgo = 'bubble';
+let vizObjects = [];
+let speed = 5;
+let cmp = 0, swp = 0, tStart = 0;
+
+const sleep  = ms => new Promise(r => setTimeout(r, ms));
+const tick   = ()  => sleep(Math.max(6, Math.round(500 / (speed * 1.8))));
+const updateStats = () => {
+  document.getElementById('stat-cmp').textContent  = cmp;
+  document.getElementById('stat-swp').textContent  = swp;
+  document.getElementById('stat-time').textContent = (Date.now() - tStart) + 'ms';
+};
+
+// ── VIZ HELPERS ───────────────────────────────────────────────────────────────
+function clearViz() {
+  for (const obj of vizObjects) {
+    scene.remove(obj);
+    if (obj.geometry) obj.geometry.dispose();
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    mats.forEach(m => m && m.dispose());
+  }
+  vizObjects = [];
+}
+
+function makeMat(hex) {
+  return new THREE.MeshPhongMaterial({ color: hex, shininess: 75, specular: 0x223355 });
+}
+
+function addGrid(size = 20) {
+  const g = new THREE.GridHelper(size, Math.floor(size), 0x181838, 0x10102e);
+  scene.add(g); vizObjects.push(g);
+}
+
+// Palette
+const C = {
+  def:      0x3d3dcc,
+  cmp:      0xf59e0b,
+  swap:     0xef4444,
+  pivot:    0xa78bfa,
+  sorted:   0x10b981,
+  found:    0x22c55e,
+  miss:     0x2a2a4a,
+  node:     0x3b3bcc,
+  visit:    0x10b981,
+  curr:     0xfbbf24,
+  frontier: 0xf59e0b,
+  path:     0xa78bfa,
+  edge:     0x222248,
+  edgeHi:   0x6366f1,
+};
+
+// ── LEGEND ────────────────────────────────────────────────────────────────────
+const LEG_COLORS = [0x3d3dcc, 0xf59e0b, 0xef4444, 0xfbbf24, 0x10b981];
+function showLegend(labels) {
+  const el = document.getElementById('legend');
+  el.innerHTML = '';
+  labels.forEach((lbl, i) => {
+    if (!lbl) return;
+    const d = document.createElement('div'); d.className = 'leg';
+    const c = LEG_COLORS[i] || 0x888888;
+    d.innerHTML = `<div class="leg-dot" style="background:#${c.toString(16).padStart(6,'0')}"></div>${lbl}`;
+    el.appendChild(d);
+  });
+}
+
+// ── ALGORITHM INFO ────────────────────────────────────────────────────────────
+const INFO = {
+  bubble:        { name:'Bubble Sort',            time:'O(n²)',        space:'O(1)',     stable:'Yes', desc:'Adjacent-pair swaps bubble the largest element to the end each pass.' },
+  selection:     { name:'Selection Sort',         time:'O(n²)',        space:'O(1)',     stable:'No',  desc:'Scan for the minimum and swap it into position. Minimises total swaps.' },
+  insertion:     { name:'Insertion Sort',         time:'O(n²)',        space:'O(1)',     stable:'Yes', desc:'Grow a sorted prefix by inserting each element into its correct place.' },
+  quick:         { name:'Quick Sort',             time:'O(n log n)',   space:'O(log n)', stable:'No',  desc:'Partition around a pivot and recurse. Fast in practice, cache-friendly.' },
+  merge:         { name:'Merge Sort',             time:'O(n log n)',   space:'O(n)',     stable:'Yes', desc:'Divide, sort halves recursively, then merge. Guaranteed O(n log n).' },
+  heap:          { name:'Heap Sort',              time:'O(n log n)',   space:'O(1)',     stable:'No',  desc:'Build a max-heap, extract the root repeatedly. In-place and consistent.' },
+  shell:         { name:'Shell Sort',             time:'O(n log² n)', space:'O(1)',     stable:'No',  desc:'Insertion sort with a decreasing gap sequence. Much faster than O(n²).' },
+  counting:      { name:'Counting Sort',          time:'O(n+k)',       space:'O(k)',     stable:'Yes', desc:'Count occurrences of each value. Linear time for small integer ranges.' },
+  radix:         { name:'Radix Sort',             time:'O(d·(n+k))',  space:'O(n+k)',   stable:'Yes', desc:'Sort digit by digit from least to most significant. Beats comparison sorts.' },
+  linear:        { name:'Linear Search',          time:'O(n)',         space:'O(1)',     stable:'—',   desc:'Scan every element. Simple and works on unsorted data.' },
+  binary:        { name:'Binary Search',          time:'O(log n)',     space:'O(1)',     stable:'—',   desc:'Halve the search space each step. Requires a sorted array.' },
+  jump:          { name:'Jump Search',            time:'O(√n)',        space:'O(1)',     stable:'—',   desc:'Jump ahead by √n steps then linear scan back. Sorted array required.' },
+  interpolation: { name:'Interpolation Search',   time:'O(log log n)', space:'O(1)',    stable:'—',   desc:'Estimate position by value distribution. O(log log n) on uniform data.' },
+  bfs:           { name:'Breadth-First Search',   time:'O(V+E)',       space:'O(V)',    stable:'—',   desc:'Explore layer by layer. Finds shortest path in unweighted graphs.' },
+  dfs:           { name:'Depth-First Search',     time:'O(V+E)',       space:'O(V)',    stable:'—',   desc:'Go as deep as possible before backtracking. Used in cycles and topology.' },
+  dijkstra:      { name:"Dijkstra's Algorithm",   time:'O(E log V)',   space:'O(V)',    stable:'—',   desc:"Greedy shortest paths from a source. Requires non-negative weights." },
+  astar:         { name:'A* Search',              time:'O(E log V)',   space:'O(V)',    stable:'—',   desc:'Dijkstra + heuristic. Finds optimal path faster when good heuristic exists.' },
+  prim:          { name:"Prim's MST",             time:'O(E log V)',   space:'O(V)',    stable:'—',   desc:'Grow minimum spanning tree one edge at a time from a start node.' },
+  bst:           { name:'BST Search',             time:'O(log n)',     space:'O(n)',    stable:'—',   desc:'Follow left/right branches by value comparison until the target is found.' },
+  inorder:       { name:'In-order Traversal',     time:'O(n)',         space:'O(h)',    stable:'—',   desc:'Left → Root → Right. Visits BST nodes in sorted ascending order.' },
+  preorder:      { name:'Pre-order Traversal',    time:'O(n)',         space:'O(h)',    stable:'—',   desc:'Root → Left → Right. Used to serialize or copy a tree.' },
+  postorder:     { name:'Post-order Traversal',   time:'O(n)',         space:'O(h)',    stable:'—',   desc:'Left → Right → Root. Used to delete a tree or evaluate expressions.' },
+};
+
+function updateInfoPanel(key) {
+  const d = INFO[key]; if (!d) return;
+  document.getElementById('info-name').textContent    = d.name;
+  document.getElementById('info-time').textContent    = d.time;
+  document.getElementById('info-space').textContent   = d.space;
+  document.getElementById('info-stable').textContent  = d.stable;
+  document.getElementById('info-desc').textContent    = d.desc;
+  document.getElementById('algo-label').textContent   = d.name;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── SORTING ───────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+const N = 26, BAR_W = 0.36, BAR_S = 0.50;
+let arr = [], bars = [];
+
+function initSort() {
+  clearViz();
+  addGrid((N + 3) * BAR_S);
+  arr = Array.from({length: N}, (_, i) => i + 1);
+  for (let i = N-1; i > 0; i--) {
+    const j = 0|Math.random()*(i+1); [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  bars = [];
+  const x0 = -(N-1) * BAR_S / 2;
+  for (let i = 0; i < N; i++) {
+    const h = arr[i] * 0.19 + 0.06;
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(BAR_W, h, BAR_W), makeMat(C.def));
+    mesh.position.set(x0 + i*BAR_S, h/2, 0);
+    mesh.castShadow = true;
+    scene.add(mesh); bars.push(mesh); vizObjects.push(mesh);
+  }
+  camera.position.set(0, 4, (N * BAR_S) * 0.68 + 4);
+  camera.lookAt(0, 2.2, 0); controls.target.set(0, 2.2, 0); controls.update();
+  showLegend(['Default', 'Comparing', 'Swapping', 'Pivot / Digit', 'Sorted']);
+}
+
+const bc  = (i, hex) => { if (bars[i]) bars[i].material.color.setHex(hex); };
+const bh  = (i, v)   => {
+  const h = v * 0.19 + 0.06;
+  bars[i].geometry.dispose();
+  bars[i].geometry = new THREE.BoxGeometry(BAR_W, h, BAR_W);
+  bars[i].position.y = h/2; arr[i] = v;
+};
+const bswap = (i, j) => {
+  const xi = bars[i].position.x; bars[i].position.x = bars[j].position.x; bars[j].position.x = xi;
+  [bars[i], bars[j]] = [bars[j], bars[i]]; [arr[i], arr[j]] = [arr[j], arr[i]];
+};
+const markAllSorted = () => { for (let i = 0; i < N; i++) bc(i, C.sorted); };
+
+// Bubble
+async function bubbleSort() {
+  for (let i = 0; i < N-1; i++) {
+    for (let j = 0; j < N-1-i; j++) {
+      if (stopFlag) return;
+      bc(j, C.cmp); bc(j+1, C.cmp); cmp++; updateStats(); await tick();
+      if (arr[j] > arr[j+1]) { bc(j, C.swap); bc(j+1, C.swap); await tick(); bswap(j, j+1); swp++; updateStats(); }
+      bc(j, C.def); bc(j+1, C.def);
+    }
+    bc(N-1-i, C.sorted);
+  }
+  bc(0, C.sorted);
+}
+
+// Selection
+async function selectionSort() {
+  for (let i = 0; i < N-1; i++) {
+    let mi = i; bc(i, C.pivot);
+    for (let j = i+1; j < N; j++) {
+      if (stopFlag) return;
+      bc(j, C.cmp); cmp++; updateStats(); await tick();
+      if (arr[j] < arr[mi]) { if (mi !== i) bc(mi, C.def); mi = j; bc(j, C.swap); }
+      else bc(j, C.def);
+    }
+    if (mi !== i) { bswap(i, mi); swp++; updateStats(); await tick(); }
+    bc(i, C.sorted);
+  }
+  bc(N-1, C.sorted);
+}
+
+// Insertion
+async function insertionSort() {
+  bc(0, C.sorted);
+  for (let i = 1; i < N; i++) {
+    if (stopFlag) return;
+    bc(i, C.cmp); await tick();
+    let j = i-1;
+    while (j >= 0 && arr[j] > arr[j+1]) {
+      if (stopFlag) return;
+      cmp++; bc(j, C.swap); bswap(j, j+1); swp++; updateStats(); await tick();
+      bc(j+1, C.sorted); j--;
+    }
+    cmp++; bc(j+1, C.sorted);
+  }
+}
+
+// Quick
+async function quickSort() { await _qs(0, N-1); markAllSorted(); }
+async function _qs(lo, hi) {
+  if (lo >= hi || stopFlag) return;
+  const p = await _qp(lo, hi); await _qs(lo, p-1); await _qs(p+1, hi);
+}
+async function _qp(lo, hi) {
+  bc(hi, C.pivot); let i = lo-1;
+  for (let j = lo; j < hi; j++) {
+    if (stopFlag) return hi;
+    bc(j, C.cmp); cmp++; updateStats(); await tick();
+    if (arr[j] <= arr[hi]) { i++; bc(j, C.swap); bswap(i, j); swp++; updateStats(); await tick(); bc(i, C.def); }
+    bc(j, C.def);
+  }
+  bswap(i+1, hi); swp++; bc(i+1, C.sorted); await tick(); return i+1;
+}
+
+// Merge
+async function mergeSort() { await _ms(0, N-1); markAllSorted(); }
+async function _ms(lo, hi) {
+  if (lo >= hi || stopFlag) return;
+  const m = (lo+hi)>>1; await _ms(lo, m); await _ms(m+1, hi); await _mg(lo, m, hi);
+}
+async function _mg(lo, m, hi) {
+  const L = arr.slice(lo, m+1), R = arr.slice(m+1, hi+1);
+  let i=0, j=0, k=lo;
+  while (i<L.length && j<R.length) {
+    if (stopFlag) return;
+    bc(k, C.cmp); cmp++; updateStats(); await tick();
+    bh(k, L[i] <= R[j] ? L[i++] : R[j++]);
+    bc(k, C.swap); swp++; updateStats(); await tick(); bc(k, C.def); k++;
+  }
+  while (i<L.length) { if (stopFlag) return; bh(k, L[i++]); bc(k, C.swap); await tick(); bc(k, C.def); k++; }
+  while (j<R.length) { if (stopFlag) return; bh(k, R[j++]); bc(k, C.swap); await tick(); bc(k, C.def); k++; }
+}
+
+// Heap
+async function heapSort() {
+  for (let i = (N>>1)-1; i >= 0; i--) await _hfy(N, i);
+  for (let i = N-1; i > 0; i--) {
+    if (stopFlag) return;
+    bc(0, C.swap); bc(i, C.swap); bswap(0, i); swp++; updateStats(); await tick(); bc(i, C.sorted);
+    await _hfy(i, 0);
+  }
+  bc(0, C.sorted);
+}
+async function _hfy(n, i) {
+  let mx = i; const l=2*i+1, r=2*i+2; cmp+=2; updateStats();
+  if (l<n && arr[l]>arr[mx]) mx=l;
+  if (r<n && arr[r]>arr[mx]) mx=r;
+  if (mx!==i) { bc(i, C.cmp); bc(mx, C.cmp); await tick(); bswap(i, mx); swp++; bc(i, C.def); bc(mx, C.def); await _hfy(n, mx); }
+}
+
+// Shell
+async function shellSort() {
+  let gap = 1;
+  while (gap < N/3) gap = gap*3+1;
+  while (gap >= 1) {
+    for (let i = gap; i < N; i++) {
+      if (stopFlag) return;
+      bc(i, C.pivot); await tick();
+      let j = i;
+      while (j >= gap && arr[j-gap] > arr[j]) {
+        if (stopFlag) return;
+        cmp++; bc(j, C.swap); bc(j-gap, C.swap); bswap(j, j-gap); swp++; updateStats(); await tick();
+        bc(j, C.def); bc(j-gap, C.def); j -= gap;
+      }
+      bc(j, C.def);
+    }
+    bc(i => bc(i, C.sorted));
+    gap = (gap-1)/3|0;
+  }
+  markAllSorted();
+}
+
+// Counting
+async function countingSort() {
+  const max = Math.max(...arr);
+  const count = new Array(max+1).fill(0);
+  for (let i=0; i<N; i++) { if(stopFlag) return; bc(i, C.cmp); cmp++; count[arr[i]]++; updateStats(); await tick(); bc(i, C.def); }
+  let k=0;
+  for (let v=1; v<=max; v++) {
+    while (count[v]-- > 0) {
+      if (stopFlag) return;
+      bh(k, v); bc(k, C.pivot); swp++; updateStats(); await tick(); bc(k, C.sorted); k++;
+    }
+  }
+}
+
+// Radix
+async function radixSort() {
+  const getD = (v, p) => Math.floor(v / p) % 10;
+  let p = 1;
+  const max = Math.max(...arr);
+  while (Math.floor(max/p) > 0) {
+    const buckets = Array.from({length:10}, () => []);
+    for (let i=0; i<N; i++) { if(stopFlag) return; bc(i, C.pivot); cmp++; updateStats(); await tick(); buckets[getD(arr[i], p)].push(arr[i]); bc(i, C.def); }
+    let k=0;
+    for (const bk of buckets) for (const v of bk) { if(stopFlag) return; bh(k, v); bc(k, C.swap); swp++; updateStats(); await tick(); bc(k, C.def); k++; }
+    p *= 10;
+  }
+  markAllSorted();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── SEARCHING ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+const SN = 22, SS = 0.68;
+let sArr = [], sMeshes = [], target = 12;
+
+function initSearch(sorted = false) {
+  clearViz();
+  addGrid((SN+2)*SS);
+  sArr = Array.from({length:SN}, (_,i) => i+1);
+  if (!sorted) for (let i=SN-1; i>0; i--) { const j=0|Math.random()*(i+1); [sArr[i],sArr[j]]=[sArr[j],sArr[i]]; }
+  sMeshes = [];
+  const x0 = -(SN-1)*SS/2;
+  for (let i=0; i<SN; i++) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.58, 0.58), makeMat(C.def));
+    mesh.position.set(x0+i*SS, 0.29, 0);
+    scene.add(mesh); sMeshes.push(mesh); vizObjects.push(mesh);
+  }
+  camera.position.set(0, 5, 15); camera.lookAt(0, 0.3, 0);
+  controls.target.set(0, 0.3, 0); controls.update();
+  showLegend(['Default', 'Comparing', null, null, 'Found / Miss']);
+}
+
+const sc = (i, hex) => { if (sMeshes[i]) sMeshes[i].material.color.setHex(hex); };
+
+async function linearSearch() {
+  initSearch(false); await sleep(150);
+  for (let i=0; i<SN; i++) {
+    if (stopFlag) return;
+    sc(i, C.cmp); cmp++; updateStats(); await tick();
+    if (sArr[i] === target) { sc(i, C.found); swp++; updateStats(); return; }
+    sc(i, C.miss);
+  }
+}
+
+async function binarySearch() {
+  initSearch(true); await sleep(150);
+  let lo=0, hi=SN-1;
+  while (lo<=hi) {
+    if (stopFlag) return;
+    const m=(lo+hi)>>1; sc(m, C.cmp); cmp++; updateStats(); await tick();
+    if (sArr[m]===target) { sc(m, C.found); swp++; updateStats(); return; }
+    if (sArr[m]<target) { for(let i=lo;i<=m;i++) sc(i, C.miss); lo=m+1; }
+    else { for(let i=m;i<=hi;i++) sc(i, C.miss); hi=m-1; }
+  }
+}
+
+async function jumpSearch() {
+  initSearch(true); await sleep(150);
+  const step = Math.floor(Math.sqrt(SN));
+  let prev=0, curr=0;
+  while (curr<SN && sArr[Math.min(curr,SN)-1]<target) {
+    if (stopFlag) return;
+    sc(Math.min(curr,SN-1), C.pivot); cmp++; updateStats(); await tick();
+    sc(Math.min(curr,SN-1), C.miss);
+    prev=curr; curr+=step;
+  }
+  for (let i=prev; i<Math.min(curr,SN); i++) {
+    if (stopFlag) return;
+    sc(i, C.cmp); cmp++; updateStats(); await tick();
+    if (sArr[i]===target) { sc(i, C.found); swp++; updateStats(); return; }
+    sc(i, C.miss);
+  }
+}
+
+async function interpolationSearch() {
+  initSearch(true); await sleep(150);
+  let lo=0, hi=SN-1;
+  while (lo<=hi && target>=sArr[lo] && target<=sArr[hi]) {
+    if (stopFlag) return;
+    const pos = lo + Math.floor((target-sArr[lo])*(hi-lo)/(sArr[hi]-sArr[lo]));
+    sc(pos, C.cmp); cmp++; updateStats(); await tick();
+    if (sArr[pos]===target) { sc(pos, C.found); swp++; updateStats(); return; }
+    if (sArr[pos]<target) { sc(pos, C.miss); lo=pos+1; }
+    else { sc(pos, C.miss); hi=pos-1; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── GRAPH ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+const GV = 10;
+const gPos = [
+  new THREE.Vector3( 0,  0,  0),
+  new THREE.Vector3(-4,  0, -2),
+  new THREE.Vector3( 4,  0, -2),
+  new THREE.Vector3(-5,  0,  2),
+  new THREE.Vector3( 0,  0,  4),
+  new THREE.Vector3( 5,  0,  2),
+  new THREE.Vector3(-3,  0, -5),
+  new THREE.Vector3( 3,  0, -5),
+  new THREE.Vector3( 0,  2, -2),
+  new THREE.Vector3(-2,  0,  2),
+];
+const gAdj = [
+  [[1,4],[2,5],[4,3],[9,2]],
+  [[0,4],[3,2],[6,7],[8,6]],
+  [[0,5],[5,6],[7,3],[8,4]],
+  [[1,2],[4,5],[9,3]],
+  [[0,3],[3,5],[5,2],[9,1]],
+  [[2,6],[4,2],[7,8]],
+  [[1,7],[7,1]],
+  [[2,3],[5,8],[6,1],[8,2]],
+  [[1,6],[2,4],[7,2]],
+  [[0,2],[3,3],[4,1]],
+];
+
+let nMesh=[], eMat=[], edgeList=[];
+
+function initGraph() {
+  clearViz();
+  const pl = new THREE.Mesh(new THREE.PlaneGeometry(22,16), new THREE.MeshPhongMaterial({color:0x060616,transparent:true,opacity:0.5}));
+  pl.rotation.x=-Math.PI/2; pl.position.y=-0.01; scene.add(pl); vizObjects.push(pl);
+  addGrid(22);
+
+  edgeList = [];
+  for (let u=0; u<GV; u++) for (const [v] of gAdj[u]) if (v>u) {
+    const pts=[gPos[u].clone(),gPos[v].clone()]; pts[0].y+=0.45; pts[1].y+=0.45;
+    const geo=new THREE.BufferGeometry().setFromPoints(pts);
+    const mat=new THREE.LineBasicMaterial({color:C.edge});
+    const ln=new THREE.Line(geo,mat);
+    scene.add(ln); vizObjects.push(ln); edgeList.push({ln,mat,u,v});
+  }
+
+  nMesh=[]; eMat=[];
+  for (let i=0; i<GV; i++) {
+    const mat=makeMat(i===0?C.curr:C.node);
+    const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.45,20,20),mat);
+    mesh.position.copy(gPos[i]); mesh.position.y+=0.45;
+    scene.add(mesh); vizObjects.push(mesh); nMesh.push(mesh); eMat.push(mat);
+  }
+
+  camera.position.set(0,11,17); camera.lookAt(0,0.5,0);
+  controls.target.set(0,0.5,0); controls.update();
+  showLegend([null,'Frontier',null,'Current','Visited']);
+}
+
+const nc = (i,h) => { if(eMat[i]) eMat[i].color.setHex(h); };
+const ec = (u,v,h) => { edgeList.filter(e=>(e.u===u&&e.v===v)||(e.u===v&&e.v===u)).forEach(e=>e.mat.color.setHex(h)); };
+
+async function bfsGraph() {
+  initGraph(); await sleep(250);
+  const vis=new Array(GV).fill(false); const q=[0]; vis[0]=true;
+  while (q.length && !stopFlag) {
+    const u=q.shift(); nc(u,C.curr); cmp++; updateStats(); await tick();
+    for (const [v] of gAdj[u]) if (!vis[v]) { vis[v]=true; nc(v,C.frontier); ec(u,v,C.edgeHi); q.push(v); swp++; updateStats(); }
+    nc(u,C.visit); await tick();
+  }
+}
+
+async function dfsGraph() {
+  initGraph(); await sleep(250);
+  const vis=new Array(GV).fill(false);
+  async function dfs(u) {
+    if(stopFlag||vis[u]) return; vis[u]=true;
+    nc(u,C.curr); cmp++; updateStats(); await tick();
+    for (const [v] of gAdj[u]) if(!vis[v]) { ec(u,v,C.edgeHi); await dfs(v); }
+    nc(u,C.visit); swp++; updateStats();
+  }
+  await dfs(0);
+}
+
+async function dijkstra() {
+  initGraph(); await sleep(250);
+  const dist=new Array(GV).fill(Infinity); const vis=new Array(GV).fill(false); dist[0]=0;
+  for (let it=0; it<GV&&!stopFlag; it++) {
+    let u=-1; for(let i=0;i<GV;i++) if(!vis[i]&&(u===-1||dist[i]<dist[u])) u=i;
+    if(u===-1||dist[u]===Infinity) break;
+    vis[u]=true; nc(u,C.curr); cmp++; updateStats(); await tick();
+    for (const [v,w] of gAdj[u]) if(!vis[v]&&dist[u]+w<dist[v]) { dist[v]=dist[u]+w; nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats(); }
+    nc(u,C.visit); await tick();
+  }
+}
+
+async function aStar() {
+  initGraph(); await sleep(250);
+  const goal=7;
+  const h=i=>gPos[i].distanceTo(gPos[goal]);
+  const g=new Array(GV).fill(Infinity); g[0]=0;
+  const f=new Array(GV).fill(Infinity); f[0]=h(0);
+  const vis=new Array(GV).fill(false);
+  for (let it=0; it<GV&&!stopFlag; it++) {
+    let u=-1; for(let i=0;i<GV;i++) if(!vis[i]&&(u===-1||f[i]<f[u])) u=i;
+    if(u===-1||f[u]===Infinity) break;
+    vis[u]=true; nc(u,u===goal?C.found:C.curr); cmp++; updateStats(); await tick();
+    if(u===goal) break;
+    for(const [v,w] of gAdj[u]) if(!vis[v]) {
+      const ng=g[u]+w;
+      if(ng<g[v]) { g[v]=ng; f[v]=ng+h(v); nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats(); }
+    }
+    nc(u,C.visit); await tick();
+  }
+}
+
+async function primMST() {
+  initGraph(); await sleep(250);
+  const inMST=new Array(GV).fill(false); const key=new Array(GV).fill(Infinity); key[0]=0;
+  for(let it=0; it<GV&&!stopFlag; it++) {
+    let u=-1; for(let i=0;i<GV;i++) if(!inMST[i]&&(u===-1||key[i]<key[u])) u=i;
+    if(u===-1) break;
+    inMST[u]=true; nc(u,C.curr); cmp++; updateStats(); await tick();
+    for(const [v,w] of gAdj[u]) if(!inMST[v]&&w<key[v]) { key[v]=w; nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats(); }
+    nc(u,C.visit); await tick();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── TREE ──────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+class BSTNode { constructor(v){this.v=v;this.l=null;this.r=null;this.x=0;this.y=0;this.mat=null;} }
+
+let bstRoot=null, tNodes=[];
+
+function bstIns(root,v){ if(!root) return new BSTNode(v); if(v<root.v) root.l=bstIns(root.l,v); else root.r=bstIns(root.r,v); return root; }
+function layout(nd,d,lo,hi){ if(!nd) return; nd.x=(lo+hi)/2; nd.y=-d*2.3; layout(nd.l,d+1,lo,(lo+hi)/2); layout(nd.r,d+1,(lo+hi)/2,hi); }
+
+function buildTreeMeshes(nd) {
+  if(!nd) return;
+  nd.mat=makeMat(C.node);
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.42,18,18),nd.mat);
+  mesh.position.set(nd.x,nd.y,0); scene.add(mesh); vizObjects.push(mesh); tNodes.push(nd);
+  for(const ch of [nd.l,nd.r]) if(ch) {
+    const pts=[new THREE.Vector3(nd.x,nd.y,0),new THREE.Vector3(ch.x,ch.y,0)];
+    const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:C.edge}));
+    scene.add(ln); vizObjects.push(ln);
+    buildTreeMeshes(ch);
+  }
+}
+
+function initTree() {
+  clearViz(); tNodes=[];
+  bstRoot=null;
+  for(const v of [8,4,12,2,6,10,14,1,3,5,7,9,11,13,15]) bstRoot=bstIns(bstRoot,v);
+  layout(bstRoot,0,-8,8);
+  buildTreeMeshes(bstRoot);
+  const grid=new THREE.GridHelper(20,20,0x181838,0x10102e); grid.position.y=-7; scene.add(grid); vizObjects.push(grid);
+  camera.position.set(0,4,24); camera.lookAt(0,-4,0); controls.target.set(0,-4,0); controls.update();
+  showLegend([null,null,null,'Current','Visited']);
+}
+
+const tnc=(nd,h)=>{ if(nd.mat) nd.mat.color.setHex(h); };
+
+async function bstSearch() {
+  initTree(); await sleep(250);
+  const t=9; let nd=bstRoot;
+  while(nd&&!stopFlag) {
+    tnc(nd,C.curr); cmp++; updateStats(); await tick();
+    if(nd.v===t) { tnc(nd,C.found); swp++; return; }
+    const prev=nd; nd=t<nd.v?nd.l:nd.r; tnc(prev,nd?C.visit:C.miss);
+  }
+}
+
+async function traverse(order) {
+  initTree(); await sleep(250);
+  async function go(nd) {
+    if(!nd||stopFlag) return;
+    if(order==='pre') { tnc(nd,C.curr); cmp++; updateStats(); await tick(); tnc(nd,C.visit); swp++; }
+    await go(nd.l);
+    if(order==='in') { tnc(nd,C.curr); cmp++; updateStats(); await tick(); tnc(nd,C.visit); swp++; }
+    await go(nd.r);
+    if(order==='post') { tnc(nd,C.curr); cmp++; updateStats(); await tick(); tnc(nd,C.visit); swp++; }
+  }
+  await go(bstRoot);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── UI WIRING ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+function initViz(cat, algo) {
+  const sorted = algo==='binary'||algo==='jump'||algo==='interpolation';
+  if(cat==='sort')   initSort();
+  if(cat==='search') { target=parseInt(document.getElementById('target-input').value)||12; initSearch(sorted); }
+  if(cat==='graph')  initGraph();
+  if(cat==='tree')   initTree();
+}
+
+async function runAlgo() {
+  if(isRunning) {
+    stopFlag=true; isRunning=false;
+    document.getElementById('btn-run').textContent='▶ Run';
+    document.getElementById('btn-run').className='ctrl-btn run'; return;
+  }
+  isRunning=true; stopFlag=false; cmp=0; swp=0; tStart=Date.now();
+  document.getElementById('btn-run').textContent='⏹ Stop';
+  document.getElementById('btn-run').className='ctrl-btn stop';
+
+  const map = {
+    bubble:bubbleSort, selection:selectionSort, insertion:insertionSort,
+    quick:quickSort, merge:mergeSort, heap:heapSort, shell:shellSort,
+    counting:countingSort, radix:radixSort,
+    linear:linearSearch, binary:binarySearch, jump:jumpSearch, interpolation:interpolationSearch,
+    bfs:bfsGraph, dfs:dfsGraph, dijkstra, astar:aStar, prim:primMST,
+    bst:bstSearch, inorder:()=>traverse('in'), preorder:()=>traverse('pre'), postorder:()=>traverse('post'),
+  };
+  if(map[currentAlgo]) await map[currentAlgo]();
+
+  isRunning=false; stopFlag=false;
+  document.getElementById('btn-run').textContent='▶ Run';
+  document.getElementById('btn-run').className='ctrl-btn run';
+}
+
+function selectAlgo(cat, algo) {
+  currentCat=cat; currentAlgo=algo;
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`[data-algo="${algo}"]`)?.classList.add('active');
+  updateInfoPanel(algo);
+  stopFlag=true; isRunning=false;
+  document.getElementById('btn-run').textContent='▶ Run';
+  document.getElementById('btn-run').className='ctrl-btn run';
+  document.getElementById('target-wrap').style.display = cat==='search' ? 'flex' : 'none';
+  cmp=0; swp=0; tStart=Date.now(); updateStats();
+  setTimeout(()=>{ stopFlag=false; initViz(cat,algo); }, 60);
+}
+
+document.querySelectorAll('.sb-btn').forEach(b=>b.addEventListener('click',()=>selectAlgo(b.dataset.cat,b.dataset.algo)));
+document.getElementById('btn-run').addEventListener('click',runAlgo);
+document.getElementById('btn-reset').addEventListener('click',()=>{
+  stopFlag=true; isRunning=false;
+  document.getElementById('btn-run').textContent='▶ Run';
+  document.getElementById('btn-run').className='ctrl-btn run';
+  cmp=0; swp=0; tStart=Date.now(); updateStats();
+  setTimeout(()=>{ stopFlag=false; initViz(currentCat,currentAlgo); }, 60);
+});
+document.getElementById('speed-slider').addEventListener('input',e=>{ speed=parseInt(e.target.value); });
+document.getElementById('target-input').addEventListener('change',e=>{ target=Math.max(1,Math.min(SN,parseInt(e.target.value)||12)); });
+
+// Boot
+updateInfoPanel('bubble');
+initSort();
+</script>
+</body>
+</html>

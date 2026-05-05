@@ -437,75 +437,18 @@
 <div class="divider"></div>
 
 <!-- ── ALGORITHM LAB ── -->
-<section id="algo-lab" class="section">
+<section id="algo-lab" class="section" style="padding-bottom:0;">
   <div class="inner">
     <div class="lbl r">Learning · Interactive</div>
     <h2 class="sh r d1">Algorithm Lab</h2>
-    <p class="sdesc r d2">Watch classic sorting algorithms run live. Select an algorithm, control the speed, and hit Run.</p>
-
-    <div class="algo-wrap r d2">
-      <!-- Controls row -->
-      <div class="algo-controls">
-        <select id="algo-select" class="algo-sel">
-          <option value="bubble">Bubble Sort — O(n²)</option>
-          <option value="insertion">Insertion Sort — O(n²)</option>
-          <option value="quick">Quick Sort — O(n log n)</option>
-          <option value="merge">Merge Sort — O(n log n)</option>
-        </select>
-        <div class="algo-speed-wrap">
-          <span class="algo-speed-lbl">Speed</span>
-          <input type="range" id="algo-speed" min="1" max="100" value="50" class="algo-range" />
-        </div>
-        <button id="algo-run" class="algo-btn algo-btn-primary" onclick="runAlgo()">▶ Run</button>
-        <button class="algo-btn algo-btn-ghost" onclick="resetAlgo()">↺ Shuffle</button>
-      </div>
-
-      <!-- Canvas -->
-      <div id="algo-canvas-wrap">
-        <canvas id="algo-canvas"></canvas>
-      </div>
-
-      <!-- Stats -->
-      <div class="algo-stats">
-        <div class="algo-stat"><span class="algo-stat-n" id="stat-cmp">0</span><span class="algo-stat-l">Comparisons</span></div>
-        <div class="algo-stat"><span class="algo-stat-n" id="stat-swp">0</span><span class="algo-stat-l">Swaps / Moves</span></div>
-        <div class="algo-stat"><span class="algo-stat-n" id="stat-time">—</span><span class="algo-stat-l">Time elapsed</span></div>
-        <div class="algo-legend">
-          <span class="leg"><span class="leg-dot" style="background:#6366f1"></span>Unsorted</span>
-          <span class="leg"><span class="leg-dot" style="background:#f59e0b"></span>Comparing</span>
-          <span class="leg"><span class="leg-dot" style="background:#ef4444"></span>Swapping</span>
-          <span class="leg"><span class="leg-dot" style="background:#a78bfa"></span>Pivot</span>
-          <span class="leg"><span class="leg-dot" style="background:#10b981"></span>Sorted</span>
-        </div>
-      </div>
-    </div>
+    <p class="sdesc r d2">Sorting, searching, graphs and trees — all as interactive 3D visualizations. Pick an algorithm, hit Run, and watch it unfold.</p>
+  </div>
+  <div style="margin-top:2rem; border-radius:16px; overflow:hidden; border:1px solid var(--border); height:92vh;">
+    <iframe src="algorithms.html" title="Algorithm Lab — 3D Visualizer"
+      allow="fullscreen" loading="lazy"
+      style="width:100%; height:100%; border:none; display:block;"></iframe>
   </div>
 </section>
-
-<style>
-  .algo-wrap { margin-top: 2.5rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
-  .algo-controls { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-  .algo-sel { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.75rem; border-radius: var(--r-sm); font-size: 0.82rem; font-family: 'Space Grotesk', sans-serif; font-weight: 600; cursor: pointer; flex: 1; min-width: 200px; }
-  .algo-sel:focus { outline: none; border-color: var(--border-hi); }
-  .algo-speed-wrap { display: flex; align-items: center; gap: 8px; }
-  .algo-speed-lbl { font-size: 0.72rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); white-space: nowrap; }
-  .algo-range { -webkit-appearance: none; width: 100px; height: 4px; background: var(--bg2); border-radius: 2px; outline: none; cursor: pointer; }
-  .algo-range::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--ind4); cursor: pointer; }
-  .algo-btn { padding: 0.4rem 1rem; border-radius: var(--r-sm); font-size: 0.82rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-family: 'Space Grotesk', sans-serif; }
-  .algo-btn-primary { background: var(--ind); color: #fff; }
-  .algo-btn-primary:hover { background: #4f51e8; }
-  .algo-btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
-  .algo-btn-ghost:hover { border-color: var(--border-hi); color: var(--text); }
-  #algo-canvas-wrap { padding: 0 1.25rem; background: rgba(0,0,0,0.3); }
-  #algo-canvas { display: block; width: 100%; }
-  .algo-stats { display: flex; align-items: center; gap: 1.5rem; padding: 0.9rem 1.25rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
-  .algo-stat { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
-  .algo-stat-n { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--ind3); line-height: 1; }
-  .algo-stat-l { font-size: 0.67rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-top: 3px; }
-  .algo-legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-left: auto; }
-  .leg { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; color: var(--text2); }
-  .leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-</style>
 
 <div class="divider"></div>
 
@@ -694,157 +637,6 @@
     }
   }, { threshold: 0.3 }).observe(document.getElementById('theory'));
 
-  // ── ALGORITHM VISUALIZER ──────────────────────────────────────
-  const algoCanvas = document.getElementById('algo-canvas');
-  const algoCtx    = algoCanvas.getContext('2d');
-  let algoArr = [], animating = false, stopReq = false;
-  let cmp = 0, swp = 0, startTime = 0;
-
-  const C = { def:'#6366f1', cmp:'#f59e0b', swp:'#ef4444', pivot:'#a78bfa', sorted:'#10b981' };
-
-  function initAlgo() {
-    const w = document.getElementById('algo-canvas-wrap').clientWidth;
-    algoCanvas.width  = w;
-    algoCanvas.height = Math.min(300, Math.max(180, window.innerHeight * 0.28));
-    resetAlgo();
-  }
-
-  function resetAlgo() {
-    stopReq = true;
-    setTimeout(() => {
-      stopReq = false; animating = false;
-      const n = Math.floor(algoCanvas.width / 10);
-      algoArr = Array.from({length: n}, () => Math.floor(Math.random() * (algoCanvas.height - 20)) + 8);
-      cmp = 0; swp = 0;
-      updateAlgoStats();
-      drawAlgo(algoArr.map(() => 'def'));
-      document.getElementById('algo-run').textContent = '▶ Run';
-    }, 30);
-  }
-
-  function drawAlgo(colors) {
-    algoCtx.clearRect(0, 0, algoCanvas.width, algoCanvas.height);
-    const bw = algoCanvas.width / algoArr.length;
-    algoArr.forEach((h, i) => {
-      algoCtx.fillStyle = C[colors[i]] || C.def;
-      const x = i * bw + 1, y = algoCanvas.height - h, w = Math.max(1, bw - 2);
-      algoCtx.beginPath();
-      if (algoCtx.roundRect) algoCtx.roundRect(x, y, w, h, [2,2,0,0]);
-      else algoCtx.rect(x, y, w, h);
-      algoCtx.fill();
-    });
-  }
-
-  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-  function delay()   { return Math.max(1, 210 - document.getElementById('algo-speed').value * 2); }
-
-  function updateAlgoStats() {
-    document.getElementById('stat-cmp').textContent  = cmp.toLocaleString();
-    document.getElementById('stat-swp').textContent  = swp.toLocaleString();
-    const el = document.getElementById('stat-time');
-    el.textContent = startTime ? ((performance.now() - startTime) / 1000).toFixed(2) + 's' : '—';
-  }
-
-  // Bubble Sort
-  async function bubbleSort() {
-    const n = algoArr.length, col = algoArr.map(() => 'def');
-    for (let i = 0; i < n - 1; i++) {
-      for (let j = 0; j < n - i - 1; j++) {
-        if (stopReq) return;
-        cmp++; col[j] = 'cmp'; col[j+1] = 'cmp';
-        drawAlgo(col); await sleep(delay());
-        if (algoArr[j] > algoArr[j+1]) { [algoArr[j],algoArr[j+1]] = [algoArr[j+1],algoArr[j]]; swp++; }
-        col[j] = 'def'; col[j+1] = 'def'; updateAlgoStats();
-      }
-      col[n - 1 - i] = 'sorted';
-    }
-    col[0] = 'sorted'; drawAlgo(col);
-  }
-
-  // Insertion Sort
-  async function insertionSort() {
-    const n = algoArr.length, col = algoArr.map(() => 'def');
-    for (let i = 1; i < n; i++) {
-      let key = algoArr[i], j = i - 1;
-      col[i] = 'cmp';
-      while (j >= 0 && algoArr[j] > key) {
-        if (stopReq) return;
-        cmp++; col[j] = 'swp'; drawAlgo(col); await sleep(delay());
-        algoArr[j+1] = algoArr[j]; col[j] = 'def'; col[j+1] = 'def'; j--; swp++; updateAlgoStats();
-      }
-      algoArr[j+1] = key; col[j+1] = 'sorted'; col[i] = 'def'; drawAlgo(col);
-    }
-    drawAlgo(algoArr.map(() => 'sorted'));
-  }
-
-  // Quick Sort
-  async function quickSort(lo = 0, hi = algoArr.length - 1, col = algoArr.map(() => 'def')) {
-    if (lo >= hi || stopReq) return;
-    const p = await qPartition(lo, hi, col);
-    await quickSort(lo, p - 1, col);
-    await quickSort(p + 1, hi, col);
-    if (lo === 0 && hi === algoArr.length - 1) drawAlgo(algoArr.map(() => 'sorted'));
-  }
-  async function qPartition(lo, hi, col) {
-    const pivot = algoArr[hi]; col[hi] = 'pivot'; let i = lo - 1;
-    for (let j = lo; j < hi; j++) {
-      if (stopReq) return i+1;
-      cmp++; col[j] = 'cmp'; drawAlgo(col); await sleep(delay());
-      if (algoArr[j] <= pivot) { i++; [algoArr[i],algoArr[j]] = [algoArr[j],algoArr[i]]; swp++; updateAlgoStats(); }
-      col[j] = 'def';
-    }
-    [algoArr[i+1],algoArr[hi]] = [algoArr[hi],algoArr[i+1]];
-    col[hi] = 'def'; col[i+1] = 'sorted'; drawAlgo(col);
-    return i + 1;
-  }
-
-  // Merge Sort
-  async function mergeSort(l = 0, r = algoArr.length - 1, col = algoArr.map(() => 'def')) {
-    if (l >= r || stopReq) return;
-    const m = (l + r) >> 1;
-    await mergeSort(l, m, col);
-    await mergeSort(m + 1, r, col);
-    await doMerge(l, m, r, col);
-    if (l === 0 && r === algoArr.length - 1) drawAlgo(algoArr.map(() => 'sorted'));
-  }
-  async function doMerge(l, m, r, col) {
-    const L = algoArr.slice(l, m+1), R = algoArr.slice(m+1, r+1);
-    let i = 0, j = 0, k = l;
-    while (i < L.length && j < R.length) {
-      if (stopReq) return;
-      cmp++; col[k] = 'cmp'; drawAlgo(col); await sleep(delay());
-      algoArr[k] = L[i] <= R[j] ? L[i++] : (swp++, R[j++]);
-      col[k++] = 'sorted'; updateAlgoStats();
-    }
-    while (i < L.length) { algoArr[k] = L[i++]; col[k++] = 'sorted'; drawAlgo(col); await sleep(delay()/2); }
-    while (j < R.length) { algoArr[k] = R[j++]; col[k++] = 'sorted'; drawAlgo(col); await sleep(delay()/2); }
-  }
-
-  async function runAlgo() {
-    const btn = document.getElementById('algo-run');
-    if (animating) { stopReq = true; animating = false; btn.textContent = '▶ Run'; return; }
-    stopReq = false; animating = true; cmp = 0; swp = 0; startTime = performance.now();
-    btn.textContent = '■ Stop';
-    const algo = document.getElementById('algo-select').value;
-    if      (algo === 'bubble')    await bubbleSort();
-    else if (algo === 'insertion') await insertionSort();
-    else if (algo === 'quick')     await quickSort();
-    else if (algo === 'merge')     await mergeSort();
-    animating = false;
-    btn.textContent = '▶ Run';
-    updateAlgoStats();
-  }
-
-  // Init visualizer when section enters view
-  const algoSection = document.getElementById('algo-lab');
-  let algoInited = false;
-  new IntersectionObserver(es => {
-    if (es[0].isIntersecting && !algoInited) {
-      algoInited = true;
-      initAlgo();
-    }
-  }, { threshold: 0.1 }).observe(algoSection);
-  window.addEventListener('resize', () => { if (algoInited) initAlgo(); });
 </script>
 </body>
 </html>
