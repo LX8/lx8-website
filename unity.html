@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Unity Experience — Lx8 Labs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #040411; color: #e2e8f0; font-family: 'Inter', sans-serif; overflow: hidden; }
+
+    /* ── UNITY CONTAINER (shown when build is present) ── */
+    #unity-container {
+      display: none; /* toggled to flex by JS when build detected */
+      width: 100%; height: 100vh;
+      flex-direction: column; align-items: stretch;
+    }
+    #unity-canvas {
+      flex: 1; width: 100%; display: block;
+      background: #000;
+    }
+    #unity-footer {
+      height: 36px; background: #07070f; border-top: 1px solid #18183a;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.2rem; font-size: 0.72rem; color: #4c4c7a;
+    }
+    #unity-loading-bar {
+      width: 220px; height: 4px; background: #18183a; border-radius: 2px; overflow: hidden;
+    }
+    #unity-loading-fill {
+      height: 100%; width: 0%; background: linear-gradient(90deg, #6366f1, #818cf8);
+      border-radius: 2px; transition: width 0.3s;
+    }
+    #unity-fullscreen {
+      cursor: pointer; background: rgba(99,102,241,0.14);
+      border: 1px solid rgba(99,102,241,0.35); color: #a5b4fc;
+      padding: 0.25rem 0.7rem; border-radius: 6px;
+      font-size: 0.72rem; font-weight: 600;
+      font-family: 'Inter', sans-serif; transition: all 0.15s;
+    }
+    #unity-fullscreen:hover { background: rgba(99,102,241,0.3); }
+
+    /* ── PLACEHOLDER (shown when no build present) ── */
+    #placeholder {
+      width: 100%; height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 2rem;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 30%, rgba(99,102,241,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 70%, rgba(129,140,248,0.04) 0%, transparent 60%);
+    }
+
+    /* Animated Unity-style hexagon logo */
+    .unity-mark {
+      width: 80px; height: 80px; margin-bottom: 2rem; position: relative;
+    }
+    .unity-mark svg { width: 100%; height: 100%; }
+
+    /* Rotating ring */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ring-outer { animation: spin 8s linear infinite; transform-origin: center; }
+    .ring-inner { animation: spin 5s linear infinite reverse; transform-origin: center; }
+
+    /* Pulse dot */
+    @keyframes pulse { 0%,100%{opacity:1;r:6px} 50%{opacity:0.4;r:4px} }
+
+    .ph-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(99,102,241,0.35); background: rgba(99,102,241,0.08);
+      border-radius: 999px; padding: 5px 14px;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 1.2px;
+      text-transform: uppercase; color: #818cf8; margin-bottom: 1.5rem;
+    }
+    .ph-dot { width: 6px; height: 6px; background: #6366f1; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+
+    .ph-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700;
+      color: #fff; letter-spacing: -0.03em; margin-bottom: 0.75rem;
+      line-height: 1.1;
+    }
+    .ph-title span { color: #818cf8; }
+
+    .ph-sub {
+      font-size: 0.9rem; color: #5c5c8a; max-width: 440px;
+      line-height: 1.65; margin-bottom: 2.5rem;
+    }
+
+    /* Steps */
+    .steps {
+      display: flex; flex-direction: column; gap: 0.75rem;
+      text-align: left; max-width: 420px; width: 100%;
+    }
+    .step {
+      display: flex; align-items: flex-start; gap: 1rem;
+      background: #07070f; border: 1px solid #18183a;
+      border-radius: 10px; padding: 0.85rem 1rem;
+    }
+    .step-num {
+      width: 24px; height: 24px; border-radius: 6px; background: rgba(99,102,241,0.2);
+      color: #818cf8; font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-body { flex: 1; }
+    .step-title { font-size: 0.8rem; font-weight: 600; color: #c0c0e8; margin-bottom: 0.2rem; }
+    .step-desc { font-size: 0.72rem; color: #4c4c7a; line-height: 1.5; }
+    code {
+      font-family: 'Space Grotesk', monospace; font-size: 0.7rem;
+      background: rgba(99,102,241,0.12); color: #a5b4fc;
+      padding: 1px 5px; border-radius: 4px;
+    }
+
+    .ph-note {
+      margin-top: 2rem; font-size: 0.68rem; color: #2e2e52;
+      max-width: 400px; line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── UNITY WEBGL CONTAINER (active when build/ is present) ── -->
+<div id="unity-container">
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <div id="unity-footer">
+    <span>Lx8 Labs — Unity 6 Experience</span>
+    <div id="unity-loading-bar"><div id="unity-loading-fill"></div></div>
+    <button id="unity-fullscreen" onclick="unityInstance&&unityInstance.SetFullscreen(1)">⛶ Fullscreen</button>
+  </div>
+</div>
+
+<!-- ── PLACEHOLDER (shown until build is dropped in) ── -->
+<div id="placeholder">
+
+  <div class="unity-mark">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#818cf8"/>
+          <stop offset="100%" stop-color="#6366f1"/>
+        </linearGradient>
+      </defs>
+      <!-- Outer ring -->
+      <g class="ring-outer">
+        <circle cx="40" cy="40" r="36" stroke="url(#g1)" stroke-width="1.5" stroke-dasharray="12 6" stroke-linecap="round" opacity="0.5"/>
+      </g>
+      <!-- Inner ring -->
+      <g class="ring-inner">
+        <circle cx="40" cy="40" r="26" stroke="#4f46e5" stroke-width="1" stroke-dasharray="8 8" stroke-linecap="round" opacity="0.4"/>
+      </g>
+      <!-- Unity-style mark: cube outline -->
+      <polygon points="40,16 58,27 58,53 40,64 22,53 22,27" stroke="url(#g1)" stroke-width="2" fill="rgba(99,102,241,0.08)"/>
+      <line x1="40" y1="16" x2="40" y2="40" stroke="#818cf8" stroke-width="1.5" opacity="0.6"/>
+      <line x1="58" y1="27" x2="40" y2="40" stroke="#818cf8" stroke-width="1.5" opacity="0.6"/>
+      <line x1="22" y1="27" x2="40" y2="40" stroke="#818cf8" stroke-width="1.5" opacity="0.6"/>
+      <!-- Center pulse -->
+      <circle cx="40" cy="40" r="5" fill="#6366f1" opacity="0.9">
+        <animate attributeName="r" values="5;3;5" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+
+  <div class="ph-chip"><div class="ph-dot"></div>Unity 6 · WebGL</div>
+
+  <h1 class="ph-title">Interactive <span>Unity</span><br/>experience coming</h1>
+  <p class="ph-sub">Drop your Unity 6 WebGL build into the repo and this space comes alive. Three steps to launch.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Export from Unity 6</div>
+        <div class="step-desc">File → Build Settings → WebGL → Build. Enable <em>Compression Format: Disabled</em> for easy static hosting.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Drop the build folder here</div>
+        <div class="step-desc">Copy the exported folder into <code>website/unity-build/</code>. It should contain <code>index.html</code> + <code>Build/</code>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Push to GitHub</div>
+        <div class="step-desc"><code>git add website/unity-build && git push</code> — GitHub Pages serves it instantly. No config needed.</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="ph-note">Once <code>unity-build/index.html</code> exists, this page auto-switches to the full Unity canvas with a loading bar and fullscreen button.</p>
+</div>
+
+<script>
+// ── AUTO-DETECT UNITY BUILD ────────────────────────────────────────────────
+// Try to load unity-build/index.html via fetch.
+// If it exists, switch to Unity loader mode; otherwise keep placeholder.
+(async () => {
+  try {
+    const res = await fetch('unity-build/Build/unity-build.loader.js', { method: 'HEAD' });
+    if (res.ok) loadUnity();
+  } catch (_) {
+    // Placeholder stays visible — build not present yet
+  }
+})();
+
+async function loadUnity() {
+  // Find the loader script name dynamically
+  const loaderRes = await fetch('unity-build/');
+  // Show Unity container, hide placeholder
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('unity-container').style.display = 'flex';
+
+  // Inject Unity loader script
+  const script = document.createElement('script');
+  script.src = 'unity-build/Build/unity-build.loader.js';
+  script.onload = () => {
+    createUnityInstance(document.getElementById('unity-canvas'), {
+      dataUrl:        'unity-build/Build/unity-build.data',
+      frameworkUrl:   'unity-build/Build/unity-build.framework.js',
+      codeUrl:        'unity-build/Build/unity-build.wasm',
+      streamingAssetsUrl: 'unity-build/StreamingAssets',
+      companyName:    'Lx8 Labs',
+      productName:    'Lx8 Experience',
+      productVersion: '1.0',
+    }, progress => {
+      document.getElementById('unity-loading-fill').style.width = (progress * 100) + '%';
+    }).then(instance => {
+      window.unityInstance = instance;
+      document.getElementById('unity-loading-bar').style.display = 'none';
+    });
+  };
+  document.head.appendChild(script);
+}
+
+// Keyboard focus fix for Unity canvas inside iframe
+document.getElementById('unity-canvas').addEventListener('click', e => e.target.focus());
+</script>
+
+</body>
+</html>
