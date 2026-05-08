@@ -44,6 +44,25 @@
     }
     .sb-btn:hover { background: #10102a; color: #c0c0e0; }
     .sb-btn.active { background: rgba(99,102,241,0.18); color: #a5b4fc; font-weight: 600; }
+    .sb-btn .yr { font-size: 0.62rem; color: #4c4c7a; margin-left: auto; padding-left: 6px; font-family: 'Space Grotesk', sans-serif; flex-shrink: 0; }
+    .sb-btn { display: flex; align-items: center; }
+    .sb-btn .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* View toggle */
+    .view-toggle { display: flex; gap: 4px; padding: 0.55rem 0.75rem 0.4rem; }
+    .vt-btn { flex: 1; background: #0a0a1a; border: 1px solid #18183a; color: #5c5c8a; padding: 0.32rem 0.5rem; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+    .vt-btn:hover { color: #c0c0e0; border-color: #2a2a50; }
+    .vt-btn.active { background: rgba(99,102,241,0.18); border-color: rgba(99,102,241,0.4); color: #a5b4fc; }
+
+    /* Era headers in chronological view */
+    .era-hdr { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #4c4c7a; padding: 0.7rem 0.95rem 0.25rem; }
+    .era-hdr:first-child { padding-top: 0.4rem; }
+
+    /* Info panel additions */
+    .info-meta { display: flex; gap: 6px; margin-bottom: 0.55rem; flex-wrap: wrap; }
+    .info-year { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); padding: 1px 8px; border-radius: 999px; letter-spacing: 0.04em; }
+    .info-creator { font-size: 0.7rem; color: #818cf8; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.22); padding: 1px 8px; border-radius: 999px; }
+    .algo-history { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed #18183a; color: #52527a; font-style: italic; font-size: 0.66rem; line-height: 1.55; }
 
     /* ── INFO PANEL ── */
     .algo-info {
@@ -129,50 +148,25 @@
   <aside id="sidebar">
     <div class="sb-logo">⚗ Algorithm Lab</div>
 
-    <div class="sb-section">
-      <div class="sb-section-title">Sorting</div>
-      <button class="sb-btn active" data-cat="sort" data-algo="bubble">Bubble Sort</button>
-      <button class="sb-btn" data-cat="sort" data-algo="selection">Selection Sort</button>
-      <button class="sb-btn" data-cat="sort" data-algo="insertion">Insertion Sort</button>
-      <button class="sb-btn" data-cat="sort" data-algo="quick">Quick Sort</button>
-      <button class="sb-btn" data-cat="sort" data-algo="merge">Merge Sort</button>
-      <button class="sb-btn" data-cat="sort" data-algo="heap">Heap Sort</button>
-      <button class="sb-btn" data-cat="sort" data-algo="shell">Shell Sort</button>
-      <button class="sb-btn" data-cat="sort" data-algo="counting">Counting Sort</button>
-      <button class="sb-btn" data-cat="sort" data-algo="radix">Radix Sort</button>
+    <!-- View toggle -->
+    <div class="view-toggle">
+      <button class="vt-btn active" id="vt-chrono" data-view="chrono">Chronological</button>
+      <button class="vt-btn" id="vt-cat" data-view="cat">By Category</button>
     </div>
 
-    <div class="sb-section">
-      <div class="sb-section-title">Searching</div>
-      <button class="sb-btn" data-cat="search" data-algo="linear">Linear Search</button>
-      <button class="sb-btn" data-cat="search" data-algo="binary">Binary Search</button>
-      <button class="sb-btn" data-cat="search" data-algo="jump">Jump Search</button>
-      <button class="sb-btn" data-cat="search" data-algo="interpolation">Interpolation Search</button>
-    </div>
-
-    <div class="sb-section">
-      <div class="sb-section-title">Graph</div>
-      <button class="sb-btn" data-cat="graph" data-algo="bfs">BFS</button>
-      <button class="sb-btn" data-cat="graph" data-algo="dfs">DFS</button>
-      <button class="sb-btn" data-cat="graph" data-algo="dijkstra">Dijkstra's</button>
-      <button class="sb-btn" data-cat="graph" data-algo="astar">A* Search</button>
-      <button class="sb-btn" data-cat="graph" data-algo="prim">Prim's MST</button>
-    </div>
-
-    <div class="sb-section">
-      <div class="sb-section-title">Trees</div>
-      <button class="sb-btn" data-cat="tree" data-algo="bst">BST Search</button>
-      <button class="sb-btn" data-cat="tree" data-algo="inorder">In-order Traversal</button>
-      <button class="sb-btn" data-cat="tree" data-algo="preorder">Pre-order Traversal</button>
-      <button class="sb-btn" data-cat="tree" data-algo="postorder">Post-order Traversal</button>
-    </div>
+    <div id="sb-list"><!-- populated by JS --></div>
 
     <div class="algo-info" id="algo-info">
       <div class="algo-info-name" id="info-name">Bubble Sort</div>
+      <div class="info-meta">
+        <span class="info-year" id="info-year">1956</span>
+        <span class="info-creator" id="info-creator">Edward Friend</span>
+      </div>
       <div class="cx-row"><span class="cx-lbl">Time (avg)</span><span class="cx-val" id="info-time">O(n²)</span></div>
       <div class="cx-row"><span class="cx-lbl">Space</span><span class="cx-val" id="info-space">O(1)</span></div>
       <div class="cx-row"><span class="cx-lbl">Stable</span><span class="cx-val" id="info-stable">Yes</span></div>
       <div class="algo-desc" id="info-desc">Repeatedly compare adjacent elements and swap if out of order.</div>
+      <div class="algo-history" id="info-history">First analysed in Friend's 1956 paper.</div>
     </div>
   </aside>
 
@@ -317,38 +311,133 @@ function showLegend(labels) {
 
 // ── ALGORITHM INFO ────────────────────────────────────────────────────────────
 const INFO = {
-  bubble:        { name:'Bubble Sort',            time:'O(n²)',        space:'O(1)',     stable:'Yes', desc:'Adjacent-pair swaps bubble the largest element to the end each pass.' },
-  selection:     { name:'Selection Sort',         time:'O(n²)',        space:'O(1)',     stable:'No',  desc:'Scan for the minimum and swap it into position. Minimises total swaps.' },
-  insertion:     { name:'Insertion Sort',         time:'O(n²)',        space:'O(1)',     stable:'Yes', desc:'Grow a sorted prefix by inserting each element into its correct place.' },
-  quick:         { name:'Quick Sort',             time:'O(n log n)',   space:'O(log n)', stable:'No',  desc:'Partition around a pivot and recurse. Fast in practice, cache-friendly.' },
-  merge:         { name:'Merge Sort',             time:'O(n log n)',   space:'O(n)',     stable:'Yes', desc:'Divide, sort halves recursively, then merge. Guaranteed O(n log n).' },
-  heap:          { name:'Heap Sort',              time:'O(n log n)',   space:'O(1)',     stable:'No',  desc:'Build a max-heap, extract the root repeatedly. In-place and consistent.' },
-  shell:         { name:'Shell Sort',             time:'O(n log² n)', space:'O(1)',     stable:'No',  desc:'Insertion sort with a decreasing gap sequence. Much faster than O(n²).' },
-  counting:      { name:'Counting Sort',          time:'O(n+k)',       space:'O(k)',     stable:'Yes', desc:'Count occurrences of each value. Linear time for small integer ranges.' },
-  radix:         { name:'Radix Sort',             time:'O(d·(n+k))',  space:'O(n+k)',   stable:'Yes', desc:'Sort digit by digit from least to most significant. Beats comparison sorts.' },
-  linear:        { name:'Linear Search',          time:'O(n)',         space:'O(1)',     stable:'—',   desc:'Scan every element. Simple and works on unsorted data.' },
-  binary:        { name:'Binary Search',          time:'O(log n)',     space:'O(1)',     stable:'—',   desc:'Halve the search space each step. Requires a sorted array.' },
-  jump:          { name:'Jump Search',            time:'O(√n)',        space:'O(1)',     stable:'—',   desc:'Jump ahead by √n steps then linear scan back. Sorted array required.' },
-  interpolation: { name:'Interpolation Search',   time:'O(log log n)', space:'O(1)',    stable:'—',   desc:'Estimate position by value distribution. O(log log n) on uniform data.' },
-  bfs:           { name:'Breadth-First Search',   time:'O(V+E)',       space:'O(V)',    stable:'—',   desc:'Explore layer by layer. Finds shortest path in unweighted graphs.' },
-  dfs:           { name:'Depth-First Search',     time:'O(V+E)',       space:'O(V)',    stable:'—',   desc:'Go as deep as possible before backtracking. Used in cycles and topology.' },
-  dijkstra:      { name:"Dijkstra's Algorithm",   time:'O(E log V)',   space:'O(V)',    stable:'—',   desc:"Greedy shortest paths from a source. Requires non-negative weights." },
-  astar:         { name:'A* Search',              time:'O(E log V)',   space:'O(V)',    stable:'—',   desc:'Dijkstra + heuristic. Finds optimal path faster when good heuristic exists.' },
-  prim:          { name:"Prim's MST",             time:'O(E log V)',   space:'O(V)',    stable:'—',   desc:'Grow minimum spanning tree one edge at a time from a start node.' },
-  bst:           { name:'BST Search',             time:'O(log n)',     space:'O(n)',    stable:'—',   desc:'Follow left/right branches by value comparison until the target is found.' },
-  inorder:       { name:'In-order Traversal',     time:'O(n)',         space:'O(h)',    stable:'—',   desc:'Left → Root → Right. Visits BST nodes in sorted ascending order.' },
-  preorder:      { name:'Pre-order Traversal',    time:'O(n)',         space:'O(h)',    stable:'—',   desc:'Root → Left → Right. Used to serialize or copy a tree.' },
-  postorder:     { name:'Post-order Traversal',   time:'O(n)',         space:'O(h)',    stable:'—',   desc:'Left → Right → Root. Used to delete a tree or evaluate expressions.' },
+  // ── ANCIENT ───────────────────────────────────────────────────────────
+  euclid:        { name:"Euclid's GCD",          cat:'sort', year:-300, creator:'Euclid',                    time:'O(log min(a,b))', space:'O(1)', stable:'—', desc:'Repeatedly replace the larger number with its remainder modulo the smaller.', history:'Described in Euclid\'s Elements (Book VII, ~300 BCE) — possibly the oldest non-trivial algorithm still in regular use today.' },
+  sieve:         { name:'Sieve of Eratosthenes', cat:'sort', year:-240, creator:'Eratosthenes of Cyrene',    time:'O(n log log n)',  space:'O(n)', stable:'—', desc:'Cross out multiples of each prime up to √n. What remains are all the primes.', history:'Devised by Eratosthenes (~240 BCE), the Greek polymath who also calculated Earth\'s circumference. Still the standard primality sieve.' },
+  pascal:        { name:"Pascal's Triangle",     cat:'sort', year:1654, creator:'Blaise Pascal',             time:'O(n²)',           space:'O(n²)', stable:'—', desc:'Each cell is the sum of the two above it. Generates binomial coefficients.', history:'Pascal published his treatise in 1654, but the pattern was known centuries earlier in Persia (al-Karaji, ~1000), India (Pingala, 200 BCE) and China (Yang Hui, 1303).' },
+
+  // ── 19TH CENTURY ──────────────────────────────────────────────────────
+  dfs:           { name:'Depth-First Search',     cat:'graph', year:1882, creator:'Charles Pierre Trémaux',   time:'O(V+E)',  space:'O(V)', stable:'—', desc:'Explore as deep as possible along each branch before backtracking.', history:'Originally a 19th-century maze-solving technique by French engineer Trémaux. Reformulated for computer science in the 1970s by Tarjan & Hopcroft.' },
+  radix:         { name:'Radix Sort',             cat:'sort', year:1887, creator:'Herman Hollerith',         time:'O(d·(n+k))', space:'O(n+k)', stable:'Yes', desc:'Sort digit-by-digit from least to most significant.', history:'Used by Hollerith\'s tabulating machines in the 1890 US census — the device that founded the company that became IBM. Beats comparison-based sorts on integer keys.' },
+
+  // ── 1930s–1940s ───────────────────────────────────────────────────────
+  jarnik:        { name:"Jarník's MST",           cat:'graph', year:1930, creator:'Vojtěch Jarník',           time:'O(E log V)', space:'O(V)', stable:'—', desc:'Grow minimum spanning tree one edge at a time from a start node.', history:'Jarník (1930) was the original — Prim rediscovered it in 1957, Dijkstra in 1959. The same algorithm, three independent inventors.' },
+  merge:         { name:'Merge Sort',             cat:'sort', year:1945, creator:'John von Neumann',         time:'O(n log n)', space:'O(n)', stable:'Yes', desc:'Divide, sort halves recursively, then merge.', history:'Invented by von Neumann in 1945 for the EDVAC computer. The first divide-and-conquer sorting algorithm, and the basis for Tim Sort and Java\'s default sort.' },
+  binary:        { name:'Binary Search',          cat:'search', year:1946, creator:'John Mauchly',           time:'O(log n)',   space:'O(1)', stable:'—', desc:'Halve the search space each step on a sorted array.', history:'First published by Mauchly (co-designer of ENIAC) in 1946. Famously hard to implement correctly — Knuth notes that the first bug-free version took 16 years to appear.' },
+
+  // ── 1950s ─────────────────────────────────────────────────────────────
+  hash:          { name:'Hash Table',             cat:'ds',   year:1953, creator:'Hans Peter Luhn (IBM)',    time:'O(1) avg',   space:'O(n)', stable:'—', desc:'Map keys to bucket indices via a hash function.', history:'Invented by Luhn at IBM in 1953 in an internal memo. Now the foundation of dictionaries, sets, caches and almost every database index.' },
+  counting:      { name:'Counting Sort',          cat:'sort', year:1954, creator:'Harold H. Seward',         time:'O(n+k)',     space:'O(k)', stable:'Yes', desc:'Count occurrences of each value, then write them back in order.', history:'Introduced by Seward at MIT in his 1954 thesis. Linear time when the value range is small — used as the inner loop of Radix Sort.' },
+  bubble:        { name:'Bubble Sort',            cat:'sort', year:1956, creator:'Edward Friend',            time:'O(n²)',      space:'O(1)', stable:'Yes', desc:'Adjacent-pair swaps bubble the largest element to the end each pass.', history:'First analysed in Friend\'s 1956 paper "Sorting on Electronic Computer Systems". Knuth famously called it "the wrong algorithm" — easy to teach but rarely the right choice.' },
+  dijkstra:      { name:"Dijkstra's Shortest Path", cat:'graph', year:1956, creator:'Edsger W. Dijkstra',    time:'O(E log V)', space:'O(V)', stable:'—', desc:'Greedy shortest paths from a source to all other nodes.', history:'Designed by Dijkstra in 1956 over coffee in Amsterdam in about 20 minutes (he said), published 1959. Won him the Turing Award.' },
+  bellman:       { name:'Bellman–Ford',           cat:'graph', year:1956, creator:'Bellman, Ford, Shimbel',  time:'O(V·E)',     space:'O(V)', stable:'—', desc:'Relax all edges V−1 times. Handles negative edge weights.', history:'Published independently by Shimbel (1955), Bellman (1958) and Ford (1956). Slower than Dijkstra but works with negative weights — used in distance-vector routing.' },
+  kruskal:       { name:"Kruskal's MST",          cat:'graph', year:1956, creator:'Joseph Kruskal',          time:'O(E log E)', space:'O(V)', stable:'—', desc:'Sort edges by weight, add the cheapest one that doesn\'t form a cycle.', history:'Published by Kruskal in 1956 in the Proceedings of the AMS. Powered by union-find — the simplest greedy MST algorithm.' },
+  selection:     { name:'Selection Sort',         cat:'sort', year:1957, creator:'Early IBM era',            time:'O(n²)',      space:'O(1)', stable:'No',  desc:'Find the minimum element and swap it into position.', history:'Among the earliest in-place sorts. Minimises swaps — useful when writes are expensive (e.g., to flash memory).' },
+  prim:          { name:"Prim's MST",             cat:'graph', year:1957, creator:'Robert C. Prim',          time:'O(E log V)', space:'O(V)', stable:'—', desc:'Grow MST one edge at a time from a start node (same as Jarník 1930).', history:'Prim (Bell Labs, 1957) rediscovered Jarník\'s 1930 algorithm. Dijkstra rediscovered it again in 1959 — three independent inventions.' },
+  interpolation: { name:'Interpolation Search',   cat:'search', year:1957, creator:'W. W. Peterson',         time:'O(log log n)', space:'O(1)', stable:'—', desc:'Estimate position by value distribution rather than always picking the middle.', history:'Peterson\'s 1957 paper "Addressing for Random-Access Storage". Beats binary search on uniformly distributed data.' },
+  shell:         { name:'Shell Sort',             cat:'sort', year:1959, creator:'Donald Shell',             time:'O(n log² n)', space:'O(1)', stable:'No',  desc:'Insertion sort with a decreasing gap sequence.', history:'Shell published the first sort beating O(n²) in 1959. Still used in embedded systems thanks to its simple in-place loop.' },
+  quick:         { name:'Quick Sort',             cat:'sort', year:1959, creator:'Tony Hoare',               time:'O(n log n)', space:'O(log n)', stable:'No', desc:'Partition around a pivot, recurse on both halves.', history:'Hoare invented it in Moscow (1959) while working on machine translation. Won him the Turing Award. Still the basis of std::sort and qsort().' },
+
+  // ── 1960s ─────────────────────────────────────────────────────────────
+  insertion:     { name:'Insertion Sort',         cat:'sort', year:1959, creator:'Folklore (formalised 1959)', time:'O(n²)',    space:'O(1)', stable:'Yes', desc:'Grow a sorted prefix by inserting each new element into its correct place.', history:'Used by humans sorting playing cards for centuries. Formalised in computer science with the rise of stored-program computers. Optimal for small or nearly-sorted arrays.' },
+  linear:        { name:'Linear Search',          cat:'search', year:1960, creator:'Folklore',                time:'O(n)',       space:'O(1)', stable:'—', desc:'Scan every element until the target is found.', history:'The trivial baseline — older than computers themselves. Optimal when the array is unsorted and accessed only once.' },
+  bst:           { name:'BST Search',             cat:'tree', year:1960, creator:'Booth & Colin (multiple)', time:'O(log n)',   space:'O(n)', stable:'—', desc:'Follow left or right branch by comparing keys.', history:'Independently invented multiple times around 1960. The conceptual ancestor of every balanced tree (AVL, Red-Black, B-tree, splay).' },
+  inorder:       { name:'In-order Traversal',     cat:'tree', year:1960, creator:'Discovered with BST',      time:'O(n)',       space:'O(h)', stable:'—', desc:'Left → Root → Right. Visits BST nodes in sorted ascending order.', history:'Defined alongside the binary search tree itself. The reason in-order on a BST gives sorted output.' },
+  preorder:      { name:'Pre-order Traversal',    cat:'tree', year:1960, creator:'Discovered with BST',      time:'O(n)',       space:'O(h)', stable:'—', desc:'Root → Left → Right. Used to serialise or clone a tree.', history:'Used in tree serialisation, expression-tree printing, and interpreters that compile prefix notation.' },
+  postorder:     { name:'Post-order Traversal',   cat:'tree', year:1960, creator:'Discovered with BST',      time:'O(n)',       space:'O(h)', stable:'—', desc:'Left → Right → Root. Used to delete a tree or evaluate expressions.', history:'Used to free trees safely, evaluate postfix expressions and compile bottom-up DSLs.' },
+  bfs:           { name:'Breadth-First Search',   cat:'graph', year:1959, creator:'Edward F. Moore',         time:'O(V+E)',     space:'O(V)', stable:'—', desc:'Explore neighbours layer by layer using a queue.', history:'Moore published it in 1959 for routing telephone-network connections. Konrad Zuse independently described it in his 1945 (unpublished) Plankalkül thesis.' },
+  knapsack:      { name:'0/1 Knapsack',           cat:'dp',   year:1957, creator:'George Dantzig',           time:'O(n·W)',     space:'O(n·W)', stable:'—', desc:'Pick a subset of items with weights ≤ W to maximise total value.', history:'Dantzig studied it in 1957 as part of his work on linear programming. The classic example of dynamic programming on a 2D grid.' },
+  fibonacci:     { name:'Fibonacci (DP)',         cat:'dp',   year:1953, creator:'Richard Bellman',          time:'O(n)',       space:'O(n)', stable:'—', desc:'Memoise sub-problem answers to avoid exponential recursion.', history:'Bellman coined "dynamic programming" in 1953. The Fibonacci sequence itself dates to Leonardo of Pisa (1202), but the DP version is the textbook intro to memoisation.' },
+  heap:          { name:'Heap Sort',              cat:'sort', year:1964, creator:'J.W.J. Williams',          time:'O(n log n)', space:'O(1)', stable:'No', desc:'Build a max-heap, repeatedly extract the root.', history:'Williams introduced both the binary heap data structure and Heap Sort in a single 1964 CACM paper. In-place and worst-case O(n log n) — a rare combination.' },
+  edit:          { name:'Edit Distance',          cat:'dp',   year:1965, creator:'Vladimir Levenshtein',     time:'O(m·n)',     space:'O(m·n)', stable:'—', desc:'Min insertions/deletions/substitutions to turn one string into another.', history:'Levenshtein\'s 1965 paper at the Soviet Academy of Sciences. Now the engine behind spell-check, fuzzy search and DNA alignment.' },
+  astar:         { name:'A* Search',              cat:'graph', year:1968, creator:'Hart, Nilsson, Raphael',  time:'O(E log V)', space:'O(V)', stable:'—', desc:'Dijkstra plus a heuristic that estimates distance to the goal.', history:'Invented at Stanford (1968) for Shakey the robot. Optimal whenever the heuristic is admissible — the basis of GPS routing and game pathfinding.' },
+
+  // ── 1970s ─────────────────────────────────────────────────────────────
+  lcs:           { name:'Longest Common Subseq.', cat:'dp',   year:1974, creator:'Hunt & McIlroy',           time:'O(m·n)',     space:'O(m·n)', stable:'—', desc:'Find the longest sequence appearing in both strings (in order).', history:'Hunt & McIlroy (Bell Labs, 1974) used it to build diff. Today\'s git diff and IDE merge tools still rely on the same DP.' },
+  lis:           { name:'Longest Increasing Subseq.', cat:'dp', year:1975, creator:'Knuth (Patience sort)', time:'O(n log n)', space:'O(n)', stable:'—', desc:'Find the longest strictly-increasing subsequence.', history:'Knuth showed in 1973 the connection to "patience sorting" (the card game). The O(n log n) trick is one of the most elegant algorithms in CS.' },
+  jump:          { name:'Jump Search',            cat:'search', year:1986, creator:'Folklore (formal 1986)', time:'O(√n)',     space:'O(1)', stable:'—', desc:'Skip ahead by √n then linear-scan back.', history:'A compromise between linear (no preprocessing) and binary search (full random access). Useful when seek cost dominates compare cost.' },
+  kmp:           { name:'KMP String Search',      cat:'string', year:1977, creator:'Knuth, Morris, Pratt',  time:'O(n+m)',     space:'O(m)', stable:'—', desc:'Pre-compute failure function to skip impossible alignments.', history:'Knuth, Morris and Pratt independently arrived at the same solution in 1977. The first linear-time substring search.' },
+
+  // ── 1980s ─────────────────────────────────────────────────────────────
+  comb:          { name:'Comb Sort',              cat:'sort', year:1980, creator:'Włodzimierz Dobosiewicz', time:'O(n²) worst', space:'O(1)', stable:'No', desc:'Bubble sort with a shrinking gap (factor ≈ 1.3).', history:'Dobosiewicz (1980), popularised by Lacey & Box in BYTE Magazine (1991). Beats bubble sort by orders of magnitude with one tweak.' },
+  kadane:        { name:"Kadane's Algorithm",     cat:'dp',   year:1984, creator:'Joseph B. Kadane',         time:'O(n)',       space:'O(1)', stable:'—', desc:'Find the maximum-sum contiguous subarray in one pass.', history:'Kadane discovered it in 1984 while sitting in on a CMU lecture by Bentley. The textbook example of greedy + DP.' },
+  cocktail:      { name:'Cocktail Shaker Sort',   cat:'sort', year:1973, creator:'Knuth (TAOCP)',            time:'O(n²)',      space:'O(1)', stable:'Yes', desc:'Bidirectional bubble sort — sweep up then back down.', history:'Described in Knuth\'s Art of Computer Programming Vol. 3 (1973). Slightly faster than bubble on partially sorted data; rarely used in practice.' },
+  rabin:         { name:'Rabin–Karp',             cat:'string', year:1987, creator:'Michael Rabin, Richard Karp', time:'O(n+m) avg', space:'O(1)', stable:'—', desc:'Use a rolling hash to compare windows of the text against the pattern.', history:'Rabin & Karp\'s 1987 paper. The rolling hash is the same idea behind plagiarism detection and rsync\'s file diffing.' },
+
+  // ── 1990s+ ────────────────────────────────────────────────────────────
+  cycle:         { name:'Cycle Sort',             cat:'sort', year:1990, creator:'B. K. Haddon',             time:'O(n²)',      space:'O(1)', stable:'No',  desc:'Minimise writes by directly placing each element at its final cycle position.', history:'Haddon (1990). The theoretically write-optimal sort — used in EEPROM/flash environments where every write is expensive.' },
+  tim:           { name:'Tim Sort',               cat:'sort', year:2002, creator:'Tim Peters',               time:'O(n log n)', space:'O(n)', stable:'Yes', desc:'Hybrid: detect natural runs (insertion sort) then merge them.', history:'Peters wrote it in 2002 for Python\'s list.sort(). Adopted by Java (2009), Android, V8, Rust — the default sort of half the modern world.' },
 };
+
+function fmtYear(y) {
+  if (y < 0) return Math.abs(y) + ' BCE';
+  return String(y);
+}
 
 function updateInfoPanel(key) {
   const d = INFO[key]; if (!d) return;
   document.getElementById('info-name').textContent    = d.name;
+  document.getElementById('info-year').textContent    = fmtYear(d.year);
+  document.getElementById('info-creator').textContent = d.creator;
   document.getElementById('info-time').textContent    = d.time;
   document.getElementById('info-space').textContent   = d.space;
   document.getElementById('info-stable').textContent  = d.stable;
   document.getElementById('info-desc').textContent    = d.desc;
-  document.getElementById('algo-label').textContent   = d.name;
+  document.getElementById('info-history').textContent = d.history || '';
+  document.getElementById('algo-label').textContent   = `${d.name} · ${fmtYear(d.year)} · ${d.creator}`;
+}
+
+// ── DYNAMIC SIDEBAR ───────────────────────────────────────────────────────
+const CAT_NAMES = { sort:'Sorting', search:'Searching', graph:'Graph', tree:'Trees', dp:'Dynamic Programming', string:'Strings', ds:'Data Structures' };
+const ERA_BUCKETS = [
+  { label:'Ancient (pre-1900)',  test: y => y < 1900 },
+  { label:'1930s–40s · Foundations', test: y => y >= 1900 && y < 1950 },
+  { label:'1950s · The Big Bang',    test: y => y >= 1950 && y < 1960 },
+  { label:'1960s · Theory Era',      test: y => y >= 1960 && y < 1970 },
+  { label:'1970s · String + DP',     test: y => y >= 1970 && y < 1980 },
+  { label:'1980s+ · Modern',         test: y => y >= 1980 },
+];
+const IMPLEMENTED = new Set(['bubble','selection','insertion','quick','merge','heap','shell','counting','radix','linear','binary','jump','interpolation','bfs','dfs','dijkstra','astar','prim','bst','inorder','preorder','postorder']);
+
+let currentView = 'chrono';
+
+function renderSidebar() {
+  const list = document.getElementById('sb-list');
+  list.innerHTML = '';
+  const entries = Object.entries(INFO).filter(([k]) => IMPLEMENTED.has(k));
+
+  if (currentView === 'chrono') {
+    entries.sort((a, b) => a[1].year - b[1].year);
+    for (const era of ERA_BUCKETS) {
+      const bucket = entries.filter(([, d]) => era.test(d.year));
+      if (!bucket.length) continue;
+      const hdr = document.createElement('div'); hdr.className = 'era-hdr'; hdr.textContent = era.label;
+      list.appendChild(hdr);
+      for (const [k, d] of bucket) list.appendChild(makeBtn(k, d));
+    }
+  } else {
+    const groups = {};
+    for (const [k, d] of entries) (groups[d.cat] = groups[d.cat] || []).push([k, d]);
+    const order = ['sort','search','graph','tree','dp','string','ds'];
+    for (const cat of order) {
+      if (!groups[cat]) continue;
+      const hdr = document.createElement('div'); hdr.className = 'era-hdr'; hdr.textContent = CAT_NAMES[cat];
+      list.appendChild(hdr);
+      groups[cat].sort((a, b) => a[1].year - b[1].year);
+      for (const [k, d] of groups[cat]) list.appendChild(makeBtn(k, d));
+    }
+  }
+  // Re-mark active button
+  document.querySelector(`.sb-btn[data-algo="${currentAlgo}"]`)?.classList.add('active');
+}
+
+function makeBtn(key, d) {
+  const b = document.createElement('button');
+  b.className = 'sb-btn';
+  b.dataset.cat = d.cat; b.dataset.algo = key;
+  b.innerHTML = `<span class="nm">${d.name}</span><span class="yr">${fmtYear(d.year)}</span>`;
+  b.addEventListener('click', () => selectAlgo(d.cat, key));
+  return b;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -855,7 +944,14 @@ function selectAlgo(cat, algo) {
   setTimeout(()=>{ stopFlag=false; initViz(cat,algo); }, 60);
 }
 
-document.querySelectorAll('.sb-btn').forEach(b=>b.addEventListener('click',()=>selectAlgo(b.dataset.cat,b.dataset.algo)));
+// View toggle
+document.querySelectorAll('.vt-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.vt-btn').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  currentView = b.dataset.view;
+  renderSidebar();
+}));
+
 document.getElementById('btn-run').addEventListener('click',runAlgo);
 document.getElementById('btn-reset').addEventListener('click',()=>{
   stopFlag=true; isRunning=false;
@@ -868,7 +964,9 @@ document.getElementById('speed-slider').addEventListener('input',e=>{ speed=pars
 document.getElementById('target-input').addEventListener('change',e=>{ target=Math.max(1,Math.min(SN,parseInt(e.target.value)||12)); });
 
 // Boot
+renderSidebar();
 updateInfoPanel('bubble');
+document.querySelector('.sb-btn[data-algo="bubble"]')?.classList.add('active');
 initSort();
 </script>
 </body>
