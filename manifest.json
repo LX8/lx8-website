@@ -1,0 +1,37 @@
+{
+  "name": "Lx8 Labs",
+  "short_name": "Lx8",
+  "description": "DevOps consulting, AI tools, courses and open research. Founded 2013 by Alexei Ferreira.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#6366f1",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "https://avatars.githubusercontent.com/u/7157081?s=192",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://avatars.githubusercontent.com/u/7157081?s=512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Algorithm Lab",
+      "url": "/algorithms.html",
+      "description": "39 algorithms in 3D"
+    },
+    {
+      "name": "Light, Gravity & Time",
+      "url": "/theory.html",
+      "description": "Bipartite physics theory visualization"
+    }
+  ]
+}

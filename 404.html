@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Lost in Phase Space · Lx8 Labs</title>
+  <meta name="description" content="The page you're looking for has slipped through the event horizon. Return to lx8.dev." />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%; background: #000; color: #e2e8f0;
+      font-family: 'Inter', sans-serif; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    canvas#stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.7; pointer-events: none; }
+    main {
+      position: relative; z-index: 1; flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 2rem; text-align: center;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 30%, rgba(99,102,241,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(129,140,248,0.06) 0%, transparent 60%);
+    }
+    .glitch {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(6rem, 22vw, 16rem);
+      font-weight: 700;
+      line-height: 0.9;
+      background: linear-gradient(120deg, #818cf8, #67e8f9, #a78bfa);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -6px;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 60px rgba(99,102,241,0.35);
+      animation: glitch 6s ease-in-out infinite;
+    }
+    @keyframes glitch {
+      0%, 92%, 100% { transform: translateX(0); filter: none; }
+      93% { transform: translateX(-2px); filter: hue-rotate(20deg); }
+      94% { transform: translateX(2px); }
+      95% { transform: translateX(0); }
+    }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(99,102,241,0.35); background: rgba(99,102,241,0.08);
+      border-radius: 999px; padding: 5px 14px;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase;
+      color: #818cf8; margin-bottom: 1.5rem;
+    }
+    .chip-dot { width: 6px; height: 6px; background: #6366f1; border-radius: 50%; box-shadow: 0 0 6px #6366f1; animation: blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100% {opacity:1} 50% {opacity:0.3} }
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 700;
+      color: #fff; letter-spacing: -1px; margin-bottom: 0.75rem;
+    }
+    p.lede {
+      font-size: 1rem; color: #94a3b8; max-width: 540px;
+      line-height: 1.7; margin: 0 auto 0.5rem;
+    }
+    p.code {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+      color: #4c4c7a; max-width: 540px; margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.875rem; font-weight: 600;
+      padding: 0.7rem 1.4rem; border-radius: 8px;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .btn-p { background: #6366f1; color: #fff; box-shadow: 0 4px 18px rgba(99,102,241,0.35); }
+    .btn-p:hover { background: #4f51e8; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(99,102,241,0.5); }
+    .btn-g { background: rgba(255,255,255,0.025); color: #c0c0e8; border: 1px solid rgba(255,255,255,0.1); }
+    .btn-g:hover { border-color: rgba(129,140,248,0.4); color: #fff; transform: translateY(-2px); }
+    footer.ft {
+      padding: 1.25rem 2rem; border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.74rem; color: #4c4c7a; text-align: center; position: relative; z-index: 1;
+    }
+    footer.ft a { color: #818cf8; text-decoration: none; }
+    footer.ft a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+  <main>
+    <div class="chip"><div class="chip-dot"></div>Error · 404</div>
+    <div class="glitch">404</div>
+    <h1>Lost in phase space.</h1>
+    <p class="lede">The page you're looking for has slipped through the event horizon. The URL doesn't exist on lx8.dev — yet.</p>
+    <p class="code">// throw new PageNotFound("/" + location.pathname.slice(1));</p>
+    <div class="actions">
+      <a class="btn btn-p" href="/">← Return home</a>
+      <a class="btn btn-g" href="/algorithms.html">Algorithm Lab</a>
+      <a class="btn btn-g" href="/theory.html">Light, Gravity &amp; Time</a>
+    </div>
+  </main>
+  <footer class="ft">© 2013–2026 Alexei Lemos Cavalcante Ferreira · <a href="https://lx8.dev">lx8.dev</a></footer>
+  <script>
+    // Star field
+    const cvs = document.getElementById('stars');
+    const ctx = cvs.getContext('2d');
+    let W, H, stars = [];
+    function resize() { W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
+    function init() {
+      stars = Array.from({length: 180}, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 1.4 + 0.2, a: Math.random(),
+        speed: Math.random() * 0.004 + 0.001, drift: (Math.random()-0.5)*0.05,
+      }));
+    }
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      for (const s of stars) {
+        s.a += s.speed; s.x += s.drift;
+        if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+        const alpha = (Math.sin(s.a) * 0.5 + 0.5) * 0.7 + 0.1;
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(180,185,255,${alpha})`; ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    resize(); init(); draw();
+    addEventListener('resize', () => { resize(); init(); });
+  </script>
+</body>
+</html>
