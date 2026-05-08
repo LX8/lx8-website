@@ -98,54 +98,86 @@
     .leg { display: flex; align-items: center; gap: 4px; font-size: 0.62rem; color: #4c4c7a; }
     .leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
-    /* ── CODE PANEL ── */
+    /* ── CODE PANEL (permanent right column) ── */
     #code-panel {
-      position: absolute; top: 0; right: 0; bottom: 0; width: 380px;
-      background: rgba(4,4,11,0.94); backdrop-filter: blur(8px);
+      width: 360px; min-width: 360px; height: 100vh;
+      background: linear-gradient(180deg, #06060e, #07070f);
       border-left: 1px solid #18183a;
       display: flex; flex-direction: column;
-      transform: translateX(100%); transition: transform 0.28s ease;
-      z-index: 10;
+      transition: width 0.28s ease, min-width 0.28s ease;
     }
-    #code-panel.open { transform: translateX(0); }
+    #code-panel.collapsed { width: 0; min-width: 0; border-left: none; overflow: hidden; }
     #code-header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 0.7rem 0.95rem; border-bottom: 1px solid #18183a;
-      background: #07070f;
+      background: #07070f; flex-shrink: 0;
     }
-    #code-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 700; color: #a5b4fc; letter-spacing: 0.04em; margin: 0; }
-    #code-close { background: none; border: none; color: #5c5c8a; font-size: 1rem; cursor: pointer; padding: 0 4px; }
-    #code-close:hover { color: #e2e8f0; }
+    .ch-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    #code-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 700; color: #a5b4fc; letter-spacing: 0.04em; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ch-tag { font-family: 'Space Grotesk', sans-serif; font-size: 0.62rem; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); padding: 1px 7px; border-radius: 999px; flex-shrink: 0; }
+    #code-close { background: none; border: 1px solid #18183a; color: #5c5c8a; font-size: 0.7rem; cursor: pointer; padding: 3px 8px; border-radius: 6px; transition: all 0.15s; }
+    #code-close:hover { color: #e2e8f0; border-color: #2a2a50; }
     #code-body {
       flex: 1; overflow-y: auto; padding: 0.65rem 0;
-      font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 0.74rem; line-height: 1.7;
+      font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 0.74rem; line-height: 1.75;
+      scrollbar-width: thin; scrollbar-color: #2a2a50 transparent;
     }
+    #code-body::-webkit-scrollbar { width: 4px; }
+    #code-body::-webkit-scrollbar-thumb { background: #2a2a50; border-radius: 2px; }
     .code-line {
-      display: flex; padding: 1px 0.95rem; color: #6c7299; transition: background 0.12s;
+      display: flex; padding: 1px 0.95rem; color: #6c7299; transition: all 0.18s;
     }
     .code-line.active {
-      background: linear-gradient(90deg, rgba(99,102,241,0.28), rgba(99,102,241,0.05));
+      background: linear-gradient(90deg, rgba(99,102,241,0.32), rgba(99,102,241,0.04));
       color: #fff;
-      border-left: 2px solid #818cf8;
-      padding-left: calc(0.95rem - 2px);
-    }
-    .code-num {
-      display: inline-block; width: 22px; flex-shrink: 0; color: #2e3057; text-align: right; padding-right: 8px;
-      user-select: none;
+      border-left: 3px solid #818cf8;
+      padding-left: calc(0.95rem - 3px);
+      box-shadow: 0 0 18px rgba(99,102,241,0.18) inset;
     }
     .code-line.active .code-num { color: #818cf8; }
+    .code-num {
+      display: inline-block; width: 22px; flex-shrink: 0; color: #2e3057; text-align: right; padding-right: 10px;
+      user-select: none; font-variant-numeric: tabular-nums;
+    }
     .code-empty { padding: 1rem; color: #4c4c7a; font-style: italic; font-size: 0.72rem; }
 
+    /* Variable inspector */
+    #var-panel {
+      border-top: 1px solid #18183a; background: #050511;
+      padding: 0.55rem 0.95rem 0.7rem; min-height: 80px; max-height: 32%;
+      overflow-y: auto; flex-shrink: 0;
+    }
+    .vp-title { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #4c4c7a; margin-bottom: 0.4rem; }
+    .vp-list { display: flex; flex-direction: column; gap: 3px; }
+    .vp-row { display: flex; gap: 8px; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; }
+    .vp-key { color: #818cf8; min-width: 80px; }
+    .vp-val { color: #e2e8f0; word-break: break-all; }
+    .vp-empty { font-style: italic; color: #3a3a6a; font-size: 0.66rem; }
+
+    /* Code toggle button (overlaid on canvas) */
     #code-toggle {
       position: absolute; top: 0.85rem; right: 0.85rem; z-index: 11;
       background: rgba(7,7,15,0.85); border: 1px solid #2a2a50;
       color: #a5b4fc; padding: 0.42rem 0.8rem; border-radius: 8px;
       font-size: 0.74rem; font-weight: 600; cursor: pointer;
       font-family: 'Inter', sans-serif; transition: all 0.15s;
-      display: flex; align-items: center; gap: 6px;
+      display: none; align-items: center; gap: 6px;
     }
+    #code-toggle.show { display: flex; }
     #code-toggle:hover { background: rgba(99,102,241,0.18); border-color: rgba(99,102,241,0.4); }
-    #code-toggle.active { background: rgba(99,102,241,0.22); border-color: rgba(99,102,241,0.5); color: #c7d2fe; }
+
+    @media (max-width: 1200px) {
+      #code-panel { width: 320px; min-width: 320px; }
+    }
+    @media (max-width: 1000px) {
+      #code-panel { width: 280px; min-width: 280px; }
+      #sidebar { width: 180px; min-width: 180px; }
+    }
+    @media (max-width: 760px) {
+      #code-panel { width: 0; min-width: 0; border-left: none; }
+      #code-panel.show-mobile { width: 100%; min-width: 100%; position: absolute; right: 0; top: 0; z-index: 50; border-left: 1px solid #18183a; }
+      #code-toggle { display: flex; }
+    }
 
     /* ── CONTROL BAR ── */
     #ctrl-bar {
@@ -225,14 +257,7 @@
       <canvas id="three-canvas"></canvas>
       <div id="algo-label">Bubble Sort</div>
       <div id="legend"></div>
-      <button id="code-toggle" onclick="toggleCode()"><span>{ }</span> Show Code</button>
-      <aside id="code-panel">
-        <div id="code-header">
-          <h3 id="code-title">Bubble Sort</h3>
-          <button id="code-close" onclick="toggleCode()" aria-label="Close code panel">✕</button>
-        </div>
-        <div id="code-body"></div>
-      </aside>
+      <button id="code-toggle" onclick="toggleCode()"><span>{ }</span><span class="ct-lbl"> Code</span></button>
     </div>
 
     <div id="ctrl-bar">
@@ -253,6 +278,24 @@
       </div>
     </div>
   </div>
+
+  <!-- ── CODE PANEL (permanent right column) ── -->
+  <aside id="code-panel">
+    <div id="code-header">
+      <div class="ch-left">
+        <h3 id="code-title">Bubble Sort</h3>
+        <span class="ch-tag" id="code-year">1956</span>
+      </div>
+      <button id="code-close" onclick="toggleCode()" aria-label="Hide code">→</button>
+    </div>
+    <div id="code-body"></div>
+    <div id="var-panel">
+      <div class="vp-title">State</div>
+      <div class="vp-list" id="vp-list">
+        <div class="vp-empty">Run an algorithm to see live variables.</div>
+      </div>
+    </div>
+  </aside>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -757,13 +800,16 @@ let lastHl = -1;
 function renderCode(algoKey) {
   const lines = CODE[algoKey];
   const body = document.getElementById('code-body');
-  document.getElementById('code-title').textContent = INFO[algoKey]?.name || '—';
+  const info = INFO[algoKey] || {};
+  document.getElementById('code-title').textContent = info.name || '—';
+  document.getElementById('code-year').textContent = info.year != null ? fmtYear(info.year) : '';
   body.innerHTML = '';
   codeLineEls = [];
   if (!lines) {
     const e = document.createElement('div'); e.className = 'code-empty';
-    e.textContent = 'Code view coming soon for this algorithm.';
+    e.textContent = 'Pseudocode view coming soon for this algorithm.';
     body.appendChild(e);
+    setVars(null);
     return;
   }
   lines.forEach((ln, i) => {
@@ -774,6 +820,7 @@ function renderCode(algoKey) {
     codeLineEls.push(el);
   });
   lastHl = -1;
+  setVars(null);
 }
 function hl(line) {
   if (line === lastHl) return;
@@ -784,13 +831,35 @@ function hl(line) {
   }
   lastHl = line;
 }
+
+// Variable inspector — pass an object {key: value} to update the right-panel state view
+function setVars(obj) {
+  const list = document.getElementById('vp-list');
+  if (!obj || Object.keys(obj).length === 0) {
+    list.innerHTML = '<div class="vp-empty">Run an algorithm to see live variables.</div>';
+    return;
+  }
+  list.innerHTML = Object.entries(obj).map(([k, v]) => {
+    let val = v;
+    if (Array.isArray(v)) val = '[' + v.slice(0, 12).join(', ') + (v.length > 12 ? ', …' : '') + ']';
+    else if (typeof v === 'string') val = '"' + v + '"';
+    return `<div class="vp-row"><span class="vp-key">${k}</span><span class="vp-val">${val}</span></div>`;
+  }).join('');
+}
+
 function toggleCode() {
   const p = document.getElementById('code-panel');
   const t = document.getElementById('code-toggle');
-  const open = p.classList.toggle('open');
-  t.classList.toggle('active', open);
-  t.querySelector('span').textContent = open ? '✕' : '{ }';
-  t.lastChild.textContent = open ? ' Hide Code' : ' Show Code';
+  const isMobile = matchMedia('(max-width: 900px)').matches;
+  if (isMobile) {
+    const open = p.classList.toggle('show-mobile');
+    t.classList.toggle('active', open);
+    t.querySelector('.ct-lbl').textContent = open ? ' Hide' : ' Code';
+  } else {
+    const collapsed = p.classList.toggle('collapsed');
+    t.classList.toggle('show', collapsed); // show toggle when collapsed
+    if (!collapsed) t.classList.remove('show');
+  }
 }
 
 function updateInfoPanel(key) {
@@ -917,18 +986,18 @@ const markAllSorted = () => { for (let i = 0; i < N; i++) bc(i, C.sorted); };
 // Bubble
 async function bubbleSort() {
   for (let i = 0; i < N-1; i++) {
-    hl(0);
+    hl(0); setVars({ i, 'pass': i+1, 'unsorted': N-i });
     for (let j = 0; j < N-1-i; j++) {
       if (stopFlag) return;
-      hl(1);
+      hl(1); setVars({ i, j, 'arr[j]': arr[j], 'arr[j+1]': arr[j+1] });
       bc(j, C.cmp); bc(j+1, C.cmp); cmp++; updateStats(); await tick();
       hl(2);
-      if (arr[j] > arr[j+1]) { hl(3); bc(j, C.swap); bc(j+1, C.swap); await tick(); bswap(j, j+1); swp++; updateStats(); }
+      if (arr[j] > arr[j+1]) { hl(3); setVars({ i, j, swap: `arr[${j}] ↔ arr[${j+1}]` }); bc(j, C.swap); bc(j+1, C.swap); await tick(); bswap(j, j+1); swp++; updateStats(); }
       bc(j, C.def); bc(j+1, C.def);
     }
     hl(4); bc(N-1-i, C.sorted);
   }
-  bc(0, C.sorted); hl(-1);
+  bc(0, C.sorted); hl(-1); setVars({ done: true, sorted: arr.slice() });
 }
 
 // Selection
@@ -1208,16 +1277,18 @@ async function linearSearch() {
 
 async function binarySearch() {
   initSearch(true); await sleep(150);
-  hl(0); let lo=0, hi=SN-1;
+  hl(0); let lo=0, hi=SN-1; setVars({ target, lo, hi });
   while (lo<=hi) {
     if (stopFlag) return;
     hl(1);
-    hl(2); const m=(lo+hi)>>1; sc(m, C.cmp); cmp++; updateStats(); await tick();
-    hl(3); if (sArr[m]===target) { sc(m, C.found); swp++; updateStats(); hl(-1); return; }
-    if (sArr[m]<target) { hl(4); hl(5); for(let i=lo;i<=m;i++) sc(i, C.miss); lo=m+1; }
-    else { hl(6); hl(7); for(let i=m;i<=hi;i++) sc(i, C.miss); hi=m-1; }
+    hl(2); const m=(lo+hi)>>1;
+    setVars({ target, lo, hi, mid: m, 'arr[mid]': sArr[m] });
+    sc(m, C.cmp); cmp++; updateStats(); await tick();
+    hl(3); if (sArr[m]===target) { sc(m, C.found); swp++; updateStats(); setVars({ found: true, index: m }); hl(-1); return; }
+    if (sArr[m]<target) { hl(4); hl(5); for(let i=lo;i<=m;i++) sc(i, C.miss); lo=m+1; setVars({ target, lo, hi, eliminated: 'left half' }); }
+    else { hl(6); hl(7); for(let i=m;i<=hi;i++) sc(i, C.miss); hi=m-1; setVars({ target, lo, hi, eliminated: 'right half' }); }
   }
-  hl(-1);
+  hl(-1); setVars({ found: false });
 }
 
 async function jumpSearch() {
@@ -1351,18 +1422,24 @@ async function dijkstra() {
   initGraph(); await sleep(250);
   hl(0);
   const dist=new Array(GV).fill(Infinity); const vis=new Array(GV).fill(false); dist[0]=0;
+  setVars({ source: 0, dist: dist.map(d => d === Infinity ? '∞' : d) });
   for (let it=0; it<GV&&!stopFlag; it++) {
     hl(1);
     let u=-1; for(let i=0;i<GV;i++) if(!vis[i]&&(u===-1||dist[i]<dist[u])) u=i;
     if(u===-1||dist[u]===Infinity) break;
     hl(2); hl(3); vis[u]=true; nc(u,C.curr); cmp++; updateStats(); await tick();
+    setVars({ u, 'dist[u]': dist[u], dist: dist.map(d => d === Infinity ? '∞' : d) });
     hl(4);
     for (const [v,w] of gAdj[u]) {
-      hl(5); if(!vis[v]&&dist[u]+w<dist[v]) { hl(6); dist[v]=dist[u]+w; nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats(); }
+      hl(5);
+      if(!vis[v]&&dist[u]+w<dist[v]) {
+        hl(6); dist[v]=dist[u]+w; nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats();
+        setVars({ u, v, w, relax: `dist[${v}] = dist[${u}] + ${w} = ${dist[v]}`, dist: dist.map(d => d === Infinity ? '∞' : d) });
+      }
     }
     nc(u,C.visit); await tick();
   }
-  hl(-1);
+  hl(-1); setVars({ done: true, dist: dist.map(d => d === Infinity ? '∞' : d) });
 }
 
 async function aStar() {
@@ -1532,19 +1609,25 @@ async function sieve() {
   await sleep(200);
   // Run sieve
   hl(0); mathMeshes[0].color.setHex(C.miss); mathMeshes[1].color.setHex(C.miss);
+  setVars({ n: NUM + 1 });
   for (let p = 2; p * p <= NUM + 1 && !stopFlag; p++) {
     hl(1);
     hl(2); if (!isPrime[p]) continue;
+    setVars({ p, 'p²': p*p });
     mathMeshes[p - 2]?.color.setHex(C.curr); cmp++; updateStats(); await tick();
     for (let m = p * p; m <= NUM + 1; m += p) {
       if (stopFlag) return;
       hl(3); hl(4); isPrime[m] = false;
+      setVars({ p, m, 'cross out': m });
       mathMeshes[m - 2]?.color.setHex(C.miss); swp++; updateStats(); await tick();
     }
     mathMeshes[p - 2]?.color.setHex(C.sorted);
   }
   hl(5);
   for (let i = 2; i <= NUM + 1; i++) if (isPrime[i]) mathMeshes[i - 2]?.color.setHex(C.sorted);
+  const primes = [];
+  for (let i = 2; i <= NUM + 1; i++) if (isPrime[i]) primes.push(i);
+  setVars({ primes });
   hl(-1);
 }
 
@@ -1570,18 +1653,21 @@ async function euclidGCD() {
   camera.position.set(0, 5, 14); camera.lookAt(0, 2, 0); controls.target.set(0, 2, 0); controls.update();
   showLegend([null, null, null, 'a', 'b → remainder']);
   await sleep(300);
+  setVars({ a, b });
   while (b !== 0 && !stopFlag) {
     hl(0);
     cmp++; updateStats(); await tick();
-    hl(1); const r = a % b;
+    hl(1); const r = a % b; setVars({ a, b, r: `${a} mod ${b} = ${r}` });
     hl(2); a = b;
     hl(3); b = r; swp++; updateStats();
+    setVars({ a, b });
     buildBars(a, b);
     await tick();
   }
   hl(4);
   // Result
   for (const m of mathMeshes) m.mat.color.setHex(C.sorted);
+  setVars({ gcd: a });
   hl(-1);
 }
 
@@ -1642,10 +1728,12 @@ async function fibonacciDP() {
   showLegend([null, 'Reading memo', null, 'Computing', 'Filled']);
   hl(0); memo[0] = 0; meshes[0].color.setHex(C.sorted); await tick();
   memo[1] = 1; meshes[1].color.setHex(C.sorted); await tick();
+  setVars({ 'memo[0]': 0, 'memo[1]': 1 });
   for (let i = 2; i < NF && !stopFlag; i++) {
     hl(1);
     meshes[i-2].color.setHex(C.cmp); meshes[i-1].color.setHex(C.cmp); cmp += 2; updateStats(); await tick();
     hl(2); memo[i] = memo[i-1] + memo[i-2]; swp++;
+    setVars({ i, 'memo[i-1]': memo[i-1], 'memo[i-2]': memo[i-2], 'memo[i]': memo[i], memo: memo.slice(0, i+1) });
     meshes[i].color.setHex(C.curr); updateStats(); await tick();
     meshes[i-2].color.setHex(C.sorted); meshes[i-1].color.setHex(C.sorted); meshes[i].color.setHex(C.sorted);
   }
