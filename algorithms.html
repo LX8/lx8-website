@@ -312,9 +312,9 @@ function showLegend(labels) {
 // ── ALGORITHM INFO ────────────────────────────────────────────────────────────
 const INFO = {
   // ── ANCIENT ───────────────────────────────────────────────────────────
-  euclid:        { name:"Euclid's GCD",          cat:'sort', year:-300, creator:'Euclid',                    time:'O(log min(a,b))', space:'O(1)', stable:'—', desc:'Repeatedly replace the larger number with its remainder modulo the smaller.', history:'Described in Euclid\'s Elements (Book VII, ~300 BCE) — possibly the oldest non-trivial algorithm still in regular use today.' },
-  sieve:         { name:'Sieve of Eratosthenes', cat:'sort', year:-240, creator:'Eratosthenes of Cyrene',    time:'O(n log log n)',  space:'O(n)', stable:'—', desc:'Cross out multiples of each prime up to √n. What remains are all the primes.', history:'Devised by Eratosthenes (~240 BCE), the Greek polymath who also calculated Earth\'s circumference. Still the standard primality sieve.' },
-  pascal:        { name:"Pascal's Triangle",     cat:'sort', year:1654, creator:'Blaise Pascal',             time:'O(n²)',           space:'O(n²)', stable:'—', desc:'Each cell is the sum of the two above it. Generates binomial coefficients.', history:'Pascal published his treatise in 1654, but the pattern was known centuries earlier in Persia (al-Karaji, ~1000), India (Pingala, 200 BCE) and China (Yang Hui, 1303).' },
+  euclid:        { name:"Euclid's GCD",          cat:'math', year:-300, creator:'Euclid',                    time:'O(log min(a,b))', space:'O(1)', stable:'—', desc:'Repeatedly replace the larger number with its remainder modulo the smaller.', history:'Described in Euclid\'s Elements (Book VII, ~300 BCE) — possibly the oldest non-trivial algorithm still in regular use today.' },
+  sieve:         { name:'Sieve of Eratosthenes', cat:'math', year:-240, creator:'Eratosthenes of Cyrene',    time:'O(n log log n)',  space:'O(n)', stable:'—', desc:'Cross out multiples of each prime up to √n. What remains are all the primes.', history:'Devised by Eratosthenes (~240 BCE), the Greek polymath who also calculated Earth\'s circumference. Still the standard primality sieve.' },
+  pascal:        { name:"Pascal's Triangle",     cat:'math', year:1654, creator:'Blaise Pascal',             time:'O(n²)',           space:'O(n²)', stable:'—', desc:'Each cell is the sum of the two above it. Generates binomial coefficients.', history:'Pascal published his treatise in 1654, but the pattern was known centuries earlier in Persia (al-Karaji, ~1000), India (Pingala, 200 BCE) and China (Yang Hui, 1303).' },
 
   // ── 19TH CENTURY ──────────────────────────────────────────────────────
   dfs:           { name:'Depth-First Search',     cat:'graph', year:1882, creator:'Charles Pierre Trémaux',   time:'O(V+E)',  space:'O(V)', stable:'—', desc:'Explore as deep as possible along each branch before backtracking.', history:'Originally a 19th-century maze-solving technique by French engineer Trémaux. Reformulated for computer science in the 1970s by Tarjan & Hopcroft.' },
@@ -397,7 +397,22 @@ const ERA_BUCKETS = [
   { label:'1970s · String + DP',     test: y => y >= 1970 && y < 1980 },
   { label:'1980s+ · Modern',         test: y => y >= 1980 },
 ];
-const IMPLEMENTED = new Set(['bubble','selection','insertion','quick','merge','heap','shell','counting','radix','linear','binary','jump','interpolation','bfs','dfs','dijkstra','astar','prim','bst','inorder','preorder','postorder']);
+const IMPLEMENTED = new Set([
+  // sorting
+  'bubble','selection','insertion','quick','merge','heap','shell','counting','radix','cocktail','comb','cycle','tim',
+  // searching
+  'linear','binary','jump','interpolation',
+  // graph
+  'bfs','dfs','dijkstra','astar','prim','bellman','kruskal',
+  // tree
+  'bst','inorder','preorder','postorder',
+  // math
+  'sieve','euclid','pascal',
+  // dp
+  'fibonacci','kadane','edit','lcs','lis','knapsack',
+  // string
+  'kmp','rabin',
+]);
 
 let currentView = 'chrono';
 
@@ -630,6 +645,98 @@ async function radixSort() {
   markAllSorted();
 }
 
+// Cocktail Shaker — bidirectional bubble
+async function cocktailSort() {
+  let lo = 0, hi = N - 1, swapped = true;
+  while (swapped && lo < hi) {
+    swapped = false;
+    for (let i = lo; i < hi; i++) {
+      if (stopFlag) return;
+      bc(i, C.cmp); bc(i+1, C.cmp); cmp++; updateStats(); await tick();
+      if (arr[i] > arr[i+1]) { bswap(i, i+1); swp++; swapped = true; updateStats(); }
+      bc(i, C.def); bc(i+1, C.def);
+    }
+    bc(hi, C.sorted); hi--;
+    if (!swapped) break;
+    swapped = false;
+    for (let i = hi; i > lo; i--) {
+      if (stopFlag) return;
+      bc(i, C.cmp); bc(i-1, C.cmp); cmp++; updateStats(); await tick();
+      if (arr[i-1] > arr[i]) { bswap(i-1, i); swp++; swapped = true; updateStats(); }
+      bc(i, C.def); bc(i-1, C.def);
+    }
+    bc(lo, C.sorted); lo++;
+  }
+  markAllSorted();
+}
+
+// Comb Sort — bubble with shrinking gap
+async function combSort() {
+  let gap = N, sorted = false;
+  const shrink = 1.3;
+  while (!sorted) {
+    gap = Math.floor(gap / shrink);
+    if (gap <= 1) { gap = 1; sorted = true; }
+    for (let i = 0; i + gap < N; i++) {
+      if (stopFlag) return;
+      bc(i, C.cmp); bc(i+gap, C.cmp); cmp++; updateStats(); await tick();
+      if (arr[i] > arr[i+gap]) { bswap(i, i+gap); swp++; sorted = false; updateStats(); }
+      bc(i, C.def); bc(i+gap, C.def);
+    }
+  }
+  markAllSorted();
+}
+
+// Cycle Sort — minimum-write sort
+async function cycleSort() {
+  for (let cs = 0; cs < N - 1; cs++) {
+    if (stopFlag) return;
+    let item = arr[cs]; let pos = cs;
+    bc(cs, C.pivot); await tick();
+    for (let i = cs + 1; i < N; i++) { cmp++; if (arr[i] < item) pos++; }
+    updateStats();
+    if (pos === cs) { bc(cs, C.sorted); continue; }
+    while (item === arr[pos]) pos++;
+    [arr[pos], item] = [item, arr[pos]]; bh(pos, arr[pos]); bc(pos, C.swap); swp++; updateStats(); await tick(); bc(pos, C.sorted);
+    while (pos !== cs) {
+      pos = cs;
+      for (let i = cs + 1; i < N; i++) { cmp++; if (arr[i] < item) pos++; }
+      while (item === arr[pos]) pos++;
+      [arr[pos], item] = [item, arr[pos]]; bh(pos, arr[pos]); bc(pos, C.swap); swp++; updateStats(); await tick(); bc(pos, C.sorted);
+    }
+    bc(cs, C.sorted);
+  }
+  markAllSorted();
+}
+
+// Tim Sort (simplified) — runs of insertion-sort, then merge
+async function timSort() {
+  const RUN = 8;
+  for (let s = 0; s < N; s += RUN) {
+    const e = Math.min(s + RUN - 1, N - 1);
+    for (let i = s + 1; i <= e; i++) {
+      if (stopFlag) return;
+      bc(i, C.pivot); await tick();
+      let j = i;
+      while (j > s && arr[j-1] > arr[j]) {
+        cmp++; bc(j, C.swap); bswap(j-1, j); swp++; updateStats(); await tick();
+        bc(j, C.def); j--;
+      }
+      cmp++; bc(j, C.def);
+    }
+    for (let k = s; k <= e; k++) bc(k, C.sorted);
+  }
+  // Merge runs
+  for (let size = RUN; size < N; size *= 2) {
+    for (let lo = 0; lo < N; lo += 2 * size) {
+      const mid = Math.min(lo + size - 1, N - 1);
+      const hi = Math.min(lo + 2 * size - 1, N - 1);
+      if (mid < hi) await _mg(lo, mid, hi);
+    }
+  }
+  markAllSorted();
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // ── SEARCHING ─────────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -836,6 +943,51 @@ async function primMST() {
   }
 }
 
+// Bellman–Ford — relax all edges V-1 times
+async function bellmanFord() {
+  initGraph(); await sleep(250);
+  const dist = new Array(GV).fill(Infinity); dist[0] = 0;
+  nc(0, C.curr);
+  for (let it = 0; it < GV - 1 && !stopFlag; it++) {
+    let updated = false;
+    for (let u = 0; u < GV; u++) {
+      for (const [v, w] of gAdj[u]) {
+        if (stopFlag) return;
+        cmp++;
+        if (dist[u] !== Infinity && dist[u] + w < dist[v]) {
+          dist[v] = dist[u] + w; nc(v, C.frontier); ec(u, v, C.edgeHi); swp++; updated = true; updateStats(); await tick();
+          nc(v, C.visit);
+        }
+      }
+    }
+    if (!updated) break;
+  }
+  for (let i = 0; i < GV; i++) if (dist[i] !== Infinity) nc(i, C.visit);
+}
+
+// Kruskal's MST — sort edges, add if no cycle (union-find)
+async function kruskalMST() {
+  initGraph(); await sleep(250);
+  const edges = [];
+  for (let u = 0; u < GV; u++) for (const [v, w] of gAdj[u]) if (v > u) edges.push({u, v, w});
+  edges.sort((a, b) => a.w - b.w);
+  const parent = Array.from({length: GV}, (_, i) => i);
+  const find = x => parent[x] === x ? x : (parent[x] = find(parent[x]));
+  for (const e of edges) {
+    if (stopFlag) return;
+    ec(e.u, e.v, C.cmp); cmp++; updateStats(); await tick();
+    const ru = find(e.u), rv = find(e.v);
+    if (ru !== rv) {
+      parent[ru] = rv;
+      ec(e.u, e.v, C.edgeHi);
+      nc(e.u, C.visit); nc(e.v, C.visit);
+      swp++; updateStats(); await tick();
+    } else {
+      ec(e.u, e.v, C.miss);
+    }
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // ── TREE ──────────────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -896,6 +1048,382 @@ async function traverse(order) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// ── MATHEMATICS ───────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+let mathMeshes = [];
+
+// Sieve of Eratosthenes — numbers in 6×8 grid; primes glow green, composites darken
+async function sieve() {
+  clearViz(); mathMeshes = [];
+  const COLS = 8, ROWS = 6, NUM = COLS * ROWS, S = 0.85;
+  const isPrime = new Array(NUM + 2).fill(true); isPrime[0] = isPrime[1] = false;
+  // Build grid
+  for (let i = 0; i < NUM; i++) {
+    const r = Math.floor(i / COLS), c = i % COLS;
+    const x = (c - (COLS-1)/2) * S, y = -((r - (ROWS-1)/2) * S);
+    const mat = makeMat(C.def);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.2), mat);
+    mesh.position.set(x, y, 0);
+    scene.add(mesh); vizObjects.push(mesh); mathMeshes.push(mat);
+  }
+  camera.position.set(0, 0, 9); camera.lookAt(0, 0, 0);
+  controls.target.set(0, 0, 0); controls.update();
+  showLegend([null, 'Checking', null, 'Composite', 'Prime']);
+  await sleep(200);
+  // Run sieve
+  mathMeshes[0].color.setHex(C.miss); mathMeshes[1].color.setHex(C.miss);
+  for (let p = 2; p * p <= NUM + 1 && !stopFlag; p++) {
+    if (!isPrime[p]) continue;
+    mathMeshes[p - 2]?.color.setHex(C.curr); cmp++; updateStats(); await tick();
+    for (let m = p * p; m <= NUM + 1; m += p) {
+      if (stopFlag) return;
+      isPrime[m] = false;
+      mathMeshes[m - 2]?.color.setHex(C.miss); swp++; updateStats(); await tick();
+    }
+    mathMeshes[p - 2]?.color.setHex(C.sorted);
+  }
+  for (let i = 2; i <= NUM + 1; i++) if (isPrime[i]) mathMeshes[i - 2]?.color.setHex(C.sorted);
+}
+
+// Euclid's GCD — two bars shrinking
+async function euclidGCD() {
+  clearViz(); mathMeshes = [];
+  let a = 84, b = 60;
+  const SCALE = 0.08;
+  function buildBars(av, bv) {
+    for (const m of mathMeshes) { scene.remove(m.mesh); m.mesh.geometry.dispose(); m.mesh.material.dispose(); }
+    mathMeshes = [];
+    const ha = Math.max(0.1, av * SCALE), hb = Math.max(0.1, bv * SCALE);
+    const m1 = new THREE.MeshPhongMaterial({color: C.pivot, shininess: 80});
+    const me1 = new THREE.Mesh(new THREE.BoxGeometry(1.2, ha, 1.2), m1);
+    me1.position.set(-1.2, ha/2, 0); scene.add(me1); vizObjects.push(me1);
+    const m2 = new THREE.MeshPhongMaterial({color: C.curr, shininess: 80});
+    const me2 = new THREE.Mesh(new THREE.BoxGeometry(1.2, hb, 1.2), m2);
+    me2.position.set(1.2, hb/2, 0); scene.add(me2); vizObjects.push(me2);
+    mathMeshes.push({mesh: me1, mat: m1}, {mesh: me2, mat: m2});
+  }
+  addGrid(8);
+  buildBars(a, b);
+  camera.position.set(0, 5, 14); camera.lookAt(0, 2, 0); controls.target.set(0, 2, 0); controls.update();
+  showLegend([null, null, null, 'a', 'b → remainder']);
+  await sleep(300);
+  while (b !== 0 && !stopFlag) {
+    cmp++; updateStats(); await tick();
+    const r = a % b;
+    a = b; b = r; swp++; updateStats();
+    buildBars(a, b);
+    await tick();
+  }
+  // Result
+  for (const m of mathMeshes) m.mat.color.setHex(C.sorted);
+}
+
+// Pascal's Triangle — rows fill in as triangle pyramid
+async function pascal() {
+  clearViz(); mathMeshes = [];
+  const ROWS = 8, S = 0.55;
+  const tri = []; // tri[r][c] = value
+  for (let r = 0; r < ROWS; r++) tri.push(new Array(r + 1).fill(1));
+  // Build mesh grid
+  const meshGrid = [];
+  for (let r = 0; r < ROWS; r++) {
+    const rowMeshes = [];
+    for (let c = 0; c <= r; c++) {
+      const x = (c - r / 2) * S, y = -r * S * 0.95;
+      const mat = makeMat(C.def);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.18), mat);
+      mesh.position.set(x, y, 0);
+      mesh.material.color.setHex(C.miss);
+      scene.add(mesh); vizObjects.push(mesh); rowMeshes.push(mat);
+    }
+    meshGrid.push(rowMeshes);
+  }
+  camera.position.set(0, -1.5, 7); camera.lookAt(0, -1.5, 0);
+  controls.target.set(0, -1.5, 0); controls.update();
+  showLegend([null, 'Computing', null, null, 'Filled']);
+  // Fill in
+  meshGrid[0][0].color.setHex(C.sorted); cmp++;
+  for (let r = 1; r < ROWS && !stopFlag; r++) {
+    for (let c = 0; c <= r; c++) {
+      if (stopFlag) return;
+      meshGrid[r][c].color.setHex(C.cmp); cmp++;
+      tri[r][c] = (c > 0 ? tri[r-1][c-1] : 0) + (c < r ? tri[r-1][c] : 0);
+      swp++; updateStats(); await tick();
+      meshGrid[r][c].color.setHex(C.sorted);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── DYNAMIC PROGRAMMING ───────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Fibonacci DP — 1D memo bar grows
+async function fibonacciDP() {
+  clearViz(); mathMeshes = [];
+  const NF = 14, S = 0.7;
+  const memo = new Array(NF).fill(null);
+  const meshes = [];
+  for (let i = 0; i < NF; i++) {
+    const x = (i - (NF-1)/2) * S;
+    const mat = makeMat(C.miss);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.4, 0.55), mat);
+    mesh.position.set(x, 0.2, 0); scene.add(mesh); vizObjects.push(mesh); meshes.push(mat);
+  }
+  addGrid(NF * S + 2);
+  camera.position.set(0, 4, 10); camera.lookAt(0, 1, 0); controls.target.set(0, 1, 0); controls.update();
+  showLegend([null, 'Reading memo', null, 'Computing', 'Filled']);
+  memo[0] = 0; meshes[0].color.setHex(C.sorted); await tick();
+  memo[1] = 1; meshes[1].color.setHex(C.sorted); await tick();
+  for (let i = 2; i < NF && !stopFlag; i++) {
+    meshes[i-2].color.setHex(C.cmp); meshes[i-1].color.setHex(C.cmp); cmp += 2; updateStats(); await tick();
+    memo[i] = memo[i-1] + memo[i-2]; swp++;
+    meshes[i].color.setHex(C.curr); updateStats(); await tick();
+    meshes[i-2].color.setHex(C.sorted); meshes[i-1].color.setHex(C.sorted); meshes[i].color.setHex(C.sorted);
+  }
+}
+
+// Kadane's — find max subarray; bars colored running
+async function kadanes() {
+  initSort();
+  await sleep(150);
+  let maxSum = -Infinity, curSum = 0, bestL = 0, bestR = 0, curL = 0;
+  for (let i = 0; i < N && !stopFlag; i++) {
+    bc(i, C.cmp); cmp++; updateStats(); await tick();
+    if (curSum < 0) { curSum = arr[i]; curL = i; } else { curSum += arr[i]; }
+    if (curSum > maxSum) { maxSum = curSum; bestL = curL; bestR = i; swp++; updateStats(); }
+    bc(i, C.def);
+  }
+  for (let i = bestL; i <= bestR; i++) bc(i, C.sorted);
+}
+
+// Edit Distance — 2D grid (Levenshtein matrix)
+async function editDistance() {
+  clearViz();
+  const A = 'KITTEN', B = 'SITTING';
+  const m = A.length + 1, n = B.length + 1, S = 0.65;
+  const dp = Array.from({length: m}, () => new Array(n).fill(0));
+  const meshes = [];
+  for (let r = 0; r < m; r++) {
+    const rowMeshes = [];
+    for (let c = 0; c < n; c++) {
+      const x = (c - (n-1)/2) * S, y = -(r - (m-1)/2) * S;
+      const mat = makeMat(C.miss);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.18), mat);
+      mesh.position.set(x, y, 0); scene.add(mesh); vizObjects.push(mesh); rowMeshes.push(mat);
+    }
+    meshes.push(rowMeshes);
+  }
+  camera.position.set(0, 0, 8); camera.lookAt(0, 0, 0); controls.target.set(0, 0, 0); controls.update();
+  showLegend([null, 'Comparing', 'Substitute', null, 'Filled']);
+  // Initialize first row/col
+  for (let i = 0; i < m; i++) { dp[i][0] = i; meshes[i][0].color.setHex(C.sorted); }
+  for (let j = 0; j < n; j++) { dp[0][j] = j; meshes[0][j].color.setHex(C.sorted); }
+  await sleep(200);
+  for (let i = 1; i < m && !stopFlag; i++) {
+    for (let j = 1; j < n; j++) {
+      if (stopFlag) return;
+      meshes[i][j].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+      if (A[i-1] === B[j-1]) dp[i][j] = dp[i-1][j-1];
+      else dp[i][j] = 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+      swp++; updateStats();
+      meshes[i][j].color.setHex(C.sorted);
+    }
+  }
+}
+
+// Longest Common Subsequence — 2D grid
+async function lcs() {
+  clearViz();
+  const A = 'AGCAT', B = 'GACTA';
+  const m = A.length + 1, n = B.length + 1, S = 0.7;
+  const dp = Array.from({length: m}, () => new Array(n).fill(0));
+  const meshes = [];
+  for (let r = 0; r < m; r++) {
+    const rowMeshes = [];
+    for (let c = 0; c < n; c++) {
+      const x = (c - (n-1)/2) * S, y = -(r - (m-1)/2) * S;
+      const mat = makeMat(C.miss);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.2), mat);
+      mesh.position.set(x, y, 0); scene.add(mesh); vizObjects.push(mesh); rowMeshes.push(mat);
+    }
+    meshes.push(rowMeshes);
+  }
+  camera.position.set(0, 0, 7); camera.lookAt(0, 0, 0); controls.target.set(0, 0, 0); controls.update();
+  showLegend([null, 'Comparing', null, 'Match', 'Filled']);
+  for (let i = 0; i < m; i++) meshes[i][0].color.setHex(C.def);
+  for (let j = 0; j < n; j++) meshes[0][j].color.setHex(C.def);
+  await sleep(200);
+  for (let i = 1; i < m && !stopFlag; i++) {
+    for (let j = 1; j < n; j++) {
+      if (stopFlag) return;
+      meshes[i][j].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+      if (A[i-1] === B[j-1]) { dp[i][j] = dp[i-1][j-1] + 1; meshes[i][j].color.setHex(C.curr); swp++; }
+      else { dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]); meshes[i][j].color.setHex(C.sorted); }
+      updateStats(); await tick();
+    }
+  }
+}
+
+// LIS — longest increasing subsequence (using bars)
+async function lis() {
+  initSort();
+  await sleep(150);
+  const dp = new Array(N).fill(1);
+  let bestEnd = 0;
+  for (let i = 0; i < N && !stopFlag; i++) {
+    bc(i, C.pivot); await tick();
+    for (let j = 0; j < i; j++) {
+      if (stopFlag) return;
+      cmp++;
+      if (arr[j] < arr[i]) {
+        bc(j, C.cmp); updateStats(); await tick();
+        if (dp[j] + 1 > dp[i]) { dp[i] = dp[j] + 1; swp++; }
+        bc(j, C.def);
+      }
+    }
+    bc(i, C.def);
+    if (dp[i] > dp[bestEnd]) bestEnd = i;
+    updateStats();
+  }
+  // Mark longest path
+  let cur = dp[bestEnd];
+  for (let i = bestEnd; i >= 0; i--) {
+    if (dp[i] === cur && (i === bestEnd || arr[i] < arr[i+1])) { bc(i, C.sorted); cur--; }
+  }
+}
+
+// 0/1 Knapsack — 2D grid
+async function knapsack() {
+  clearViz();
+  const items = [{w:2,v:3},{w:3,v:4},{w:4,v:5},{w:5,v:6}];
+  const W = 8, n = items.length;
+  const dp = Array.from({length: n+1}, () => new Array(W+1).fill(0));
+  const S = 0.55;
+  const meshes = [];
+  for (let r = 0; r <= n; r++) {
+    const rowMeshes = [];
+    for (let c = 0; c <= W; c++) {
+      const x = (c - W/2) * S, y = -(r - n/2) * S;
+      const mat = makeMat(C.miss);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.15), mat);
+      mesh.position.set(x, y, 0); scene.add(mesh); vizObjects.push(mesh); rowMeshes.push(mat);
+    }
+    meshes.push(rowMeshes);
+  }
+  camera.position.set(0, 0, 7); camera.lookAt(0, 0, 0); controls.target.set(0, 0, 0); controls.update();
+  showLegend([null, 'Considering', 'Skip', 'Take', 'Filled']);
+  for (let r = 1; r <= n && !stopFlag; r++) {
+    for (let c = 0; c <= W; c++) {
+      if (stopFlag) return;
+      meshes[r][c].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+      const it = items[r-1];
+      if (it.w <= c) {
+        const take = dp[r-1][c-it.w] + it.v, skip = dp[r-1][c];
+        dp[r][c] = Math.max(take, skip);
+        meshes[r][c].color.setHex(take > skip ? C.curr : C.swap); swp++;
+      } else {
+        dp[r][c] = dp[r-1][c];
+        meshes[r][c].color.setHex(C.swap);
+      }
+      updateStats(); await tick();
+      meshes[r][c].color.setHex(C.sorted);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── STRINGS ───────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+const TXT = 'ABABCABABCABABCD', PAT = 'ABABCD';
+
+function initString() {
+  clearViz();
+  const S = 0.6;
+  const txtMats = [], patMats = [];
+  for (let i = 0; i < TXT.length; i++) {
+    const x = (i - (TXT.length-1)/2) * S;
+    const mat = makeMat(C.def);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), mat);
+    mesh.position.set(x, 1, 0); scene.add(mesh); vizObjects.push(mesh); txtMats.push(mat);
+  }
+  for (let i = 0; i < PAT.length; i++) {
+    const mat = makeMat(C.pivot);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), mat);
+    mesh.position.set((i - (TXT.length-1)/2) * S, 0, 0); scene.add(mesh); vizObjects.push(mesh); patMats.push({mat, mesh});
+  }
+  addGrid(TXT.length * S + 2);
+  camera.position.set(0, 4, 10); camera.lookAt(0, 0.5, 0); controls.target.set(0, 0.5, 0); controls.update();
+  showLegend(['Text', 'Comparing', 'Mismatch', 'Pattern', 'Match']);
+  return { txtMats, patMats, S };
+}
+
+// KMP — pre-compute failure, then slide
+async function kmpSearch() {
+  const { txtMats, patMats, S } = initString();
+  await sleep(200);
+  // Failure function
+  const lps = new Array(PAT.length).fill(0);
+  for (let i = 1, len = 0; i < PAT.length;) {
+    if (PAT[i] === PAT[len]) { lps[i++] = ++len; }
+    else if (len) len = lps[len-1];
+    else lps[i++] = 0;
+  }
+  let i = 0, j = 0;
+  while (i < TXT.length && !stopFlag) {
+    // Slide pattern
+    for (let k = 0; k < PAT.length; k++) patMats[k].mesh.position.x = ((i - j + k) - (TXT.length-1)/2) * S;
+    txtMats[i].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+    if (PAT[j] === TXT[i]) {
+      patMats[j].mat.color.setHex(C.sorted);
+      txtMats[i].color.setHex(C.sorted);
+      i++; j++;
+      if (j === PAT.length) {
+        for (let k = 0; k < PAT.length; k++) patMats[k].mat.color.setHex(C.found);
+        return;
+      }
+    } else {
+      txtMats[i].color.setHex(C.swap); swp++; await tick();
+      txtMats[i].color.setHex(C.def);
+      for (let k = 0; k < PAT.length; k++) patMats[k].mat.color.setHex(C.pivot);
+      if (j !== 0) j = lps[j-1]; else i++;
+    }
+  }
+}
+
+// Rabin–Karp — rolling hash
+async function rabinKarp() {
+  const { txtMats, patMats, S } = initString();
+  await sleep(200);
+  const m = PAT.length, n = TXT.length, BASE = 256, MOD = 101;
+  let patHash = 0, txtHash = 0, h = 1;
+  for (let i = 0; i < m - 1; i++) h = (h * BASE) % MOD;
+  for (let i = 0; i < m; i++) {
+    patHash = (BASE * patHash + PAT.charCodeAt(i)) % MOD;
+    txtHash = (BASE * txtHash + TXT.charCodeAt(i)) % MOD;
+  }
+  for (let i = 0; i <= n - m && !stopFlag; i++) {
+    for (let k = 0; k < m; k++) patMats[k].mesh.position.x = ((i + k) - (TXT.length-1)/2) * S;
+    for (let k = 0; k < m; k++) txtMats[i+k].color.setHex(C.cmp);
+    cmp++; updateStats(); await tick();
+    if (patHash === txtHash) {
+      let match = true;
+      for (let j = 0; j < m; j++) if (TXT[i+j] !== PAT[j]) { match = false; break; }
+      if (match) {
+        for (let k = 0; k < m; k++) { txtMats[i+k].color.setHex(C.found); patMats[k].mat.color.setHex(C.found); }
+        return;
+      }
+    }
+    for (let k = 0; k < m; k++) txtMats[i+k].color.setHex(C.def);
+    if (i < n - m) {
+      txtHash = (BASE * (txtHash - TXT.charCodeAt(i) * h) + TXT.charCodeAt(i + m)) % MOD;
+      if (txtHash < 0) txtHash += MOD;
+      swp++;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // ── UI WIRING ─────────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
 function initViz(cat, algo) {
@@ -904,6 +1432,7 @@ function initViz(cat, algo) {
   if(cat==='search') { target=parseInt(document.getElementById('target-input').value)||12; initSearch(sorted); }
   if(cat==='graph')  initGraph();
   if(cat==='tree')   initTree();
+  // math/dp/string init themselves inside their algo functions
 }
 
 async function runAlgo() {
@@ -920,9 +1449,14 @@ async function runAlgo() {
     bubble:bubbleSort, selection:selectionSort, insertion:insertionSort,
     quick:quickSort, merge:mergeSort, heap:heapSort, shell:shellSort,
     counting:countingSort, radix:radixSort,
+    cocktail:cocktailSort, comb:combSort, cycle:cycleSort, tim:timSort,
     linear:linearSearch, binary:binarySearch, jump:jumpSearch, interpolation:interpolationSearch,
     bfs:bfsGraph, dfs:dfsGraph, dijkstra, astar:aStar, prim:primMST,
+    bellman:bellmanFord, kruskal:kruskalMST,
     bst:bstSearch, inorder:()=>traverse('in'), preorder:()=>traverse('pre'), postorder:()=>traverse('post'),
+    sieve, euclid:euclidGCD, pascal,
+    fibonacci:fibonacciDP, kadane:kadanes, edit:editDistance, lcs, lis, knapsack,
+    kmp:kmpSearch, rabin:rabinKarp,
   };
   if(map[currentAlgo]) await map[currentAlgo]();
 
