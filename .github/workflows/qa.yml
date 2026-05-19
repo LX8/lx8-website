@@ -37,11 +37,13 @@ jobs:
       - name: lychee (offline, internal links only)
         uses: lycheeverse/lychee-action@v2
         with:
-          # lychee v0.23 expects positional inputs as a single line and uses
-          # --mode='nocheck' to disable URL resolution; we want full offline +
-          # only-relative-paths behaviour. Skip mail and external URLs.
+          # --root-dir lets lychee resolve root-relative links like /about.html
+          # against the repo root rather than the filesystem root.
+          # --exclude '^https?://' skips external URLs; CI shouldn't fail because
+          # LinkedIn rate-limits us.
           args: |
             --offline --no-progress --include-fragments
+            --root-dir "$GITHUB_WORKSPACE"
             --exclude "^mailto:"
             --exclude "^https?://"
             "**/*.html" "**/*.md"
