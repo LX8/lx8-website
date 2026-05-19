@@ -1,7 +1,7 @@
 {
   "name": "Lx8 Labs",
   "short_name": "Lx8",
-  "description": "DevOps consulting, AI tools, courses and open research. Founded 2013 by Alexei Ferreira.",
+  "description": "A small research-and-engineering studio in the Bell Labs lineage. Built around DevOps, AI, and theoretical physics. Founded 2013, based in Berlin.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -24,14 +24,24 @@
   ],
   "shortcuts": [
     {
+      "name": "Products",
+      "url": "/products.html",
+      "description": "All four products"
+    },
+    {
       "name": "Algorithm Lab",
       "url": "/algorithms.html",
       "description": "39 algorithms in 3D"
     },
     {
-      "name": "Light, Gravity & Time",
-      "url": "/theory.html",
-      "description": "Bipartite physics theory visualization"
+      "name": "aimem",
+      "url": "/aimem.html",
+      "description": "AI memory, one canonical source"
+    },
+    {
+      "name": "Tupã IDE",
+      "url": "/tupa.html",
+      "description": "Native macOS dev environment"
     }
   ]
 }

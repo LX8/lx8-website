@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Alexei Ferreira · Lx8 Labs</title>
+  <meta name="description" content="Alexei Ferreira — DevOps engineer for 13 years, now also building AI tools and writing physics. Founded Lx8 Labs in 2013. Berlin." />
+  <link rel="canonical" href="https://lx8.dev/about.html" />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" />
+  <meta name="theme-color" content="#6366f1" />
+
+  <meta property="og:type" content="profile" />
+  <meta property="og:url" content="https://lx8.dev/about.html" />
+  <meta property="og:title" content="Alexei Ferreira — Lx8 Labs" />
+  <meta property="og:description" content="13 years of DevOps, now building AI tools and writing physics. Berlin." />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/7157081?v=4" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Alexei Lemos Cavalcante Ferreira",
+    "alternateName": "Alexei Ferreira",
+    "jobTitle": "Founder · Senior DevOps & AI Engineer",
+    "url": "https://lx8.dev/about.html",
+    "image": "https://avatars.githubusercontent.com/u/7157081?v=4",
+    "worksFor": { "@type": "Organization", "name": "Lx8 Labs", "url": "https://lx8.dev" },
+    "sameAs": [
+      "https://github.com/LX8",
+      "https://github.com/LeKCei",
+      "https://de.linkedin.com/in/lx8-alexei"
+    ],
+    "knowsAbout": ["DevOps", "Kubernetes", "AWS", "GCP", "Python", "Go", "TypeScript", "Rust", "Artificial Intelligence", "LLMs", "Theoretical Physics", "General Relativity"]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  
+  <link href="https://fonts.bunny.net/css?family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.bunny.net/css?family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" /></noscript>
+
+  <!-- Prerender adjacent pages on hover (Chrome 121+, Speculation Rules) -->
+  <script type="speculationrules">
+  {
+    "prerender": [{
+      "where": { "and": [{ "href_matches": "/*" }, { "not": { "href_matches": "/*.html?*" } }] },
+      "eagerness": "moderate"
+    }]
+  }
+  </script>
+
+  <style>
+    /* Cross-document View Transitions (Chrome 126+, Safari 18.2+) */
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.28s; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --bg1: rgba(255,255,255,0.025); --bg2: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.07); --border-hi: rgba(129,140,248,0.28);
+      --ind: #6366f1; --ind3: #a5b4fc; --ind4: #818cf8; --ind-d: rgba(99,102,241,0.12);
+      --blue4: #60a5fa; --green4: #34d399; --amber: #fbbf24;
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
+      --r: 14px; --r-sm: 8px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.75; font-feature-settings: 'ss01', 'cv11', 'cv10'; }
+    a { color: inherit; text-decoration: none; }
+    p { color: var(--text2); }
+    p strong { color: var(--text); font-weight: 500; }
+    p em { color: var(--ind3); font-style: normal; }
+
+    #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    #bg::before { content:''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px); background-size: 30px 30px; mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 30%, transparent 100%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(110px); }
+    .b1 { width: 60vw; height: 50vh; background: radial-gradient(circle, rgba(99,102,241,0.16), transparent 70%); top: -10vh; left: -10vw; }
+    .b2 { width: 45vw; height: 50vh; background: radial-gradient(circle, rgba(59,130,246,0.10), transparent 70%); bottom: -5vh; right: -5vw; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 2.5rem; transition: all 0.3s; }
+    nav.solid { background: rgba(0,0,0,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 2.5rem; }
+    .logo-a { display: flex; align-items: center; gap: 9px; }
+    .logo-img { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.5); box-shadow: 0 0 10px rgba(99,102,241,0.35); }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; }
+    .logo-txt span { color: var(--ind4); }
+    .back-link { font-size: 0.84rem; color: var(--text2); padding: 0.4rem 1rem; border-radius: var(--r-sm); border: 1px solid var(--border); transition: all 0.2s; }
+    .back-link:hover { color: var(--text); border-color: var(--border-hi); background: var(--bg2); }
+
+    /* Hero */
+    #hero { position: relative; z-index: 1; padding: 9rem 1.75rem 3rem; max-width: 900px; margin: 0 auto; text-align: center; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-hi); background: var(--ind-d); border-radius: 999px; padding: 5px 14px; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ind3); margin-bottom: 1.4rem; }
+    .chip-dot { width: 6px; height: 6px; background: var(--ind4); border-radius: 50%; box-shadow: 0 0 6px var(--ind4); animation: blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.35 } }
+    .avatar { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto 1.75rem; border: 2px solid rgba(129,140,248,0.4); box-shadow: 0 0 40px rgba(99,102,241,0.25); }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.4rem, 5.5vw, 4rem); font-weight: 700; letter-spacing: -1.8px; line-height: 1.05; margin-bottom: 0.7rem; }
+    .hero-role { font-size: 1rem; color: var(--ind3); font-weight: 500; margin-bottom: 1rem; }
+    .hero-loc { font-size: 0.85rem; color: var(--text3); }
+    .hero-loc::before { content: '📍 '; }
+
+    /* Sections */
+    section.content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 0 1.75rem 3rem; }
+    h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: -0.8px; margin: 2.75rem 0 1rem; }
+    h2:first-of-type { margin-top: 1.5rem; }
+    section.content p { font-size: 1.02rem; margin-bottom: 1.1rem; }
+
+    /* Timeline */
+    .timeline { display: flex; flex-direction: column; gap: 0; margin: 1.5rem 0; position: relative; padding-left: 22px; }
+    .timeline::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 1px; background: linear-gradient(180deg, transparent, var(--border-hi) 10%, var(--border-hi) 90%, transparent); }
+    .t-item { position: relative; padding: 0.4rem 0 1rem; }
+    .t-item::before { content: ''; position: absolute; left: -22px; top: 1rem; width: 11px; height: 11px; border-radius: 50%; background: var(--ind4); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--ind4); }
+    .t-year { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.3rem; }
+    .t-title { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+    .t-body { font-size: 0.92rem; color: var(--text2); }
+
+    /* Stack pills */
+    .pills-grid { display: flex; flex-wrap: wrap; gap: 6px; margin: 1rem 0 1.5rem; }
+    .pill { font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: var(--bg1); border: 1px solid var(--border); color: var(--text2); }
+    .pill strong { color: var(--ind3); font-weight: 700; }
+
+    /* CTA */
+    .cta-box { padding: 1.6rem 1.75rem; background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98)); border: 1px solid var(--border-hi); border-radius: var(--r); margin-top: 2rem; }
+    .cta-box h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .cta-box h3 span { color: var(--ind3); }
+    .cta-box p { font-size: 0.88rem; margin-bottom: 1rem; }
+    .cta-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 7px; font-size: 0.86rem; font-weight: 600; padding: 0.6rem 1.2rem; border-radius: var(--r-sm); transition: all 0.2s; }
+    .btn-p { background: var(--ind); color: #fff; box-shadow: 0 4px 18px rgba(99,102,241,0.35); }
+    .btn-p:hover { background: #4f51e8; transform: translateY(-2px); }
+    .btn-g { background: var(--bg1); color: var(--text2); border: 1px solid var(--border); }
+    .btn-g:hover { color: var(--text); border-color: var(--border-hi); }
+
+    /* Footer */
+    footer { padding: 2rem 2.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; position: relative; z-index: 1; }
+    .ft-left { display: flex; align-items: center; gap: 9px; }
+    .ft-logo { width: 24px; height: 24px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); }
+    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ft-copy { font-size: 0.77rem; color: var(--text3); }
+    .ft-copy a { color: var(--ind4); }
+    .ft-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .ft-links a { font-size: 0.77rem; color: var(--text3); transition: color 0.2s; }
+    .ft-links a:hover { color: var(--ind4); }
+
+    /* Reveal */
+    .r { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+    .r.in { opacity: 1; transform: none; }
+    .r.d1 { transition-delay: 0.07s; } .r.d2 { transition-delay: 0.14s; }
+
+    @media (max-width: 600px) {
+      nav { padding: 1.1rem 1.25rem; } nav.solid { padding: 0.75rem 1.25rem; }
+      footer { flex-direction: column; }
+    }
+
+    /* ── ACCESSIBILITY (WCAG 2.2) ── */
+    .skip-link { position: absolute; top: -100px; left: 0; background: var(--ind); color: #fff; padding: 0.6rem 1rem; border-radius: 0 0 6px 0; z-index: 999; font-weight: 600; font-size: 0.85rem; text-decoration: none; transition: top 0.15s; }
+    .skip-link:focus { top: 0; outline: 2px solid #fff; outline-offset: -4px; }
+    *:focus { outline: none; }
+    a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--ind4); outline-offset: 2px; border-radius: 4px;
+    }
+    .ft-links a, .back-link { min-height: 24px; display: inline-flex; align-items: center; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+      .r { opacity: 1 !important; transform: none !important; }
+      .blob { animation: none !important; }
+      .chip-dot { animation: none !important; }
+    }
+  </style>
+  <meta name="color-scheme" content="dark" />
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<nav id="nav">
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs"/></div>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
+  </a>
+  <a href="/" class="back-link">← Home</a>
+</nav>
+
+<section id="hero">
+  <div class="chip"><div class="chip-dot"></div>About</div>
+  <div class="avatar"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Alexei Ferreira"/></div>
+  <h1>Alexei Ferreira</h1>
+  <div class="hero-role">Founder · Senior DevOps & AI Engineer</div>
+  <div class="hero-loc">Berlin, Germany · Originally from Brazil</div>
+</section>
+
+<section class="content" id="main">
+  <p class="r" style="font-size:0.92rem; color:var(--ind3); padding:0.85rem 1.1rem; background:var(--bg1); border:1px solid var(--border-hi); border-radius:var(--r); margin: 1.5rem 0 2.5rem;">
+    <strong>Founder, Lx8 Labs.</strong> This page is the long-form personal bio.
+    The studio overview lives on <a href="/team.html" style="color:var(--ind4); text-decoration:underline; text-underline-offset:3px;">Team</a>; the company front lives at <a href="/" style="color:var(--ind4); text-decoration:underline; text-underline-offset:3px;">lx8.dev</a>.
+  </p>
+  <h2 class="r">In one paragraph</h2>
+  <p class="r d1">I've been a <strong>DevOps engineer for 13 years</strong>. Started in 2013 in Brazil, moved to Berlin, ran production for fintechs and platforms, built K8s clusters for teams of 5 and teams of 500. About three years ago I started moving into <em>AI engineering</em> — not the demo kind, the boring infrastructure underneath that keeps an AI feature from embarrassing you when it ships. <strong>Lx8 Labs</strong> is the studio I'm putting all of that into: consulting work, the courses I always wished existed, and a couple of products I actually use myself (Tupã IDE among them). On the side I write physics papers — there's a Theory of Everything project under peer review at Foundations of Physics as I type this.</p>
+
+  <h2 class="r">Path</h2>
+  <div class="timeline">
+    <div class="t-item r d1">
+      <div class="t-year">2013</div>
+      <div class="t-title">Started DevOps consulting in Brazil</div>
+      <div class="t-body">First Linux SRE jobs in São Paulo. Founded Lx8 as a personal vehicle for freelance work that year.</div>
+    </div>
+    <div class="t-item r d1">
+      <div class="t-year">2016–2020</div>
+      <div class="t-title">Platform engineering · fintech, e-commerce</div>
+      <div class="t-body">K8s, AWS, Terraform shops. Built and operated production. Got good at incident response, observability, and saying no to half-baked architectures.</div>
+    </div>
+    <div class="t-item r d1">
+      <div class="t-year">2020</div>
+      <div class="t-title">Moved to Berlin</div>
+      <div class="t-body">Different climate, same containers. Started thinking seriously about what a small independent studio could look like.</div>
+    </div>
+    <div class="t-item r d2">
+      <div class="t-year">2023</div>
+      <div class="t-title">Pivoted toward AI engineering</div>
+      <div class="t-body">LLMs hit a quality threshold where they were worth productionizing seriously. Started shipping AI features and learning what the boring layer underneath needs to look like.</div>
+    </div>
+    <div class="t-item r d2">
+      <div class="t-year">2024</div>
+      <div class="t-title">Tupã IDE prototype</div>
+      <div class="t-body">Frustrated with Electron IDEs. Started a native macOS editor in Swift + Rust + Metal. Still in active development.</div>
+    </div>
+    <div class="t-item r d2">
+      <div class="t-year">2026</div>
+      <div class="t-title">Lx8 Labs as a studio</div>
+      <div class="t-body">Consolidated consulting + courses + products + research under one roof at lx8.dev. Submitted the bipartite-theory paper to Foundations of Physics in May.</div>
+    </div>
+  </div>
+
+  <h2 class="r">What I do well</h2>
+  <p class="r d1">Taking systems people are afraid of and making them legible. The fintech that couldn't release on Fridays, the K8s cluster that worked but no one understood, the AI feature that demoed great and broke under 10 concurrent users. The hands-on, no-bullshit middle layer between "what does this metric mean" and "how do we ship this safely tomorrow."</p>
+
+  <h2 class="r">Stack I'm fluent in</h2>
+  <div class="pills-grid r d1">
+    <span class="pill"><strong>Kubernetes</strong></span>
+    <span class="pill"><strong>Terraform</strong></span>
+    <span class="pill"><strong>AWS</strong></span>
+    <span class="pill"><strong>GCP</strong></span>
+    <span class="pill"><strong>Python</strong></span>
+    <span class="pill"><strong>Go</strong></span>
+    <span class="pill"><strong>TypeScript</strong></span>
+    <span class="pill"><strong>Rust</strong></span>
+    <span class="pill"><strong>Swift</strong></span>
+    <span class="pill"><strong>PostgreSQL</strong></span>
+    <span class="pill"><strong>GitHub Actions</strong></span>
+    <span class="pill"><strong>Helm</strong></span>
+    <span class="pill"><strong>Argo</strong></span>
+    <span class="pill"><strong>Prometheus</strong> · Grafana</span>
+    <span class="pill"><strong>OpenTelemetry</strong></span>
+    <span class="pill"><strong>LLMs</strong> · vLLM, TGI, Anthropic, OpenAI</span>
+    <span class="pill"><strong>Three.js</strong></span>
+  </div>
+
+  <h2 class="r">What I write about</h2>
+  <p class="r d1">Lately: AI cost control, prompt versioning, the gap between "model accuracy" and "user-visible reliability." Older posts in the queue: Kubernetes failure modes nobody warns you about, deploy pipeline rewrites, the consulting business itself. <em>Insights</em> section on the homepage carries the queue.</p>
+
+  <h2 class="r">Theoretical physics, briefly</h2>
+  <p class="r d1">Independent research on a <strong>bipartite reading of the Einstein–Maxwell system</strong> — organizing light–gravity coupling into three orthogonal channels (gravitoelectric, gravitomagnetic, Λ-cosmological). A paper went to <em>Foundations of Physics</em> (Springer) in May 2026. Whether it lands or not, the work lives in the open. The interactive 3D version is the <a href="/theory.html" style="color:var(--ind4);">"Light, Gravity &amp; Time"</a> visualization on this site.</p>
+
+  <h2 class="r">Outside engineering</h2>
+  <p class="r d1">Hiking, Latin guitar (bad but enthusiastic), Brazilian Portuguese as a first language, German learned mostly from neighbours' kids. Believe small companies built on long relationships beat fast-growth ones run on investor patience.</p>
+
+  <div class="cta-box r d1">
+    <h3>Want to <span>work together</span>?</h3>
+    <p>Open for consulting engagements (DevOps audits, AI feature productionization, platform reviews) and private cohorts of any course on this site. I work with teams of 1 to ~50 engineers and prefer fixed-scope projects to retainers.</p>
+    <div class="cta-actions">
+      <a href="/#consulting" class="btn btn-p">Send a brief →</a>
+      <a href="/courses.html" class="btn btn-g">Course catalog</a>
+      <a href="https://github.com/LX8" target="_blank" rel="noopener" class="btn btn-g">GitHub</a>
+      <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener" class="btn btn-g">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-left">
+    <div class="ft-logo"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8"/></div>
+    <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="/">lx8.dev</a></span>
+  </div>
+  <div class="ft-links">
+    <a href="/">Home</a>
+    <a href="/courses.html">Courses</a>
+    <a href="/algorithms.html">Algorithm Lab</a>
+    <a href="/tupa.html">Tupã IDE</a>
+    <a href="/theory.html">Research</a>
+    <a href="/#consulting">Consulting</a>
+    <a href="/impressum.html">Impressum</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 50), { passive: true });
+  const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } }), { threshold: 0.1 });
+  document.querySelectorAll('.r').forEach(el => ro.observe(el));
+</script>
+</body>
+</html>

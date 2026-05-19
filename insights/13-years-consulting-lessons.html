@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>13 years of DevOps consulting: eight lessons · Lx8 Labs</title>
+  <meta name="description" content="What I'd tell my 2013 self about running a one-person DevOps consultancy. Sell outcomes, charge for thinking, hire your replacement — and seven more." />
+  <link rel="canonical" href="https://lx8.dev/insights/13-years-consulting-lessons.html" />
+  <link rel="alternate" type="application/rss+xml" title="Lx8 Labs — Insights" href="/feed.xml" />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="color-scheme" content="dark" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lx8.dev/insights/13-years-consulting-lessons.html" />
+  <meta property="og:title" content="13 years of DevOps consulting: eight lessons" />
+  <meta property="og:description" content="What I'd tell my 2013 self about running a one-person DevOps consultancy." />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/7157081?v=4" />
+  <meta property="article:published_time" content="2026-05-11" />
+  <meta property="article:author" content="Alexei Ferreira" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "13 years of DevOps consulting: eight lessons",
+    "description": "What I'd tell my 2013 self about running a one-person DevOps consultancy.",
+    "datePublished": "2026-05-11",
+    "author": { "@type": "Person", "name": "Alexei Lemos Cavalcante Ferreira" },
+    "publisher": { "@type": "Organization", "name": "Lx8 Labs", "logo": { "@type": "ImageObject", "url": "https://avatars.githubusercontent.com/u/7157081?v=4" } },
+    "mainEntityOfPage": "https://lx8.dev/insights/13-years-consulting-lessons.html",
+    "image": "https://avatars.githubusercontent.com/u/7157081?v=4",
+    "keywords": ["consulting", "DevOps", "career", "freelancing", "fixed-scope"]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org", "@type": "WebPage",
+    "speakable": { "@type": "SpeakableSpecification", "cssSelector": [".lede", "article h2", "blockquote"] }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link href="https://fonts.bunny.net/css?family=Inter:300,400,500,600,700&family=Space+Grotesk:500,600,700&family=JetBrains+Mono:400,600&display=swap" rel="stylesheet" />
+
+  <script type="speculationrules">
+  { "prerender": [{ "where": { "and": [{ "href_matches": "/*" }, { "not": { "href_matches": "/*.html?*" } }] }, "eagerness": "moderate" }] }
+  </script>
+
+  <style>
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.28s; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050511; --bg1: rgba(255,255,255,0.025); --bg2: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.07); --border-hi: rgba(129,140,248,0.28);
+      --ind: #6366f1; --ind3: #a5b4fc; --ind4: #818cf8; --ind-d: rgba(99,102,241,0.12);
+      --green4: #34d399; --amber: #fbbf24;
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
+      --r: 14px; --r-sm: 8px;
+      --ease-spring: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.85; font-feature-settings: 'ss01', 'cv11', 'cv10'; }
+    a { color: var(--ind4); text-decoration: none; border-bottom: 1px solid rgba(129,140,248,0.3); transition: all 0.18s var(--ease-spring); }
+    a:hover { color: var(--ind3); border-bottom-color: var(--ind3); }
+    p { color: #d1d9e8; margin-bottom: 1.4rem; font-size: 1.05rem; }
+    p strong { color: var(--text); font-weight: 600; }
+    p em { color: var(--ind3); font-style: italic; }
+    h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; color: #fff; }
+
+    #progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.05); z-index: 250; }
+    #progress::after { content: ''; display: block; height: 100%; width: var(--progress, 0%); background: linear-gradient(90deg, var(--ind), var(--ind4)); transition: width 0.05s linear; }
+
+    nav { position: fixed; top: 3px; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 2.5rem; transition: all 0.3s var(--ease-spring); }
+    nav.solid { background: rgba(5,5,17,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.7rem 2.5rem; }
+    .logo-a { display: flex; align-items: center; gap: 9px; border: none; }
+    .logo-img { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.5); }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.92rem; font-weight: 600; color: #fff; }
+    .logo-txt span { color: var(--ind4); }
+    .back-link { font-size: 0.84rem; color: var(--text2); padding: 0.4rem 1rem; border-radius: var(--r-sm); border: 1px solid var(--border); transition: all 0.2s; text-decoration: none; }
+    .back-link:hover { color: var(--text); border-color: var(--border-hi); background: var(--bg2); }
+
+    article { max-width: 720px; margin: 0 auto; padding: 7rem 1.75rem 4rem; position: relative; }
+    .a-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .a-tag { font-family: 'Space Grotesk', sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ind3); background: var(--ind-d); border: 1px solid var(--border-hi); padding: 4px 12px; border-radius: 999px; }
+    .a-date, .a-read { font-size: 0.78rem; color: var(--text3); }
+    .a-date::before, .a-read::before { content: '· '; color: var(--text3); }
+    .a-date:first-of-type::before, .a-read:first-of-type::before { content: ''; }
+
+    article h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; letter-spacing: -1.6px; line-height: 1.08; margin-bottom: 1.5rem; }
+    article h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; margin: 3rem 0 1rem; padding-top: 0.5rem; }
+    article h2 .anchor { color: var(--text3); margin-right: 0.5rem; opacity: 0; transition: opacity 0.2s; text-decoration: none; border: none; font-weight: 500; }
+    article h2:hover .anchor { opacity: 1; }
+    article h2 .anchor:hover { color: var(--ind4); }
+    article h3 { font-size: 1.15rem; font-weight: 600; margin: 1.8rem 0 0.8rem; color: var(--ind3); }
+
+    .lede { font-size: 1.18rem; line-height: 1.7; color: #cbd5e1; margin-bottom: 2.5rem; padding-bottom: 1.8rem; border-bottom: 1px solid var(--border); }
+
+    blockquote {
+      margin: 1.6rem 0; padding: 1rem 1.4rem;
+      border-left: 3px solid var(--ind4); background: rgba(99,102,241,0.04);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      font-style: italic; color: var(--ind3); font-size: 1rem; line-height: 1.7;
+    }
+
+    code { font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 0.92em; background: rgba(99,102,241,0.1); color: var(--ind3); padding: 1px 7px; border-radius: 4px; border: 1px solid rgba(99,102,241,0.15); }
+
+    ul, ol { margin: 1.2rem 0 1.6rem 1.6rem; color: #d1d9e8; }
+    ul li, ol li { margin-bottom: 0.55rem; font-size: 1.02rem; line-height: 1.7; }
+
+    /* Lesson card */
+    .lesson { padding: 1.2rem 0 1.5rem; border-top: 1px solid var(--border); margin-top: 2.5rem; position: relative; }
+    .lesson:first-of-type { border-top: none; padding-top: 0; margin-top: 1.5rem; }
+    .lesson-num { font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.4rem; font-variant-numeric: tabular-nums; }
+
+    /* CTA */
+    .post-cta { margin: 3rem 0 0; padding: 1.5rem 1.75rem; background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98)); border: 1px solid var(--border-hi); border-radius: var(--r); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .post-cta-text { flex: 1; min-width: 240px; }
+    .post-cta-h { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .post-cta-p { font-size: 0.88rem; color: var(--text2); }
+    .btn { display: inline-flex; align-items: center; gap: 7px; font-size: 0.86rem; font-weight: 600; padding: 0.6rem 1.2rem; border-radius: var(--r-sm); transition: all 0.2s var(--ease-spring); text-decoration: none; border: none; }
+    .btn-p { background: var(--ind); color: #fff; box-shadow: 0 4px 18px rgba(99,102,241,0.35); }
+    .btn-p:hover { background: #4f51e8; transform: translateY(-2px); border: none; }
+
+    .byline { margin: 3rem 0 0; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 0.9rem; }
+    .by-avatar { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.4); flex-shrink: 0; border-bottom: 1.5px solid rgba(129,140,248,0.4); }
+    .by-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .by-name { font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #fff; font-size: 0.95rem; display: block; margin-bottom: 2px; text-decoration: none; border: none; }
+    .by-name:hover { color: var(--ind3); border: none; }
+    .by-bio { font-size: 0.82rem; color: var(--text2); }
+
+    footer { padding: 2rem 2.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .ft-left { display: flex; align-items: center; gap: 9px; }
+    .ft-logo { width: 24px; height: 24px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); }
+    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ft-copy { font-size: 0.77rem; color: var(--text3); }
+    .ft-copy a { color: var(--ind4); border: none; }
+    .ft-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .ft-links a { font-size: 0.77rem; color: var(--text3); border: none; }
+    .ft-links a:hover { color: var(--ind4); }
+
+    .skip-link { position: absolute; top: -100px; left: 0; background: var(--ind); color: #fff; padding: 0.6rem 1rem; border-radius: 0 0 6px 0; z-index: 999; font-weight: 600; font-size: 0.85rem; border: none; transition: top 0.15s; }
+    .skip-link:focus { top: 0; }
+    *:focus { outline: none; }
+    a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--ind4); outline-offset: 3px; border-radius: 4px; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.25rem; } nav.solid { padding: 0.65rem 1.25rem; }
+      article { padding: 6rem 1.25rem 3rem; }
+      .post-cta { flex-direction: column; align-items: flex-start; }
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<div id="progress"></div>
+
+<nav id="nav">
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs"/></div>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
+  </a>
+  <a href="/#insights" class="back-link">← Insights</a>
+</nav>
+
+<article id="main">
+  <div class="a-meta">
+    <span class="a-tag">Consulting</span>
+    <time class="a-date" datetime="2026-05-11">11 May 2026</time>
+    <span class="a-read">~14 min read</span>
+  </div>
+
+  <h1>13 years of DevOps consulting: eight lessons</h1>
+
+  <p class="lede">I started consulting in 2013, in Brazil, with a laptop and zero idea what I was doing. Thirteen years later, in Berlin, the laptop is newer and I've made every mistake worth making twice. Here are the eight that mattered most — written for the version of me who'd just printed his first business card and was about to charge €20 an hour for work that was worth ten times that.</p>
+
+  <p>Most consulting advice you read is by people who run agencies of 50 and want to sound humble, or by people who quit their job last week and want to sound like they didn't. I am neither. I have run a one-person studio long enough to see what compounds and what doesn't. The shape of that career — every win, every fired client, every "you charge what?" moment — is the only thing I'm certified to talk about.</p>
+
+  <div class="lesson">
+    <div class="lesson-num">Lesson 01</div>
+    <h2><a href="#sell-outcomes" id="sell-outcomes" class="anchor">#</a>Sell outcomes, not hours.</h2>
+    <p>This is the lesson with the biggest delta in my career. For my first seven years I sold time — €X per hour, multiply by hours, send invoice. It capped my income at the number of conscious hours in a week and forced me to optimise for visible activity instead of actual results.</p>
+    <p>The switch was simple in retrospect: <strong>"€X to migrate this cluster off CentOS"</strong> instead of <strong>"€X/h, estimated 60 hours."</strong> Same work. Same risk for me. <em>Three times the perceived value to the client</em> because they were buying a deliverable, not someone's calendar.</p>
+    <p>The shift took six months to be comfortable with. Three things made it easier:</p>
+    <ul>
+      <li>I started writing <strong>fixed-scope statements of work</strong> with a clear "you get / you don't get" list. Nothing vague.</li>
+      <li>I added a <strong>change-order clause</strong>: anything outside the scope is a new line item, quoted before work starts. Removes the resentment that kills projects.</li>
+      <li>I priced for the <em>outcome's value to them</em>, not my hours. A 4-day cluster migration that prevents one hour of outage on Black Friday is worth more than 4 days of my time. Charge for the prevention, not the work.</li>
+    </ul>
+    <blockquote>"You're not buying hours. You're buying the fact that I've done this thirty times and know which three things will break."</blockquote>
+  </div>
+
+  <div class="lesson">
+    <div class="lesson-num">Lesson 02</div>
+    <h2><a href="#first-two-weeks" id="first-two-weeks" class="anchor">#</a>The first two weeks decide everything.</h2>
+    <p>Every engagement that went badly was visibly going badly by day 10. I just refused to call it.</p>
+    <p>What "going badly" looks like: the brief keeps mutating; the technical contact is two layers below the decision-maker; another consultant is being onboarded in parallel "just to compare"; the Slack channel for the project has fewer than three of their people in it. <strong>Any one of these is a signal. Two is a verdict.</strong></p>
+    <p>The expensive thing is not exiting at week two. It's six months in, when you've shipped half a runbook nobody reads and you have to explain to your spouse why this month is leaner than the last.</p>
+    <p>My current rule: <em>week 2 sit-down with the decision-maker</em>, not the technical contact, not the project manager. Either the project is real to them and we go, or it isn't and I exit gracefully with a written "here's what's blocking you from moving forward" deliverable. The client always pays for that. They almost never feel bad about it.</p>
+  </div>
+
+  <div class="lesson">
+    <div class="lesson-num">Lesson 03</div>
+    <h2><a href="#charge-thinking" id="charge-thinking" class="anchor">#</a>Charge for thinking, not just doing.</h2>
+    <p>The most lucrative work I've ever done was a one-page architecture review that took 90 minutes of writing and saved a startup roughly €40,000 in deferred AWS commitments. The invoice was €4,000. They were thrilled.</p>
+    <p>The opposite — the lowest-value work — has always been "implementation under direct supervision." Show up, do the keystrokes, leave. The market for that is infinite and brutal.</p>
+    <p>When I quote a project now, the line item is <strong>"architecture, decisions, and ownership"</strong>. The keystrokes are downstream. If the client wants to do the keystrokes themselves with my plan, the price is the same. <em>You're paying for the plan, not the typist.</em></p>
+  </div>
+
+  <div class="lesson">
+    <div class="lesson-num">Lesson 04</div>
+    <h2><a href="#write-runbook" id="write-runbook" class="anchor">#</a>Write the runbook before the deploy.</h2>
+    <p>Every engagement now ships with a runbook before it ships code. The runbook is <strong>the deliverable</strong>. The infrastructure is the implementation detail.</p>
+    <p>Why this works:</p>
+    <ul>
+      <li>The runbook is what survives the engagement. Code rots; markdown is forever.</li>
+      <li>Writing the runbook first forces the design to be operable. If you can't explain how something fails in writing, you don't understand it.</li>
+      <li>The runbook is the artefact the client shows their CTO when justifying the spend. Make it good.</li>
+    </ul>
+    <p>My current runbooks have five sections: <em>what this thing does</em>, <em>how to deploy it</em>, <em>how it fails (top 5)</em>, <em>how to fix each failure</em>, and <em>what to do when you're paged at 3 AM and the doc lies to you</em>. That last section is the most important.</p>
+  </div>
+
+  <div class="lesson">
+    <div class="lesson-num">Lesson 05</div>
+    <h2><a href="#saying-no" id="saying-no" class="anchor">#</a>Saying no is the highest-leverage move.</h2>
+    <p>The single best investment I made in my career was developing the muscle to say no to bad work.</p>
+    <p>Bad work, in approximately the order I learned to filter it out:</p>
+    <ol>
+      <li>Clients who haggle on the first call. They will haggle on every invoice forever.</li>
+      <li>Projects where the technical lead is also the founder, also the CFO, also chronically unavailable.</li>
+      <li>"We need someone to fight with our current vendor." You're being hired as a hammer, not a builder.</li>
+      <li>Anything where the scope is "make our cloud bill smaller" with no further context. Means there's a political fight you're being invited into.</li>
+      <li>Replacements for the last consultant who was just here. Sometimes legitimate. Mostly: the client is the problem.</li>
+    </ol>
+    <p>The hard part is that <em>no</em> always feels expensive in the moment. I have left, conservatively, six figures of bad work on the table. The thing those six figures bought me is the bandwidth to do the work I'm here doing now — including writing this post.</p>
+  </div>
+
+  <div class="lesson">
+    <div class="lesson-num">Lesson 06</div>
+    <h2><a href="#hire-replacement" id="hire-replacement" class="anchor">#</a>The goal of every engagement is to hire your replacement.</h2>
+    <p>This is counterintuitive only the first time you hear it. The good consultants — the ones who get referred and re-hired — make their clients self-sufficient. The mediocre ones make their clients dependent.</p>
+    <p>The dependency model has short-term cash but a brutal ceiling. Every retainer you sign on it is one slow exit conversation in a year, often initiated by the client's CFO. You will burn that bridge.</p>
+    <p>The replacement-hire model means you teach the senior engineer who's actually going to live with this system after you leave. You pair-program. You write docs together. You sit on the post-launch retro. They don't need you in six months — and they recommend you to two new clients next year because they're now the hero internally.</p>
+    <p>I have made more money on referrals than I ever made on retainers. <em>Trust is the asset</em>, not access.</p>
+  </div>
+
+  <div class="lesson">
+    <div class="lesson-num">Lesson 07</div>
+    <h2><a href="#pre-mortem" id="pre-mortem" class="anchor">#</a>The pre-mortem call is worth ten times its time.</h2>
+    <p>Borrowed from Gary Klein's research and used everywhere from the US Army to NASA: before any non-trivial deployment, run a 30-minute meeting where the question is <em>"This deploy has failed catastrophically. We're 24 hours past the planned rollout. What happened?"</em></p>
+    <p>It's a hypothetical post-mortem. Everyone speaks. You write down every failure mode. You then go fix the top three before the actual deploy.</p>
+    <p>Three reasons this is the most undervalued meeting in consulting:</p>
+    <ul>
+      <li>It makes junior engineers contribute. They know what's fragile; they're just rarely asked.</li>
+      <li>It surfaces political risks (the "we forgot to tell legal" or "the marketing launch is the same day" kind) that pure-technical reviews miss.</li>
+      <li>It is a billable hour that prevents 40 unbillable ones.</li>
+    </ul>
+    <p>I never skip it now, even when the client says they're fine without it. Especially then.</p>
+  </div>
+
+  <div class="lesson">
+    <div class="lesson-num">Lesson 08</div>
+    <h2><a href="#renew-outcomes" id="renew-outcomes" class="anchor">#</a>Renew on outcomes, not anniversaries.</h2>
+    <p>Most consulting relationships I've seen end badly do so because they were on autopilot. A retainer hits its 12-month mark, the client doesn't really need monthly hours but doesn't want the friction of cancelling, and one day the new CTO comes in and the line item gets cut overnight.</p>
+    <p>Instead: structure the relationship around <strong>concrete next outcomes</strong>. We just shipped the AI inference fallback chain. The next outcome is "instrument the cost-per-user across the LLM provider stack." When that's done, we agree on the next thing or we wrap up cleanly.</p>
+    <p>This means I can quote fairly, the client can budget fairly, and the relationship has natural <em>off-ramps that don't feel like rejection</em>. Some of my best clients went away for a year and came back. That doesn't happen if you exit by being fired during a Q4 cost review.</p>
+  </div>
+
+  <h2><a href="#meta-lesson" id="meta-lesson" class="anchor">#</a>The meta-lesson: trust compounds, brand doesn't.</h2>
+  <p>I spent a fair number of years trying to optimise for being known. I wrote on Twitter. I went to conferences. I spoke at meetups. None of it was wasted — but almost none of it converted into paying work.</p>
+  <p>What did convert: <strong>showing up for a small number of people, repeatedly, over many years</strong>. The engineer I helped in 2017 became a CTO in 2022 and sent me his first three platform engineers. The founder I refused to take on in 2019 referred me to her two best friends from VC. The team I delivered a clean runbook for in 2021 is still in touch — they bought my AI in Production course's first private cohort in 2026.</p>
+  <p>Brand is what you say about yourself. Trust is what other people say about you when you're not in the room. <em>The second one is the only thing that compounds.</em></p>
+
+  <h2><a href="#where-i-am-now" id="where-i-am-now" class="anchor">#</a>Where this puts me, now.</h2>
+  <p>In 2026 I run a one-person studio. I take 6–8 engagements a year, no more. Each is fixed-scope, outcome-priced, and rarely longer than two months. I cap retainers at one per quarter and only with clients I'd give my password to. The rest of the time I write courses, build <a href="/tupa.html">Tupã IDE</a>, and run audits on a physics paper that may or may not survive peer review.</p>
+  <p>It is the most boring-on-paper career possible. And it is the only one I would do over.</p>
+
+  <div class="post-cta">
+    <div class="post-cta-text">
+      <div class="post-cta-h">Working on something tricky?</div>
+      <div class="post-cta-p">Two consulting slots open for the rest of Q2. Fixed scope, outcome-priced, no retainers.</div>
+    </div>
+    <a href="/#consulting" class="btn btn-p">Send a brief →</a>
+  </div>
+
+  <div class="byline">
+    <a href="/about.html" class="by-avatar"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Alexei Ferreira"/></a>
+    <div>
+      <a href="/about.html" class="by-name">Alexei Ferreira</a>
+      <span class="by-bio">DevOps engineer for 13 years, now also building AI tools and writing physics. Founder of <a href="/">Lx8 Labs</a>. Berlin.</span>
+    </div>
+  </div>
+</article>
+
+<footer>
+  <div class="ft-left">
+    <div class="ft-logo"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8"/></div>
+    <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="/">lx8.dev</a></span>
+  </div>
+  <div class="ft-links">
+    <a href="/">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/courses.html">Courses</a>
+    <a href="/#insights">Insights</a>
+    <a href="/changelog.html">Changelog</a>
+    <a href="/feed.xml">RSS</a>
+    <a href="/impressum.html">Impressum</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  const prog = document.getElementById('progress');
+  function onScroll() {
+    nav.classList.toggle('solid', scrollY > 50);
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const pct = max > 0 ? Math.min(100, scrollY / max * 100) : 0;
+    prog.style.setProperty('--progress', pct + '%');
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team — Lx8 Labs</title>
+  <meta name="description" content="How Lx8 Labs is run. Small team, long horizons. Fixed-scope engagements, in-house tools, open research. Specialists invited per project." />
+  <link rel="canonical" href="https://lx8.dev/team.html" />
+  <link rel="alternate" type="application/rss+xml" title="Lx8 Labs — Insights" href="/feed.xml" />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="color-scheme" content="dark" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lx8.dev/team.html" />
+  <meta property="og:title" content="Team — Lx8 Labs" />
+  <meta property="og:description" content="Small team. Long horizons." />
+  <meta property="og:image" content="https://lx8.dev/og-image.svg" />
+
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" />
+
+  <script type="speculationrules">
+  { "prerender": [{ "where": { "and": [{ "href_matches": "/*" }, { "not": { "href_matches": "/*.html?*" } }] }, "eagerness": "moderate" }] }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Lx8 Labs",
+    "url": "https://lx8.dev",
+    "logo": "https://avatars.githubusercontent.com/u/7157081?v=4",
+    "foundingDate": "2013",
+    "founder": { "@type": "Person", "name": "Alexei Lemos Cavalcante Ferreira", "alternateName": "Alexei Ferreira" },
+    "description": "A small research-and-engineering studio in the Bell Labs lineage. DevOps consulting, AI tools, open-source research.",
+    "sameAs": ["https://github.com/LX8", "https://de.linkedin.com/in/lx8-alexei"]
+  }
+  </script>
+
+  <style>
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.36s; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --bg1: rgba(255,255,255,0.025); --bg2: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.07); --border-hi: rgba(129,140,248,0.28);
+      --ind: #6366f1; --ind3: #a5b4fc; --ind4: #818cf8; --ind-d: rgba(99,102,241,0.12);
+      --amber: #fbbf24; --green4: #34d399;
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
+      --r: 14px; --r-sm: 8px;
+      --ease-dream: cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display: 'Fraunces', 'EB Garamond', Georgia, serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.8; font-feature-settings: 'ss01', 'cv11', 'cv10'; }
+    a { color: var(--ind4); text-decoration: none; border-bottom: 1px solid rgba(129,140,248,0.3); transition: all 0.4s var(--ease-dream); }
+    a:hover { color: var(--ind3); border-bottom-color: var(--ind3); }
+    p { color: #d1d9e8; margin-bottom: 1.3rem; font-size: 1.04rem; }
+    p strong { color: var(--text); font-weight: 600; }
+    p em { color: var(--ind3); font-style: italic; }
+    .display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; }
+    .display em { font-style: italic; color: var(--amber); }
+
+    #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    #bg::before { content:''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.045) 1px, transparent 1px); background-size: 32px 32px; mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 30%, transparent 100%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .b1 { width: 50vw; height: 45vh; background: radial-gradient(circle, rgba(99,102,241,0.16), transparent 70%); top: -10vh; left: -10vw; animation: b1 16s ease-in-out infinite alternate; }
+    .b2 { width: 40vw; height: 40vh; background: radial-gradient(circle, rgba(251,191,36,0.05), transparent 70%); bottom: 5vh; right: -5vw; animation: b2 22s ease-in-out infinite alternate; }
+    @keyframes b1 { to { transform: translate(3vw, 4vh) scale(1.05); } }
+    @keyframes b2 { to { transform: translate(-3vw, -3vh) scale(1.04); } }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 2.5rem; transition: all 0.4s var(--ease-dream); }
+    nav.solid { background: rgba(0,0,0,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 2.5rem; }
+    .logo-a { display: flex; align-items: center; gap: 9px; border: none; }
+    .logo-img { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.5); }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: #fff; }
+    .logo-txt span { color: var(--ind4); }
+    .back-link { font-size: 0.84rem; color: var(--text2); padding: 0.4rem 1rem; border-radius: var(--r-sm); border: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: all 0.3s var(--ease-dream); }
+    .back-link:hover { color: var(--text); border-color: var(--border-hi); background: var(--bg2); border-bottom-color: var(--border-hi); }
+
+    /* Hero */
+    #hero { position: relative; z-index: 1; padding: 9rem 1.75rem 3rem; max-width: 760px; margin: 0 auto; text-align: center; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-hi); background: var(--ind-d); border-radius: 999px; padding: 5px 14px; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ind3); margin-bottom: 1.6rem; }
+    .chip-dot { width: 6px; height: 6px; background: var(--ind4); border-radius: 50%; animation: blink 2.4s ease-in-out infinite; }
+    @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.35 } }
+    h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.4rem, 5.6vw, 4rem); letter-spacing: -0.035em; line-height: 1.04; color: #fff; margin-bottom: 0.8rem; }
+    h1 em { font-style: italic; font-weight: 400; color: var(--amber); }
+    .hero-sub { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text2); }
+
+    /* Sections */
+    section.content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 0 1.75rem 3rem; }
+    h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.5rem, 3vw, 2rem); color: #fff; letter-spacing: -0.02em; margin: 3rem 0 1rem; }
+    h2 em { font-style: italic; color: var(--ind3); font-weight: 400; }
+
+    /* Founder card */
+    .founder { display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.8rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); margin: 1.5rem 0 2.5rem; position: relative; overflow: hidden; transition: all 0.5s var(--ease-dream); }
+    .founder:hover { border-color: rgba(129,140,248,0.3); box-shadow: 0 22px 60px rgba(0,0,0,0.4); }
+    .founder::after { content: ''; position: absolute; inset: 0; background: radial-gradient(420px circle at 80% 30%, rgba(129,140,248,0.06), transparent 50%); pointer-events: none; }
+    .f-avatar { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid rgba(129,140,248,0.4); box-shadow: 0 0 30px rgba(99,102,241,0.2); border-bottom: 2px solid rgba(129,140,248,0.4); }
+    .f-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .f-info { position: relative; z-index: 1; }
+    .f-name { font-family: var(--font-display); font-weight: 500; font-size: 1.4rem; color: #fff; margin-bottom: 4px; letter-spacing: -0.02em; }
+    .f-role { font-size: 0.86rem; color: var(--ind3); font-weight: 500; margin-bottom: 0.85rem; letter-spacing: 0.02em; }
+    .f-bio { font-size: 0.95rem; color: var(--text2); line-height: 1.7; margin-bottom: 1rem; }
+    .f-links { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+    .f-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 500; padding: 5px 12px; border-radius: 999px; background: var(--bg2); color: var(--text2); border: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: all 0.3s var(--ease-dream); }
+    .f-link:hover { color: var(--ind3); border-color: var(--border-hi); border-bottom-color: var(--border-hi); }
+
+    /* How we work card */
+    .work-card { padding: 1.4rem 1.6rem; background: linear-gradient(135deg, rgba(10,8,32,0.92), rgba(4,4,16,0.96)); border: 1px solid var(--border-hi); border-radius: var(--r); margin: 1.5rem 0 2rem; }
+    .work-card .wc-h { font-family: var(--font-display); font-weight: 500; font-size: 1.05rem; color: #fff; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+    .work-card .wc-h em { font-style: italic; color: var(--ind3); }
+    .work-card p { font-size: 0.92rem; color: var(--text2); margin: 0; line-height: 1.7; }
+
+    /* Partners */
+    .partners-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text3); text-align: center; margin: 2rem 0 1rem; }
+    .partners-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 640px; margin: 0 auto 1rem; }
+    .logo-slot { aspect-ratio: 2/1; border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px; background: rgba(255,255,255,0.015); display: flex; align-items: center; justify-content: center; }
+    .logo-slot::after { content: '·'; color: var(--text3); font-size: 1.4rem; opacity: 0.4; }
+    .partners-cta { font-size: 0.84rem; color: var(--text3); text-align: center; font-style: italic; }
+    .partners-cta a { color: var(--ind4); }
+
+    /* Footer */
+    footer { padding: 2.5rem 2.5rem; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+    .ft-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 2rem; max-width: 1100px; margin: 0 auto 1.5rem; }
+    .ft-col-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 0.85rem; }
+    .ft-col a { display: block; font-size: 0.85rem; color: var(--text2); margin-bottom: 0.35rem; border-bottom: none; }
+    .ft-col a:hover { color: var(--ind4); border-bottom: none; }
+    .ft-bottom { max-width: 1100px; margin: 0 auto; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .ft-left { display: flex; align-items: center; gap: 9px; }
+    .ft-logo { width: 24px; height: 24px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); }
+    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ft-copy { font-size: 0.77rem; color: var(--text3); }
+    .ft-copy a { color: var(--ind4); border: none; }
+
+    .skip-link { position: absolute; top: -100px; left: 0; background: var(--ind); color: #fff; padding: 0.6rem 1rem; border-radius: 0 0 6px 0; z-index: 999; font-weight: 600; font-size: 0.85rem; border: none; transition: top 0.15s; }
+    .skip-link:focus { top: 0; }
+    *:focus { outline: none; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--ind4); outline-offset: 3px; border-radius: 4px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1.1rem 1.25rem; } nav.solid { padding: 0.75rem 1.25rem; }
+      .founder { flex-direction: column; align-items: flex-start; }
+      .ft-grid { grid-template-columns: 1fr 1fr; }
+      .partners-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<nav id="nav">
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs"/></div>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
+  </a>
+  <a href="/" class="back-link">← Home</a>
+</nav>
+
+<section id="hero">
+  <div class="chip"><div class="chip-dot"></div>Team · The studio</div>
+  <h1><em>Small team.</em><br/>Long horizons.</h1>
+  <p class="hero-sub">How Lx8 Labs is run.</p>
+</section>
+
+<section class="content" id="main">
+
+  <h2>The <em>studio</em>.</h2>
+  <p>Lx8 Labs is a <strong>one-person studio with a long memory</strong>. Founded in Brazil in 2013 and moved to Berlin in 2020, it sits in the lineage of small research-and-engineering institutions that take the long route — the original Bell Labs, the early Xerox PARC, the kind of place that publishes papers and ships products from the same desk.</p>
+  <p>Engagements are <strong>fixed-scope and outcome-priced</strong>, never retainers. The studio publishes research in the open, builds tools to scratch its own itch — <a href="/tupa.html">Tupã IDE</a>, <a href="/aimem.html">aimem</a> — and brings in trusted specialists when a project asks for them.</p>
+  <p>It is intentionally small. <em>It will stay that way.</em></p>
+
+  <h2>The <em>founder</em>.</h2>
+
+  <div class="founder">
+    <div class="f-avatar"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Alexei Ferreira" /></div>
+    <div class="f-info">
+      <div class="f-name">Alexei Ferreira</div>
+      <div class="f-role">Founder · Senior DevOps &amp; AI Engineer</div>
+      <p class="f-bio">Thirteen years of DevOps consulting, now also building AI tools and writing physics. Carries the studio's institutional memory, takes the engagements, ships the products, signs the invoices. Lives in Berlin; came from Brazil.</p>
+      <div class="f-links">
+        <a class="f-link" href="/about.html">Long-form bio →</a>
+        <a class="f-link" href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="f-link" href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <h2>Working with <em>others</em>.</h2>
+
+  <div class="work-card">
+    <div class="wc-h"><em>Specialists,</em> per engagement.</div>
+    <p>When a project genuinely needs a hand we trust — Rust systems work, front-end deep-dives, ML infra at a scale beyond a single person — the studio brings in a vetted specialist for that engagement and pays them properly. Anyone we work with is a known quantity, not a marketplace hire.</p>
+  </div>
+
+  <div class="work-card">
+    <div class="wc-h"><em>Hiring,</em> in short.</div>
+    <p>Lx8 Labs is <strong>not currently hiring full-time</strong>. Open to fixed-scope subcontract work in Rust systems, front-end (Three.js / Solid / native), and ML/inference infra. <a href="/#consulting">Get in touch</a> if that's you.</p>
+  </div>
+
+  <div class="partners-h">Currently working with</div>
+  <div class="partners-row">
+    <div class="logo-slot" aria-hidden="true"></div>
+    <div class="logo-slot" aria-hidden="true"></div>
+    <div class="logo-slot" aria-hidden="true"></div>
+    <div class="logo-slot" aria-hidden="true"></div>
+  </div>
+  <p class="partners-cta"><a href="/#consulting">Talk to us if your logo should be here →</a></p>
+
+</section>
+
+<footer>
+  <div class="ft-grid">
+    <div class="ft-col">
+      <div class="ft-col-h">Studio</div>
+      <a href="/">Home</a>
+      <a href="/team.html">Team</a>
+      <a href="/about.html">About (founder)</a>
+      <a href="/now.html">Now</a>
+      <a href="/#consulting">Contact</a>
+    </div>
+    <div class="ft-col">
+      <div class="ft-col-h">Products</div>
+      <a href="/tupa.html">Tupã IDE</a>
+      <a href="/aimem.html">aimem</a>
+      <a href="/algorithms.html">Algorithm Lab</a>
+      <a href="/products.html">All products</a>
+    </div>
+    <div class="ft-col">
+      <div class="ft-col-h">Research &amp; writing</div>
+      <a href="/theory.html">Light, Gravity &amp; Time</a>
+      <a href="/research.html">Research</a>
+      <a href="/#insights">Insights</a>
+      <a href="/changelog.html">Changelog</a>
+      <a href="/feed.xml">RSS feed</a>
+    </div>
+    <div class="ft-col">
+      <div class="ft-col-h">Legal</div>
+      <a href="/impressum.html">Impressum</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <div class="ft-left">
+      <div class="ft-logo"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8"/></div>
+      <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="/">lx8.dev</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 50), { passive: true });
+</script>
+</body>
+</html>

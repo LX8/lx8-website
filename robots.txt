@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Be nice to AI crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://lx8.dev/sitemap.xml

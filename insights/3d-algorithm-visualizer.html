@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building a 3D algorithm visualizer in pure HTML · Lx8 Labs</title>
+  <meta name="description" content="How a single 2,000-line HTML file with Three.js + 350 lines of CSS turned into a 39-algorithm visualizer with synchronized code highlighting. The case for constraints over frameworks." />
+  <link rel="canonical" href="https://lx8.dev/insights/3d-algorithm-visualizer.html" />
+  <link rel="alternate" type="application/rss+xml" title="Lx8 Labs — Insights" href="/feed.xml" />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="color-scheme" content="dark" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lx8.dev/insights/3d-algorithm-visualizer.html" />
+  <meta property="og:title" content="Building a 3D algorithm visualizer in pure HTML" />
+  <meta property="og:description" content="2,000 lines of HTML. No framework. Why constraints made the result faster than every alternative." />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/7157081?v=4" />
+  <meta property="article:published_time" content="2026-05-11" />
+  <meta property="article:author" content="Alexei Ferreira" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Building a 3D algorithm visualizer in pure HTML",
+    "description": "How a single 2,000-line HTML file with Three.js + 350 lines of CSS turned into a 39-algorithm visualizer with synchronized code highlighting.",
+    "datePublished": "2026-05-11",
+    "author": { "@type": "Person", "name": "Alexei Lemos Cavalcante Ferreira" },
+    "publisher": { "@type": "Organization", "name": "Lx8 Labs", "logo": { "@type": "ImageObject", "url": "https://avatars.githubusercontent.com/u/7157081?v=4" } },
+    "mainEntityOfPage": "https://lx8.dev/insights/3d-algorithm-visualizer.html",
+    "image": "https://avatars.githubusercontent.com/u/7157081?v=4",
+    "keywords": ["Three.js", "WebGL", "algorithm visualization", "vanilla JS", "no-framework"]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  
+  <link href="https://fonts.bunny.net/css?family=Inter:300,400,500,600,700&family=Space+Grotesk:500,600,700&family=JetBrains+Mono:400,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.bunny.net/css?family=Inter:300,400,500,600,700&family=Space+Grotesk:500,600,700&family=JetBrains+Mono:400,600&display=swap" rel="stylesheet" /></noscript>
+
+  <!-- Prerender adjacent pages on hover (Chrome 121+, Speculation Rules) -->
+  <script type="speculationrules">
+  {
+    "prerender": [{
+      "where": { "and": [{ "href_matches": "/*" }, { "not": { "href_matches": "/*.html?*" } }] },
+      "eagerness": "moderate"
+    }]
+  }
+  </script>
+
+  <!-- Speakable Schema (voice assistants can read article highlights) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".lede", "article h2", "blockquote"]
+    }
+  }
+  </script>
+
+  <style>
+    /* Cross-document View Transitions (Chrome 126+, Safari 18.2+) */
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.28s; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050511; --bg1: rgba(255,255,255,0.025); --bg2: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.07); --border-hi: rgba(129,140,248,0.28);
+      --ind: #6366f1; --ind3: #a5b4fc; --ind4: #818cf8; --ind-d: rgba(99,102,241,0.12);
+      --blue4: #60a5fa; --green4: #34d399; --amber: #fbbf24;
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
+      --r: 14px; --r-sm: 8px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.85; font-feature-settings: 'ss01', 'cv11', 'cv10'; }
+    a { color: var(--ind4); text-decoration: none; border-bottom: 1px solid rgba(129,140,248,0.3); transition: all 0.15s; }
+    a:hover { color: var(--ind3); border-bottom-color: var(--ind3); }
+    p { color: #d1d9e8; margin-bottom: 1.4rem; font-size: 1.05rem; }
+    p strong { color: var(--text); font-weight: 600; }
+    p em { color: var(--ind3); font-style: italic; }
+    h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; color: #fff; }
+
+    /* Reading-progress bar */
+    #progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.05); z-index: 250; }
+    #progress::after { content: ''; display: block; height: 100%; width: var(--progress, 0%); background: linear-gradient(90deg, var(--ind), var(--ind4)); transition: width 0.05s linear; }
+
+    /* Nav */
+    nav { position: fixed; top: 3px; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 2.5rem; transition: all 0.3s; }
+    nav.solid { background: rgba(5,5,17,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.7rem 2.5rem; }
+    .logo-a { display: flex; align-items: center; gap: 9px; text-decoration: none; border: none; }
+    .logo-img { width: 32px; height: 32px; border-radius: 8px; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.5); }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.92rem; font-weight: 600; color: #fff; }
+    .logo-txt span { color: var(--ind4); }
+    .back-link { font-size: 0.84rem; color: var(--text2); padding: 0.4rem 1rem; border-radius: var(--r-sm); border: 1px solid var(--border); transition: all 0.2s; text-decoration: none; }
+    .back-link:hover { color: var(--text); border-color: var(--border-hi); background: var(--bg2); }
+
+    /* Article */
+    article { max-width: 720px; margin: 0 auto; padding: 7rem 1.75rem 4rem; position: relative; }
+
+    .a-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .a-tag { font-family: 'Space Grotesk', sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ind3); background: var(--ind-d); border: 1px solid var(--border-hi); padding: 4px 12px; border-radius: 999px; }
+    .a-date, .a-read { font-size: 0.78rem; color: var(--text3); }
+    .a-date::before { content: '· '; color: var(--text3); }
+    .a-read::before { content: '· '; color: var(--text3); }
+    .a-date:first-of-type::before, .a-read:first-of-type::before { content: ''; }
+
+    article h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; letter-spacing: -1.6px; line-height: 1.08; margin-bottom: 1.5rem; }
+    article h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; margin: 3rem 0 1rem; padding-top: 0.5rem; }
+    article h3 { font-size: 1.15rem; font-weight: 600; margin: 1.8rem 0 0.8rem; color: var(--ind3); }
+
+    .lede { font-size: 1.18rem; line-height: 1.7; color: #cbd5e1; margin-bottom: 2.5rem; padding-bottom: 1.8rem; border-bottom: 1px solid var(--border); }
+
+    blockquote {
+      margin: 1.6rem 0; padding: 1rem 1.4rem;
+      border-left: 3px solid var(--ind4); background: rgba(99,102,241,0.04);
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      font-style: italic; color: var(--ind3); font-size: 1rem; line-height: 1.7;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 0.92em;
+      background: rgba(99,102,241,0.1); color: var(--ind3);
+      padding: 1px 7px; border-radius: 4px; border: 1px solid rgba(99,102,241,0.15);
+    }
+    pre {
+      background: #07070f; border: 1px solid var(--border); border-radius: var(--r);
+      padding: 1.2rem 1.4rem; margin: 1.6rem 0; overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 0.85rem; line-height: 1.7;
+      color: #c0c0e8;
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+
+    ul, ol { margin: 1.2rem 0 1.6rem 1.6rem; color: #d1d9e8; }
+    ul li, ol li { margin-bottom: 0.55rem; font-size: 1.02rem; line-height: 1.7; }
+
+    /* Stats callout */
+    .stats-row { display: flex; gap: 0; margin: 2rem 0; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+    .stats-row .s-cell { flex: 1; padding: 1rem 1rem; text-align: center; background: var(--bg1); }
+    .stats-row .s-cell + .s-cell { border-left: 1px solid var(--border); }
+    .s-n { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; line-height: 1; }
+    .s-l { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-top: 5px; }
+
+    /* CTA at bottom */
+    .post-cta { margin: 3rem 0 0; padding: 1.5rem 1.75rem; background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98)); border: 1px solid var(--border-hi); border-radius: var(--r); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .post-cta-text { flex: 1; min-width: 240px; }
+    .post-cta-h { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .post-cta-p { font-size: 0.88rem; color: var(--text2); }
+    .btn { display: inline-flex; align-items: center; gap: 7px; font-size: 0.86rem; font-weight: 600; padding: 0.6rem 1.2rem; border-radius: var(--r-sm); transition: all 0.2s; text-decoration: none; border: none; }
+    .btn-p { background: var(--ind); color: #fff; box-shadow: 0 4px 18px rgba(99,102,241,0.35); }
+    .btn-p:hover { background: #4f51e8; transform: translateY(-2px); border: none; }
+
+    /* Author byline */
+    .byline { margin: 3rem 0 0; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 0.9rem; }
+    .by-avatar { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.4); flex-shrink: 0; }
+    .by-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .by-name { font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #fff; font-size: 0.95rem; display: block; margin-bottom: 2px; text-decoration: none; border: none; }
+    .by-name:hover { color: var(--ind3); border: none; }
+    .by-bio { font-size: 0.82rem; color: var(--text2); }
+
+    /* Footer */
+    footer { padding: 2rem 2.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .ft-left { display: flex; align-items: center; gap: 9px; }
+    .ft-logo { width: 24px; height: 24px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); }
+    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ft-copy { font-size: 0.77rem; color: var(--text3); }
+    .ft-copy a { color: var(--ind4); border: none; }
+    .ft-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .ft-links a { font-size: 0.77rem; color: var(--text3); transition: color 0.2s; border: none; }
+    .ft-links a:hover { color: var(--ind4); }
+
+    /* Accessibility */
+    .skip-link { position: absolute; top: -100px; left: 0; background: var(--ind); color: #fff; padding: 0.6rem 1rem; border-radius: 0 0 6px 0; z-index: 999; font-weight: 600; font-size: 0.85rem; text-decoration: none; border: none; transition: top 0.15s; }
+    .skip-link:focus { top: 0; outline: 2px solid #fff; outline-offset: -4px; }
+    *:focus { outline: none; }
+    a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--ind4); outline-offset: 3px; border-radius: 4px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.25rem; } nav.solid { padding: 0.65rem 1.25rem; }
+      article { padding: 6rem 1.25rem 3rem; }
+      .post-cta { flex-direction: column; align-items: flex-start; }
+      footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<div id="progress"></div>
+
+<nav id="nav">
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs"/></div>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
+  </a>
+  <a href="/#insights" class="back-link">← Insights</a>
+</nav>
+
+<article id="main">
+  <div class="a-meta">
+    <span class="a-tag">Engineering</span>
+    <time class="a-date" datetime="2026-05-11">11 May 2026</time>
+    <span class="a-read">~12 min read</span>
+  </div>
+
+  <h1>Building a 3D algorithm visualizer in pure HTML</h1>
+
+  <p class="lede">A single 2,000-line HTML file. Three.js, ~350 lines of CSS, vanilla JavaScript. No npm, no bundler, no framework. Hosted on GitHub Pages for $0. The result is faster, smaller, and arguably better than what most teams ship after sprinting through React + Vite for a week. Here's the case for choosing constraints.</p>
+
+  <h2>The brief</h2>
+  <p>I wanted the homepage of <a href="/">lx8.dev</a> to feature an interactive 3D algorithm visualizer covering everything from Euclid's GCD (300 BCE) to Tim Sort (2002). Each algorithm needed to show its 3D state — sorting bars, graph nodes, DP grids, trees — alongside a code panel that highlighted the executing line in lock-step. A live variable inspector at the bottom. Filtering by name, era, or creator. Keyboard shortcuts. Step-through mode. The kind of thing you'd usually call <code>visualgo.net</code>-grade.</p>
+
+  <p>The default modern answer would be: React + Vite + Tailwind + react-three-fiber + zustand for state + maybe TanStack Query if I felt like it. <em>I picked none of that.</em></p>
+
+  <h2>The constraint</h2>
+  <p>One HTML file. CDN scripts only. Hosted on GitHub Pages with zero build step. The kind of thing you can email someone as an attachment and they can open it in 2034 and it still works.</p>
+
+  <blockquote>"The website is a build artefact. The build artefact should be the website."</blockquote>
+
+  <p>That's not original — it's a paraphrase of every <a href="https://htmx.org/essays/" rel="noopener">htmx essay</a> ever — but it kept me honest. Whenever I felt the urge to reach for a library, I'd ask: <em>is this saving a line of code, or is it adding 200 KB of node_modules to ship 20 KB of feature?</em></p>
+
+  <h2>What I ended up with</h2>
+
+  <div class="stats-row">
+    <div class="s-cell"><div class="s-n">1</div><div class="s-l">HTML file</div></div>
+    <div class="s-cell"><div class="s-n">~80 KB</div><div class="s-l">Gzipped</div></div>
+    <div class="s-cell"><div class="s-n">39</div><div class="s-l">Algorithms</div></div>
+    <div class="s-cell"><div class="s-n">0</div><div class="s-l">npm deps</div></div>
+  </div>
+
+  <p>The file lives at <a href="/algorithms.html">/algorithms.html</a>. Open it. Inspect the source. The whole thing — sidebar, 3D canvas, code panel, search, keyboard shortcuts, every sorting algorithm, every graph algorithm, every DP solution — is in one document. The only external resources are Three.js r128 and OrbitControls from cdnjs, plus Google Fonts.</p>
+
+  <h2>The wins</h2>
+
+  <h3>1. Time-to-first-paint is unbeatable</h3>
+  <p>There's no JavaScript bundle to parse before the page paints. The browser sees HTML, paints it, then asynchronously fetches Three.js. By the time Three.js is ready, the user has already been staring at the sidebar and reading "Bubble Sort · 1956 · Edward Friend" for a hundred milliseconds.</p>
+  <p>Compare to a Vite-built React app: the browser sees an empty <code>&lt;div id="root"&gt;</code>, fetches a 200 KB bundle, parses it, runs React's first render. Then maybe paints something.</p>
+
+  <h3>2. The "view-source" affordance</h3>
+  <p>Right-click → View Source on <a href="/algorithms.html">/algorithms.html</a> shows the entire app. Every CSS rule, every algorithm, every Three.js scene. If a CS student wants to learn how a 3D Quick Sort visualization works, they can — by reading it. No source maps, no minification, no JSX compiling to <code>React.createElement</code> noise.</p>
+  <p>This was the unexpected delight. The site teaches twice: once by what it shows, once by what it is.</p>
+
+  <h3>3. Maintenance cost approaches zero</h3>
+  <p>Six months from now, when I want to add a new algorithm, there's nothing to <code>npm audit fix</code>. No vulnerable dependency to patch. No "the framework deprecated this hook" migration. The file is the file.</p>
+
+  <h3>4. Forking is trivial</h3>
+  <p>Someone wants to take this and build their own visualizer? Save the HTML, open in their editor, change what they want. No "clone, install, configure" ceremony. The file is the project.</p>
+
+  <h2>The patterns that made it possible</h2>
+
+  <h3>Data-driven sidebar</h3>
+  <p>Every algorithm is an entry in one <code>INFO</code> object:</p>
+  <pre><code>const INFO = {
+  bubble: {
+    name: 'Bubble Sort', cat: 'sort',
+    year: 1956, creator: 'Edward Friend',
+    time: 'O(n²)', space: 'O(1)', stable: 'Yes',
+    desc: 'Adjacent-pair swaps bubble the largest…',
+    history: "Knuth famously called it 'the wrong algorithm'…"
+  },
+  // 38 more
+};</code></pre>
+  <p>The sidebar is rendered from this object. Chronological view sorts by <code>year</code>. By-category view groups by <code>cat</code>. Search filters by name/creator/category in one <code>.filter()</code> call. Adding a new algorithm is two things: add an INFO entry + add a <code>run</code> function. The sidebar updates itself.</p>
+
+  <h3>Synchronized code highlighting via async/await</h3>
+  <p>The algorithm functions are <code>async</code>. They call <code>hl(line)</code> to highlight a pseudocode line, then <code>await tick()</code> to pause. <code>tick()</code> returns a promise that either resolves on a timer (continuous mode) or on a button click (step mode):</p>
+  <pre><code>const tick = () => {
+  if (stepMode) return new Promise(r => stepResolver = r);
+  return sleep(Math.max(8, 900 / Math.pow(speed, 1.6)));
+};
+
+async function bubbleSort() {
+  for (let i = 0; i &lt; N-1; i++) {
+    hl(0); setVars({ i, pass: i+1 });
+    for (let j = 0; j &lt; N-1-i; j++) {
+      hl(1); cmp++; await tick();
+      if (arr[j] &gt; arr[j+1]) {
+        hl(3); bswap(j, j+1); swp++;
+      }
+    }
+  }
+}</code></pre>
+  <p>The same code structure works for line-by-line debugging and continuous playback. No state machine, no animation engine — just JavaScript's existing async primitives.</p>
+
+  <h3>Live variable inspector</h3>
+  <p>Each algorithm calls <code>setVars({ key: value })</code> at meaningful moments. The function diffs against the current state and updates the right-panel display. Cost: ~15 lines of code. Result: the user watches <code>i</code>, <code>j</code>, <code>arr[mid]</code>, <code>dist[v]</code>, <code>memo[i]</code> change as the algorithm runs.</p>
+
+  <h2>Where this approach breaks down</h2>
+  <p>I'm not anti-framework. I'm anti-<em>defaulting</em> to a framework. Reach for the bigger toolkit when:</p>
+  <ul>
+    <li>You have routing across 20+ pages and shared state (use SvelteKit, Astro, or Next).</li>
+    <li>Multiple engineers are working on the same surface (a framework is a forcing function for conventions).</li>
+    <li>The app has heavy form state, validation, accessibility on every input — React Hook Form is worth it.</li>
+    <li>You're building a real-time multi-user product. The single-file path doesn't scale to WebSocket sync, optimistic updates, conflict resolution.</li>
+  </ul>
+  <p>But for <em>this</em> — a personal site with a few interactive demos — every framework decision would have been overhead. The constraint <em>was</em> the design.</p>
+
+  <h2>What I'd do differently</h2>
+  <ul>
+    <li>Move per-category CSS into <code>@layer</code> blocks for tidier source diffs.</li>
+    <li>Split the algorithm implementations into separate <code>.js</code> files behind <code>&lt;script type="module"&gt;</code>. Still no bundler — just native ESM. Would cut the HTML to ~600 lines.</li>
+    <li>Add a TypeScript declarations file (<code>.d.ts</code>) for the INFO shape, even though the JavaScript stays plain JS. Editor autocomplete for free.</li>
+  </ul>
+
+  <h2>The takeaway</h2>
+  <p>Static sites are having a moment again, and the reason is: the browsers got really good. <code>fetch</code>, <code>Promise</code>, <code>IntersectionObserver</code>, CSS Grid, <code>matchMedia</code>, <code>requestAnimationFrame</code>, View Transitions, dialog elements, container queries — all native. Most of what a framework gives you in 2026, you can get by reading MDN for a week.</p>
+  <p>If you're starting a project that fits in one HTML file, <em>start there</em>. Drop into a framework when the constraints actually break. The site I built in three days would have taken three weeks if I'd reached for Next.js first.</p>
+
+  <div class="post-cta">
+    <div class="post-cta-text">
+      <div class="post-cta-h">Want to see the result?</div>
+      <div class="post-cta-p">Open the Algorithm Lab and inspect the source. The whole 2,000-line file is right there.</div>
+    </div>
+    <a href="/algorithms.html" class="btn btn-p">Open Algorithm Lab →</a>
+  </div>
+
+  <div class="byline">
+    <a href="/about.html" class="by-avatar"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Alexei Ferreira"/></a>
+    <div>
+      <a href="/about.html" class="by-name">Alexei Ferreira</a>
+      <span class="by-bio">DevOps engineer for 13 years, now also building AI tools and writing physics. Founder of <a href="/">Lx8 Labs</a>. Berlin.</span>
+    </div>
+  </div>
+</article>
+
+<footer>
+  <div class="ft-left">
+    <div class="ft-logo"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8"/></div>
+    <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="/">lx8.dev</a></span>
+  </div>
+  <div class="ft-links">
+    <a href="/">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/algorithms.html">Algorithm Lab</a>
+    <a href="/courses.html">Courses</a>
+    <a href="/#insights">Insights</a>
+    <a href="/impressum.html">Impressum</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  const prog = document.getElementById('progress');
+  function onScroll() {
+    nav.classList.toggle('solid', scrollY > 50);
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const pct = max > 0 ? Math.min(100, scrollY / max * 100) : 0;
+    prog.style.setProperty('--progress', pct + '%');
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+</body>
+</html>

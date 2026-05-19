@@ -72,9 +72,8 @@
   <meta name="twitter:title"      content="Lx8 Labs" />
   <meta name="twitter:description" content="Research · Tools · Ideas" />
   <meta name="twitter:image"      content="https://avatars.githubusercontent.com/u/7157081?v=4" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -97,9 +96,15 @@
       --text3:      #475569;
       --r:          14px;
       --r-sm:       8px;
+      /* Dreamy aesthetic tokens (PR C) */
+      --font-display: 'Fraunces', 'EB Garamond', Georgia, serif;
+      --ease-dream:   cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-spring:  cubic-bezier(0.4, 0, 0.2, 1);
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; font-feature-settings: 'ss01', 'cv11', 'cv10'; }
+    .display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.025em; }
+    .display em { font-style: italic; color: var(--amber); }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--ind); border-radius: 2px; }
 
@@ -150,9 +155,9 @@
     .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-hi); background: var(--ind-d); border-radius: 999px; padding: 5px 14px; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ind3); margin-bottom: 2rem; }
     .chip-dot { width: 6px; height: 6px; background: var(--ind4); border-radius: 50%; box-shadow: 0 0 6px var(--ind4); animation: blink 2s ease-in-out infinite; }
     @keyframes blink { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.35; transform:scale(0.6); } }
-    h1.hero-h { font-family: 'Space Grotesk', sans-serif; font-size: clamp(3rem,7.5vw,7rem); font-weight: 700; letter-spacing: -3px; line-height: 0.97; margin-bottom: 1.5rem; }
-    h1.hero-h .t1 { display: block; color: #fff; }
-    h1.hero-h .t2 { display: block; background: linear-gradient(120deg, var(--ind3), var(--blue4), #67e8f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200%; animation: gf 5s ease-in-out infinite alternate; }
+    h1.hero-h { font-family: var(--font-display); font-size: clamp(3rem,7.5vw,7rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1; margin-bottom: 1.5rem; }
+    h1.hero-h .t1 { display: block; color: #fff; font-weight: 500; }
+    h1.hero-h .t2 { display: block; font-style: italic; font-weight: 400; background: linear-gradient(120deg, var(--ind3), var(--blue4), #67e8f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200%; animation: gf 10s ease-in-out infinite alternate; }
     @keyframes gf { from { background-position: 0%; } to { background-position: 100%; } }
     .hero-sub { max-width: 540px; font-size: 1.02rem; line-height: 1.75; color: var(--text2); margin-bottom: 2.5rem; }
     .hero-sub strong { color: var(--text); font-weight: 500; }
@@ -180,6 +185,17 @@
     .stat-cell:hover { background: rgba(99,102,241,0.05); }
     .stat-cell-n { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; color: #fff; line-height: 1; letter-spacing: -1px; background: linear-gradient(120deg, #fff, var(--ind3)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
     .stat-cell-l { font-size: 0.66rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text3); }
+    /* Partners strip — honest placeholder slots */
+    .partners-strip { max-width: 660px; margin: 0 auto 2.5rem; opacity: 0.92; }
+    .partners-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text3); text-align: center; margin-bottom: 1rem; }
+    .partners-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 0.9rem; }
+    .logo-slot { aspect-ratio: 5/2; border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px; background: rgba(255,255,255,0.015); display: flex; align-items: center; justify-content: center; transition: border-color 0.6s var(--ease-dream); }
+    .logo-slot:hover { border-color: rgba(129,140,248,0.3); }
+    .logo-slot::after { content: '·'; color: var(--text3); font-size: 1.4rem; opacity: 0.4; }
+    .partners-cta { font-family: var(--font-display); font-style: italic; font-size: 0.86rem; color: var(--text3); text-align: center; }
+    .partners-cta a { color: var(--ind4); text-decoration: none; transition: color 0.4s var(--ease-dream); }
+    .partners-cta a:hover { color: var(--ind3); }
+    @media (max-width: 600px) { .partners-row { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 600px) {
       .stats-strip { flex-direction: column; }
       .stat-cell + .stat-cell { border-left: none; border-top: 1px solid var(--border); }
@@ -344,12 +360,12 @@
 
 <!-- ── MOBILE DRAWER ── -->
 <div class="mobile-nav" id="mobile-nav">
-  <a href="#about"      onclick="closeMobileNav()">About</a>
-  <a href="#courses"    onclick="closeMobileNav()">Courses</a>
-  <a href="#algo-lab"   onclick="closeMobileNav()">Algorithm Lab</a>
-  <a href="#projects"   onclick="closeMobileNav()">Projects</a>
-  <a href="#unity-lab"  onclick="closeMobileNav()">Unity</a>
-  <a href="#consulting" onclick="closeMobileNav()">Consulting</a>
+  <a href="/products.html" onclick="closeMobileNav()">Products</a>
+  <a href="/team.html"     onclick="closeMobileNav()">Team</a>
+  <a href="/courses.html"  onclick="closeMobileNav()">Courses</a>
+  <a href="/research.html" onclick="closeMobileNav()">Research</a>
+  <a href="#insights"      onclick="closeMobileNav()">Insights</a>
+  <a href="#consulting"    onclick="closeMobileNav()">Consulting</a>
   <a href="#consulting" class="nl-cta" onclick="closeMobileNav()">Work With Us</a>
 </div>
 
@@ -362,12 +378,12 @@
     <span class="logo-txt">Lx8 <span>Labs</span></span>
   </a>
   <div class="nav-links">
-    <a href="#about"      class="nl">About</a>
-    <a href="#courses"    class="nl">Courses</a>
-    <a href="#algo-lab"   class="nl">Algorithm Lab</a>
-    <a href="#projects"   class="nl">Projects</a>
-    <a href="#unity-lab"  class="nl">Unity</a>
-    <a href="#consulting" class="nl">Consulting</a>
+    <a href="/products.html" class="nl">Products</a>
+    <a href="/team.html"     class="nl">Team</a>
+    <a href="/courses.html"  class="nl">Courses</a>
+    <a href="/research.html" class="nl">Research</a>
+    <a href="#insights"      class="nl">Insights</a>
+    <a href="#consulting"    class="nl">Consulting</a>
     <a href="#consulting" class="nl nl-cta">Work With Us</a>
   </div>
   <button class="ham" id="ham-btn" aria-label="Menu" onclick="toggleMobileNav()">
@@ -384,9 +400,10 @@
     <span class="t2">Beautiful minds,<br/>world impact.</span>
   </h1>
   <p class="hero-sub">
-    Inspired by <strong>Bell Labs</strong> — a studio where <strong>DevOps</strong> meets
-    <strong>AI</strong>, tools are built for developers who care, and research
-    stays open.<br/><em>Small, fast, honest software.</em>
+    <strong>Lx8 Labs</strong> — a small studio in the Bell Labs lineage. We build
+    <strong>engineering tools</strong>, ship <strong>open-source research</strong>, and
+    run <strong>fixed-scope consulting</strong> for teams that take operability seriously.
+    <br/><em>Small, fast, honest software.</em>
   </p>
   <div class="tech-strip">
     <span class="ts">Kubernetes</span><span class="ts">Terraform</span>
@@ -413,6 +430,19 @@
       <div class="stat-cell-l">Curiosity</div>
     </div>
   </div>
+
+  <!-- Currently working with — honest placeholder strip -->
+  <section class="partners-strip">
+    <p class="partners-h">Currently working with</p>
+    <div class="partners-row">
+      <div class="logo-slot" aria-hidden="true"></div>
+      <div class="logo-slot" aria-hidden="true"></div>
+      <div class="logo-slot" aria-hidden="true"></div>
+      <div class="logo-slot" aria-hidden="true"></div>
+    </div>
+    <p class="partners-cta"><a href="#consulting">Talk to us if your logo should be here →</a></p>
+  </section>
+
   <div class="hero-btns">
     <a href="#courses" class="btn btn-p">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
@@ -468,8 +498,8 @@
     <div class="about-grid">
       <div class="about-card r d1">
         <div class="about-avatar">⚡</div>
-        <div class="about-name">Alexei Lemos Cavalcante Ferreira</div>
-        <div class="about-role">DevOps Engineer & AI Researcher</div>
+        <div class="about-name">Alexei Ferreira</div>
+        <div class="about-role">Founder · Lx8 Labs</div>
         <div class="about-tags">
           <span class="tag tag-i">DevOps</span>
           <span class="tag tag-b">Cloud</span>
@@ -481,9 +511,9 @@
       </div>
       <div class="about-body r d2">
         <p>
-          I'm a <strong>DevOps engineer</strong> who crossed into <strong>AI and theoretical physics</strong>,
-          and decided to build a lab around those intersections. Lx8 Labs is the company I'm putting together —
-          piece by piece, project by project.
+          <strong>Lx8 Labs</strong> was built around the intersections of <strong>DevOps, AI, and theoretical
+          physics</strong> — three lineages that don't usually share a roof. The studio is a single
+          small institution carrying that work forward, piece by piece, project by project.
         </p>
         <p>
           My work spans cloud infrastructure, developer tooling (Tupã IDE), and original research
@@ -672,7 +702,7 @@
 
     <div class="bento">
 
-      <div class="card card-feat r d1">
+      <a href="/tupa.html" class="card card-feat r d1">
         <div class="card-ico ci-i">⌨️</div>
         <div class="card-name">Tupã IDE</div>
         <p class="card-desc">
@@ -685,11 +715,11 @@
           <span class="pill pb">IDE</span>
           <span class="pill pg">Active</span>
         </div>
-        <a href="#" class="card-lnk">
+        <span class="card-lnk">
           Learn more
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-      </div>
+        </span>
+      </a>
 
       <div class="card r d2" style="cursor:pointer" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">
         <div class="card-ico ci-b">🔭</div>
@@ -826,22 +856,95 @@
   </div>
 </section>
 
+<div class="divider"></div>
+
+<!-- ── INSIGHTS / NEWSLETTER ── -->
+<section id="insights" class="section">
+  <div class="inner">
+    <div class="lbl r">Insights · Newsletter</div>
+    <h2 class="sh r d1">Field notes from the lab.</h2>
+    <p class="sdesc r d2">Once or twice a month: a deep technical write-up on whatever we just shipped or learned. DevOps post-mortems, AI experiments, paper breakdowns. No marketing drips.</p>
+
+    <div class="news-grid r d3">
+      <article class="news-card preview-card">
+        <div class="news-tag">Coming soon</div>
+        <h3>Why I rewrote our deploy pipeline in Go</h3>
+        <p>From 7-minute Bash spaghetti to a 90-second Go binary. The case for treating CI scripts as real software.</p>
+        <span class="news-meta">DevOps · ~10 min read</span>
+      </article>
+      <article class="news-card preview-card">
+        <div class="news-tag">Coming soon</div>
+        <h3>Building a 3D algorithm visualizer in pure HTML</h3>
+        <p>Three.js + 350 lines of CSS. No framework. Why constraints made this site faster than every framework alternative.</p>
+        <span class="news-meta">Engineering · ~12 min read</span>
+      </article>
+      <article class="news-card preview-card">
+        <div class="news-tag">Coming soon</div>
+        <h3>Lessons from 13 years of consulting</h3>
+        <p>What changes when you stop selling time and start selling outcomes — and why most engineers should try it.</p>
+        <span class="news-meta">Consulting · ~8 min read</span>
+      </article>
+    </div>
+
+    <div class="news-signup r d4">
+      <div class="news-signup-text">
+        <h3>Get the next one in your inbox.</h3>
+        <p>One email per article. Unsubscribe with a click. No tracking pixels.</p>
+      </div>
+      <form id="news-form" class="news-form" action="https://formspree.io/f/REPLACE_WITH_FORM_ID" method="POST">
+        <input type="email" name="email" placeholder="you@domain.com" required />
+        <input type="hidden" name="_subject" value="Lx8 Labs newsletter signup" />
+        <input type="hidden" name="source" value="lx8.dev/#insights" />
+        <button type="submit" class="btn btn-p">Subscribe →</button>
+      </form>
+      <div class="news-success" id="news-success">✓ Subscribed. We'll be in touch.</div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #insights { background: linear-gradient(180deg, transparent, rgba(10,8,28,0.4) 50%, transparent); }
+  .news-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 3rem; margin-bottom: 2.5rem; }
+  .news-card { padding: 1.6rem 1.4rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); transition: all 0.3s; cursor: pointer; }
+  .news-card:hover { transform: translateY(-3px); border-color: rgba(129,140,248,0.3); box-shadow: 0 12px 36px rgba(0,0,0,0.4); }
+  .preview-card { opacity: 0.85; }
+  .news-tag { display: inline-block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); padding: 3px 9px; border: 1px dashed var(--border); border-radius: 999px; margin-bottom: 0.9rem; }
+  .news-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.55rem; line-height: 1.35; }
+  .news-card p { font-size: 0.84rem; color: var(--text2); line-height: 1.65; margin-bottom: 0.85rem; }
+  .news-meta { font-size: 0.72rem; color: var(--text3); }
+  .news-signup { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; padding: 2rem 2.25rem; background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98)); border: 1px solid var(--border-hi); border-radius: var(--r); }
+  .news-signup-text h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+  .news-signup-text p { font-size: 0.85rem; color: var(--text2); }
+  .news-form { display: flex; gap: 8px; flex: 1; min-width: 280px; max-width: 460px; }
+  .news-form input { flex: 1; min-width: 0; padding: 0.7rem 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--text); font-family: inherit; font-size: 0.9rem; }
+  .news-form input:focus { outline: none; border-color: var(--ind3); }
+  .news-success { width: 100%; color: var(--green4); font-size: 0.85rem; display: none; }
+  .news-success.show { display: block; }
+  @media (max-width: 1024px) { .news-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) {
+    .news-grid { grid-template-columns: 1fr; }
+    .news-signup { flex-direction: column; align-items: stretch; padding: 1.5rem; }
+  }
+</style>
+
 <!-- ── FOOTER ── -->
 <footer>
   <div class="ft-left">
     <div class="ft-logo">
       <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" />
     </div>
-    <span class="ft-copy">© 2013–2026 Alexei Lemos Cavalcante Ferreira · <a href="https://lx8.dev" style="color:var(--ind4);text-decoration:none;">lx8.dev</a></span>
+    <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="https://lx8.dev" style="color:var(--ind4);text-decoration:none;">lx8.dev</a></span>
   </div>
   <div class="ft-links">
     <a href="#about">About</a>
     <a href="#courses">Courses</a>
     <a href="#algo-lab">Algorithm Lab</a>
+    <a href="/tupa.html">Tupã IDE</a>
     <a href="#projects">Projects</a>
     <a href="#unity-lab">Unity</a>
     <a href="#consulting">Consulting</a>
     <a href="#theory">Research</a>
+    <a href="#insights">Insights</a>
     <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
   </div>
 </footer>
@@ -856,6 +959,26 @@
     es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } });
   }, { threshold: 0.1 });
   document.querySelectorAll('.r').forEach(el => ro.observe(el));
+
+  // Newsletter form
+  const newsForm = document.getElementById('news-form');
+  if (newsForm) {
+    newsForm.addEventListener('submit', async e => {
+      const action = newsForm.action;
+      const successEl = document.getElementById('news-success');
+      if (action.includes('REPLACE_WITH_FORM_ID')) {
+        e.preventDefault();
+        const email = newsForm.querySelector('input[type=email]').value;
+        location.href = `mailto:hi@lx8.dev?subject=Lx8%20Labs%20newsletter&body=${encodeURIComponent('Email: ' + email)}`;
+        return;
+      }
+      e.preventDefault();
+      try {
+        const res = await fetch(action, { method: 'POST', body: new FormData(newsForm), headers: { 'Accept': 'application/json' } });
+        if (res.ok) { newsForm.style.display = 'none'; successEl.classList.add('show'); }
+      } catch (_) { newsForm.submit(); }
+    });
+  }
 
   // Theory hint fade
   const hint = document.getElementById('th-hint');

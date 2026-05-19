@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Algorithm Lab — Lx8 Labs</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.bunny.net"/>
+  <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Space+Grotesk:400,600,700&family=Inter:400,500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; background: #040411; color: #e2e8f0; font-family: 'Inter', sans-serif; overflow: hidden; }
@@ -47,6 +47,71 @@
     .sb-btn .yr { font-size: 0.62rem; color: #4c4c7a; margin-left: auto; padding-left: 6px; font-family: 'Space Grotesk', sans-serif; flex-shrink: 0; }
     .sb-btn { display: flex; align-items: center; }
     .sb-btn .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Search */
+    .sb-search { padding: 0.55rem 0.75rem 0; position: relative; }
+    .sb-search input {
+      width: 100%; background: #0a0a1a; border: 1px solid #18183a;
+      color: #c0c0e0; padding: 0.42rem 0.65rem 0.42rem 1.85rem;
+      border-radius: 8px; font-size: 0.78rem; font-family: 'Inter', sans-serif;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .sb-search input:focus { outline: none; border-color: rgba(99,102,241,0.5); background: #10102a; }
+    .sb-search input::placeholder { color: #4c4c7a; }
+    .sb-search-icon { position: absolute; left: 1.4rem; top: 50%; transform: translateY(-50%); color: #4c4c7a; pointer-events: none; font-size: 0.85rem; }
+    .sb-search-clear { position: absolute; right: 1.4rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: #4c4c7a; cursor: pointer; font-size: 0.85rem; padding: 2px 5px; border-radius: 4px; display: none; }
+    .sb-search-clear:hover { color: #c0c0e0; background: #18183a; }
+    .sb-search.has-value .sb-search-clear { display: block; }
+    .sb-empty { padding: 1rem 0.95rem; color: #4c4c7a; font-size: 0.72rem; font-style: italic; text-align: center; }
+
+    /* Step button */
+    .ctrl-btn.step { background: rgba(167,139,250,0.14); border-color: rgba(167,139,250,0.35); color: #c4b5fd; }
+    .ctrl-btn.step:hover { background: rgba(167,139,250,0.28); }
+    .ctrl-btn.step:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
+
+    /* Keyboard shortcuts overlay */
+    #kbd-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(8px);
+      z-index: 200; display: none; align-items: center; justify-content: center; padding: 1.5rem;
+      animation: kbdFade 0.2s ease;
+    }
+    @keyframes kbdFade { from { opacity: 0; } to { opacity: 1; } }
+    #kbd-overlay.show { display: flex; }
+    .kbd-card {
+      background: linear-gradient(180deg, #0a0a1a, #060614); border: 1px solid #2a2a50;
+      border-radius: 14px; padding: 1.6rem 1.8rem; max-width: 460px; width: 100%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+    .kbd-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .kbd-list { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.1rem; }
+    .kbd-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .kbd-desc { font-size: 0.85rem; color: #c0c0e8; }
+    .kbd-keys { display: flex; gap: 4px; flex-shrink: 0; }
+    kbd {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 600;
+      background: #18183a; color: #a5b4fc; padding: 3px 8px; border-radius: 5px;
+      border: 1px solid #2a2a50; border-bottom-width: 2px; min-width: 26px; text-align: center;
+    }
+    .kbd-close { display: block; width: 100%; background: rgba(99,102,241,0.18); border: 1px solid rgba(99,102,241,0.4); color: #a5b4fc; padding: 0.6rem; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .kbd-close:hover { background: rgba(99,102,241,0.3); }
+    .kbd-hint {
+      position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+      background: rgba(7,7,15,0.92); border: 1px solid #18183a; color: #6c7299;
+      font-size: 0.7rem; padding: 0.45rem 1rem; border-radius: 999px;
+      z-index: 50; backdrop-filter: blur(6px);
+      animation: kbdHintFade 5s ease forwards;
+    }
+    @keyframes kbdHintFade { 0% { opacity: 0; transform: translate(-50%, 8px); } 8%, 80% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -8px); pointer-events: none; } }
+
+    /* First-time onboarding card */
+    #onboard-hint { position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 180; animation: obIn 0.35s ease-out; }
+    @keyframes obIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .ob-card { background: linear-gradient(180deg, #0a0a1a, #06060e); border: 1px solid rgba(99,102,241,0.4); border-radius: 12px; padding: 1.1rem 1.25rem; max-width: 280px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+    .ob-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 700; color: #a5b4fc; margin-bottom: 0.75rem; letter-spacing: 0.02em; }
+    .ob-row { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #c0c0e0; margin-bottom: 0.3rem; }
+    .ob-row kbd { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; background: #18183a; color: #a5b4fc; padding: 1px 6px; border-radius: 4px; border: 1px solid #2a2a50; border-bottom-width: 2px; min-width: 22px; text-align: center; flex-shrink: 0; }
+    .ob-close { margin-top: 0.85rem; width: 100%; background: rgba(99,102,241,0.18); border: 1px solid rgba(99,102,241,0.4); color: #a5b4fc; padding: 0.42rem; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+    .ob-close:hover { background: rgba(99,102,241,0.3); }
 
     /* View toggle */
     .view-toggle { display: flex; gap: 4px; padding: 0.55rem 0.75rem 0.4rem; }
@@ -115,8 +180,10 @@
     .ch-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
     #code-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 700; color: #a5b4fc; letter-spacing: 0.04em; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .ch-tag { font-family: 'Space Grotesk', sans-serif; font-size: 0.62rem; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); padding: 1px 7px; border-radius: 999px; flex-shrink: 0; }
-    #code-close { background: none; border: 1px solid #18183a; color: #5c5c8a; font-size: 0.7rem; cursor: pointer; padding: 3px 8px; border-radius: 6px; transition: all 0.15s; }
-    #code-close:hover { color: #e2e8f0; border-color: #2a2a50; }
+    #code-close, #code-copy { background: none; border: 1px solid #18183a; color: #5c5c8a; font-size: 0.78rem; cursor: pointer; padding: 3px 8px; border-radius: 6px; transition: all 0.15s; min-width: 26px; min-height: 24px; }
+    #code-close:hover, #code-copy:hover { color: #e2e8f0; border-color: #2a2a50; }
+    #code-copy.ok { color: #34d399; border-color: rgba(52,211,153,0.5); }
+    .ch-actions { display: flex; gap: 5px; align-items: center; }
     #code-body {
       flex: 1; overflow-y: auto; padding: 0.65rem 0;
       font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 0.74rem; line-height: 1.75;
@@ -229,6 +296,13 @@
   <aside id="sidebar">
     <div class="sb-logo">⚗ Algorithm Lab</div>
 
+    <!-- Search -->
+    <div class="sb-search" id="sb-search-wrap">
+      <span class="sb-search-icon">⌕</span>
+      <input id="sb-search" type="text" placeholder="Filter algorithms (⌘ K)…" autocomplete="off" spellcheck="false"/>
+      <button class="sb-search-clear" id="sb-search-clear" aria-label="Clear">✕</button>
+    </div>
+
     <!-- View toggle -->
     <div class="view-toggle">
       <button class="vt-btn active" id="vt-chrono" data-view="chrono">Chronological</button>
@@ -261,8 +335,9 @@
     </div>
 
     <div id="ctrl-bar">
-      <button class="ctrl-btn run" id="btn-run">▶ Run</button>
-      <button class="ctrl-btn" id="btn-reset">⟳ Reset</button>
+      <button class="ctrl-btn run" id="btn-run" title="Run / Stop (Space)">▶ Run</button>
+      <button class="ctrl-btn step" id="btn-step" title="Step forward one operation (→)">⏭ Step</button>
+      <button class="ctrl-btn" id="btn-reset" title="Reset (R)">⟳ Reset</button>
       <div id="target-wrap">
         <span>Target:</span>
         <input type="number" id="target-input" value="12" min="1" max="30"/>
@@ -286,7 +361,10 @@
         <h3 id="code-title">Bubble Sort</h3>
         <span class="ch-tag" id="code-year">1956</span>
       </div>
-      <button id="code-close" onclick="toggleCode()" aria-label="Hide code">→</button>
+      <div class="ch-actions">
+        <button id="code-copy" onclick="copyCode()" aria-label="Copy pseudocode" title="Copy pseudocode">⎘</button>
+        <button id="code-close" onclick="toggleCode()" aria-label="Hide code">→</button>
+      </div>
     </div>
     <div id="code-body"></div>
     <div id="var-panel">
@@ -350,8 +428,21 @@ let speed = 5;
 let cmp = 0, swp = 0, tStart = 0;
 
 const sleep  = ms => new Promise(r => setTimeout(r, ms));
-// Speed 1 = 700ms (read code line by line) · Speed 5 = 90ms · Speed 10 = 8ms
-const tick   = ()  => sleep(Math.max(8, Math.round(900 / Math.pow(speed, 1.6))));
+// Speed 1 = 900ms (read code line by line) · Speed 5 = 100ms · Speed 10 = 14ms
+let stepMode = false;
+let stepResolver = null;
+const tick = () => {
+  if (stepMode) {
+    return new Promise(resolve => { stepResolver = resolve; });
+  }
+  return sleep(Math.max(8, Math.round(900 / Math.pow(speed, 1.6))));
+};
+function doStep() {
+  // Enter step mode (pauses any current pace), and advance one step.
+  if (!isRunning) return;
+  stepMode = true;
+  if (stepResolver) { const r = stepResolver; stepResolver = null; r(); }
+}
 const updateStats = () => {
   document.getElementById('stat-cmp').textContent  = cmp;
   document.getElementById('stat-swp').textContent  = swp;
@@ -876,7 +967,7 @@ function updateInfoPanel(key) {
 }
 
 // ── DYNAMIC SIDEBAR ───────────────────────────────────────────────────────
-const CAT_NAMES = { sort:'Sorting', search:'Searching', graph:'Graph', tree:'Trees', dp:'Dynamic Programming', string:'Strings', ds:'Data Structures' };
+const CAT_NAMES = { sort:'Sorting', search:'Searching', graph:'Graph', tree:'Trees', dp:'Dynamic Programming', string:'Strings', ds:'Data Structures', math:'Mathematics' };
 const ERA_BUCKETS = [
   { label:'Ancient (pre-1900)',  test: y => y < 1900 },
   { label:'1930s–40s · Foundations', test: y => y >= 1900 && y < 1950 },
@@ -903,11 +994,28 @@ const IMPLEMENTED = new Set([
 ]);
 
 let currentView = 'chrono';
+let searchQuery = '';
+
+function matchesSearch(key, d) {
+  if (!searchQuery) return true;
+  const q = searchQuery.toLowerCase();
+  return d.name.toLowerCase().includes(q)
+      || (d.creator || '').toLowerCase().includes(q)
+      || (CAT_NAMES[d.cat] || '').toLowerCase().includes(q)
+      || key.toLowerCase().includes(q);
+}
 
 function renderSidebar() {
   const list = document.getElementById('sb-list');
   list.innerHTML = '';
-  const entries = Object.entries(INFO).filter(([k]) => IMPLEMENTED.has(k));
+  const entries = Object.entries(INFO)
+    .filter(([k, d]) => IMPLEMENTED.has(k) && matchesSearch(k, d));
+
+  if (entries.length === 0) {
+    const e = document.createElement('div'); e.className = 'sb-empty';
+    e.textContent = `No matches for "${searchQuery}"`;
+    list.appendChild(e); return;
+  }
 
   if (currentView === 'chrono') {
     entries.sort((a, b) => a[1].year - b[1].year);
@@ -921,10 +1029,10 @@ function renderSidebar() {
   } else {
     const groups = {};
     for (const [k, d] of entries) (groups[d.cat] = groups[d.cat] || []).push([k, d]);
-    const order = ['sort','search','graph','tree','dp','string','ds'];
+    const order = ['sort','search','graph','tree','dp','string','ds','math'];
     for (const cat of order) {
       if (!groups[cat]) continue;
-      const hdr = document.createElement('div'); hdr.className = 'era-hdr'; hdr.textContent = CAT_NAMES[cat];
+      const hdr = document.createElement('div'); hdr.className = 'era-hdr'; hdr.textContent = CAT_NAMES[cat] || cat;
       list.appendChild(hdr);
       groups[cat].sort((a, b) => a[1].year - b[1].year);
       for (const [k, d] of groups[cat]) list.appendChild(makeBtn(k, d));
@@ -1059,17 +1167,25 @@ async function _qp(lo, hi) {
 }
 
 // Merge
-async function mergeSort() { await _ms(0, N-1); markAllSorted(); }
+async function mergeSort() { await _ms(0, N-1); markAllSorted(); hl(-1); }
 async function _ms(lo, hi) {
   if (lo >= hi || stopFlag) return;
-  const m = (lo+hi)>>1; await _ms(lo, m); await _ms(m+1, hi); await _mg(lo, m, hi);
+  hl(1);
+  const m = (lo+hi)>>1;
+  hl(2); await _ms(lo, m);
+  hl(3); await _ms(m+1, hi);
+  hl(4); await _mg(lo, m, hi);
 }
 async function _mg(lo, m, hi) {
+  hl(5);
   const L = arr.slice(lo, m+1), R = arr.slice(m+1, hi+1);
   let i=0, j=0, k=lo;
+  setVars({ lo, mid: m, hi, leftSize: L.length, rightSize: R.length });
   while (i<L.length && j<R.length) {
     if (stopFlag) return;
-    bc(k, C.cmp); cmp++; updateStats(); await tick();
+    bc(k, C.cmp); cmp++; updateStats();
+    setVars({ k, 'L[i]': L[i], 'R[j]': R[j], i, j });
+    await tick();
     bh(k, L[i] <= R[j] ? L[i++] : R[j++]);
     bc(k, C.swap); swp++; updateStats(); await tick(); bc(k, C.def); k++;
   }
@@ -1079,13 +1195,17 @@ async function _mg(lo, m, hi) {
 
 // Heap
 async function heapSort() {
+  hl(0);
+  setVars({ phase: 'build max-heap', n: N });
   for (let i = (N>>1)-1; i >= 0; i--) await _hfy(N, i);
+  hl(1);
   for (let i = N-1; i > 0; i--) {
     if (stopFlag) return;
-    bc(0, C.swap); bc(i, C.swap); bswap(0, i); swp++; updateStats(); await tick(); bc(i, C.sorted);
-    await _hfy(i, 0);
+    setVars({ phase: 'extract max', i, 'arr[0]': arr[0] });
+    hl(2); bc(0, C.swap); bc(i, C.swap); bswap(0, i); swp++; updateStats(); await tick(); bc(i, C.sorted);
+    hl(3); await _hfy(i, 0);
   }
-  bc(0, C.sorted);
+  bc(0, C.sorted); hl(-1);
 }
 async function _hfy(n, i) {
   let mx = i; const l=2*i+1, r=2*i+2; cmp+=2; updateStats();
@@ -1446,20 +1566,30 @@ async function aStar() {
   initGraph(); await sleep(250);
   const goal=7;
   const h=i=>gPos[i].distanceTo(gPos[goal]);
+  hl(0);
   const g=new Array(GV).fill(Infinity); g[0]=0;
   const f=new Array(GV).fill(Infinity); f[0]=h(0);
   const vis=new Array(GV).fill(false);
+  setVars({ start: 0, goal, 'h(start)': h(0).toFixed(2), 'f[start]': f[0].toFixed(2) });
   for (let it=0; it<GV&&!stopFlag; it++) {
+    hl(1);
+    hl(2);
     let u=-1; for(let i=0;i<GV;i++) if(!vis[i]&&(u===-1||f[i]<f[u])) u=i;
     if(u===-1||f[u]===Infinity) break;
     vis[u]=true; nc(u,u===goal?C.found:C.curr); cmp++; updateStats(); await tick();
-    if(u===goal) break;
+    setVars({ u, 'g[u]': g[u].toFixed(2), 'f[u]': f[u].toFixed(2), 'h(u)': h(u).toFixed(2) });
+    hl(3); if(u===goal) { hl(-1); return; }
+    hl(4);
     for(const [v,w] of gAdj[u]) if(!vis[v]) {
-      const ng=g[u]+w;
-      if(ng<g[v]) { g[v]=ng; f[v]=ng+h(v); nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats(); }
+      hl(5); const ng=g[u]+w;
+      hl(6);
+      if(ng<g[v]) { hl(7); g[v]=ng; f[v]=ng+h(v); nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats();
+        setVars({ relaxed: `g[${v}]=${ng.toFixed(2)}, f[${v}]=${(ng+h(v)).toFixed(2)}` });
+      }
     }
     nc(u,C.visit); await tick();
   }
+  hl(-1);
 }
 
 async function primMST() {
@@ -1695,16 +1825,22 @@ async function pascal() {
   controls.target.set(0, -1.5, 0); controls.update();
   showLegend([null, 'Computing', null, null, 'Filled']);
   // Fill in
-  meshGrid[0][0].color.setHex(C.sorted); cmp++;
+  hl(0); meshGrid[0][0].color.setHex(C.sorted); cmp++;
+  setVars({ 'tri[0]': [1] });
   for (let r = 1; r < ROWS && !stopFlag; r++) {
+    hl(1);
     for (let c = 0; c <= r; c++) {
       if (stopFlag) return;
-      meshGrid[r][c].color.setHex(C.cmp); cmp++;
-      tri[r][c] = (c > 0 ? tri[r-1][c-1] : 0) + (c < r ? tri[r-1][c] : 0);
+      hl(2); meshGrid[r][c].color.setHex(C.cmp); cmp++;
+      hl(3); const left = c > 0 ? tri[r-1][c-1] : 0;
+      hl(4); const right = c < r ? tri[r-1][c] : 0;
+      hl(5); tri[r][c] = left + right;
+      setVars({ r, c, left, right, sum: tri[r][c], 'tri[r]': tri[r].slice(0, c+1) });
       swp++; updateStats(); await tick();
       meshGrid[r][c].color.setHex(C.sorted);
     }
   }
+  hl(-1);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1779,19 +1915,25 @@ async function editDistance() {
   camera.position.set(0, 0, 8); camera.lookAt(0, 0, 0); controls.target.set(0, 0, 0); controls.update();
   showLegend([null, 'Comparing', 'Substitute', null, 'Filled']);
   // Initialize first row/col
+  hl(0);
   for (let i = 0; i < m; i++) { dp[i][0] = i; meshes[i][0].color.setHex(C.sorted); }
   for (let j = 0; j < n; j++) { dp[0][j] = j; meshes[0][j].color.setHex(C.sorted); }
+  setVars({ A, B, m: A.length, n: B.length });
   await sleep(200);
   for (let i = 1; i < m && !stopFlag; i++) {
+    hl(1);
     for (let j = 1; j < n; j++) {
       if (stopFlag) return;
-      meshes[i][j].color.setHex(C.cmp); cmp++; updateStats(); await tick();
-      if (A[i-1] === B[j-1]) dp[i][j] = dp[i-1][j-1];
-      else dp[i][j] = 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+      hl(2); meshes[i][j].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+      hl(3);
+      if (A[i-1] === B[j-1]) { hl(4); dp[i][j] = dp[i-1][j-1]; setVars({ i, j, 'A[i-1]': A[i-1], 'B[j-1]': B[j-1], match: true, 'dp[i][j]': dp[i][j] }); }
+      else { hl(5); hl(6); hl(7); dp[i][j] = 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]); setVars({ i, j, 'A[i-1]': A[i-1], 'B[j-1]': B[j-1], match: false, 'min+1': dp[i][j] }); }
       swp++; updateStats();
       meshes[i][j].color.setHex(C.sorted);
     }
   }
+  setVars({ 'edit distance': dp[m-1][n-1] });
+  hl(-1);
 }
 
 // Longest Common Subsequence — 2D grid
@@ -1925,32 +2067,41 @@ async function kmpSearch() {
   const { txtMats, patMats, S } = initString();
   await sleep(200);
   // Failure function
+  hl(0); hl(1);
   const lps = new Array(PAT.length).fill(0);
   for (let i = 1, len = 0; i < PAT.length;) {
     if (PAT[i] === PAT[len]) { lps[i++] = ++len; }
     else if (len) len = lps[len-1];
     else lps[i++] = 0;
   }
-  let i = 0, j = 0;
+  setVars({ text: TXT, pattern: PAT, lps });
+  hl(2); let i = 0, j = 0;
   while (i < TXT.length && !stopFlag) {
+    hl(3);
     // Slide pattern
     for (let k = 0; k < PAT.length; k++) patMats[k].mesh.position.x = ((i - j + k) - (TXT.length-1)/2) * S;
-    txtMats[i].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+    txtMats[i].color.setHex(C.cmp); cmp++; updateStats();
+    setVars({ i, j, 'txt[i]': TXT[i], 'pat[j]': PAT[j] });
+    await tick();
+    hl(4);
     if (PAT[j] === TXT[i]) {
-      patMats[j].mat.color.setHex(C.sorted);
+      hl(5); patMats[j].mat.color.setHex(C.sorted);
       txtMats[i].color.setHex(C.sorted);
       i++; j++;
-      if (j === PAT.length) {
+      hl(6); if (j === PAT.length) {
         for (let k = 0; k < PAT.length; k++) patMats[k].mat.color.setHex(C.found);
-        return;
+        setVars({ found: true, position: i - j });
+        hl(-1); return;
       }
     } else {
       txtMats[i].color.setHex(C.swap); swp++; await tick();
       txtMats[i].color.setHex(C.def);
       for (let k = 0; k < PAT.length; k++) patMats[k].mat.color.setHex(C.pivot);
-      if (j !== 0) j = lps[j-1]; else i++;
+      hl(7); if (j !== 0) { j = lps[j-1]; setVars({ i, j, 'skipped via lps': true }); }
+      else { hl(8); i++; }
     }
   }
+  hl(-1);
 }
 
 // Rabin–Karp — rolling hash
@@ -2057,15 +2208,203 @@ document.getElementById('btn-reset').addEventListener('click',()=>{
   cmp=0; swp=0; tStart=Date.now(); updateStats();
   setTimeout(()=>{ stopFlag=false; initViz(currentCat,currentAlgo); }, 60);
 });
-document.getElementById('speed-slider').addEventListener('input',e=>{ speed=parseInt(e.target.value); });
+document.getElementById('speed-slider').addEventListener('input',e=>{
+  speed=parseInt(e.target.value);
+  // Leaving step mode if user moves slider while running
+  if (stepMode && stepResolver) { stepMode = false; const r = stepResolver; stepResolver = null; r(); }
+});
 document.getElementById('target-input').addEventListener('change',e=>{ target=Math.max(1,Math.min(SN,parseInt(e.target.value)||12)); });
 
+// ── SEARCH ────────────────────────────────────────────────────────────────
+const sbSearch = document.getElementById('sb-search');
+const sbSearchClear = document.getElementById('sb-search-clear');
+const sbSearchWrap = document.getElementById('sb-search-wrap');
+sbSearch.addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  sbSearchWrap.classList.toggle('has-value', !!searchQuery);
+  renderSidebar();
+});
+sbSearchClear.addEventListener('click', () => {
+  sbSearch.value = ''; searchQuery = '';
+  sbSearchWrap.classList.remove('has-value');
+  renderSidebar(); sbSearch.focus();
+});
+
+// ── STEP BUTTON ───────────────────────────────────────────────────────────
+const btnStep = document.getElementById('btn-step');
+btnStep.addEventListener('click', () => {
+  if (!isRunning) {
+    // First click while idle: start the algorithm in step mode
+    stepMode = true;
+    runAlgo();
+  } else {
+    doStep();
+  }
+});
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────
+function showKbd() { document.getElementById('kbd-overlay').classList.add('show'); }
+function closeKbd() { document.getElementById('kbd-overlay').classList.remove('show'); }
+
+function siblingAlgoKey(direction) {
+  const btns = [...document.querySelectorAll('.sb-btn')];
+  if (!btns.length) return null;
+  const idx = btns.findIndex(b => b.dataset.algo === currentAlgo);
+  let nextIdx = idx + direction;
+  if (nextIdx < 0) nextIdx = btns.length - 1;
+  if (nextIdx >= btns.length) nextIdx = 0;
+  const btn = btns[nextIdx];
+  return { cat: btn.dataset.cat, algo: btn.dataset.algo, btn };
+}
+
+document.addEventListener('keydown', e => {
+  // Search focus shortcut
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault(); sbSearch.focus(); sbSearch.select(); return;
+  }
+  // Skip other shortcuts when typing in inputs
+  const t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) {
+    if (e.key === 'Escape') t.blur();
+    return;
+  }
+  if (e.key === 'Escape') { closeKbd(); return; }
+  if (e.key === '?') { showKbd(); e.preventDefault(); return; }
+  if (e.key === ' ') { e.preventDefault(); document.getElementById('btn-run').click(); return; }
+  if (e.key.toLowerCase() === 'r') { e.preventDefault(); document.getElementById('btn-reset').click(); return; }
+  if (e.key.toLowerCase() === 'c') { e.preventDefault(); toggleCode(); return; }
+  if (e.key === 'ArrowRight') { e.preventDefault(); doStep(); return; }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    const nx = siblingAlgoKey(e.key === 'ArrowDown' ? 1 : -1);
+    if (nx) { selectAlgo(nx.cat, nx.algo); nx.btn.scrollIntoView({block:'nearest'}); }
+    return;
+  }
+  if (e.key === '+' || e.key === '=') {
+    e.preventDefault();
+    const sl = document.getElementById('speed-slider');
+    sl.value = Math.min(10, parseInt(sl.value) + 1); sl.dispatchEvent(new Event('input'));
+    return;
+  }
+  if (e.key === '-' || e.key === '_') {
+    e.preventDefault();
+    const sl = document.getElementById('speed-slider');
+    sl.value = Math.max(1, parseInt(sl.value) - 1); sl.dispatchEvent(new Event('input'));
+    return;
+  }
+});
+
+// Selecting a new algo should leave step mode
+const _origSelectAlgo = selectAlgo;
+window.selectAlgo = function(cat, algo) {
+  stepMode = false;
+  if (stepResolver) { const r = stepResolver; stepResolver = null; r(); }
+  return _origSelectAlgo(cat, algo);
+};
+// runAlgo cleanup: when algorithm finishes, clear step mode for next run
+const _origRunAlgo = runAlgo;
+window.runAlgo = async function() {
+  const wasStep = stepMode;
+  await _origRunAlgo();
+  if (wasStep) stepMode = false;
+};
+
+// ── COPY CODE ─────────────────────────────────────────────────────────────
+function copyCode() {
+  const code = CODE[currentAlgo];
+  if (!code) return;
+  const text = code.map((l, i) => `${i+1}. ${l}`).join('\n');
+  const header = `${INFO[currentAlgo]?.name || ''} · ${fmtYear(INFO[currentAlgo]?.year || 0)} · ${INFO[currentAlgo]?.creator || ''}\n\n`;
+  navigator.clipboard.writeText(header + text).then(() => {
+    const btn = document.getElementById('code-copy');
+    btn.textContent = '✓';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = '⎘'; btn.classList.remove('ok'); }, 1400);
+  }).catch(() => {});
+}
+
+// ── PERSISTENCE (localStorage) ────────────────────────────────────────────
+const LS_KEY = 'lx8-algo-prefs';
+function savePrefs() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      view: currentView, algo: currentAlgo, speed, target,
+      panelCollapsed: document.getElementById('code-panel')?.classList.contains('collapsed'),
+    }));
+  } catch (_) {}
+}
+function loadPrefs() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch (_) { return {}; }
+}
+// Save on every meaningful change
+['btn-run','btn-step','btn-reset','speed-slider','target-input'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', savePrefs);
+  document.getElementById(id)?.addEventListener('input', savePrefs);
+});
+
+// ── FIRST-TIME ONBOARDING HINT ────────────────────────────────────────────
+function maybeShowOnboarding() {
+  if (localStorage.getItem('lx8-algo-onboarded')) return;
+  const el = document.createElement('div');
+  el.id = 'onboard-hint';
+  el.innerHTML = `
+    <div class="ob-card">
+      <div class="ob-h">⚗ Welcome to Algorithm Lab</div>
+      <div class="ob-row"><kbd>Space</kbd> Run / Stop</div>
+      <div class="ob-row"><kbd>→</kbd> Step forward (during paused run)</div>
+      <div class="ob-row"><kbd>↑</kbd> <kbd>↓</kbd> Switch algorithm</div>
+      <div class="ob-row"><kbd>?</kbd> All shortcuts</div>
+      <div class="ob-row" style="margin-top:0.6rem;color:#a5b4fc;font-size:0.78rem;">Drag the 3D scene to rotate · scroll to zoom</div>
+      <button class="ob-close" onclick="dismissOnboarding()">Got it</button>
+    </div>`;
+  document.body.appendChild(el);
+}
+function dismissOnboarding() {
+  localStorage.setItem('lx8-algo-onboarded', '1');
+  document.getElementById('onboard-hint')?.remove();
+}
+
 // Boot
+const prefs = loadPrefs();
+if (prefs.view === 'cat') {
+  currentView = 'cat';
+  document.querySelector('.vt-btn[data-view="cat"]')?.classList.add('active');
+  document.querySelector('.vt-btn[data-view="chrono"]')?.classList.remove('active');
+}
+if (prefs.speed && prefs.speed >= 1 && prefs.speed <= 10) {
+  speed = prefs.speed;
+  document.getElementById('speed-slider').value = speed;
+}
+const bootAlgo = (prefs.algo && IMPLEMENTED.has(prefs.algo)) ? prefs.algo : 'bubble';
+const bootCat = INFO[bootAlgo]?.cat || 'sort';
+
 renderSidebar();
-updateInfoPanel('bubble');
-renderCode('bubble');
-document.querySelector('.sb-btn[data-algo="bubble"]')?.classList.add('active');
-initSort();
+updateInfoPanel(bootAlgo);
+renderCode(bootAlgo);
+currentCat = bootCat; currentAlgo = bootAlgo;
+document.querySelector(`.sb-btn[data-algo="${bootAlgo}"]`)?.classList.add('active');
+initViz(bootCat, bootAlgo);
+setTimeout(maybeShowOnboarding, 800);
 </script>
+
+<!-- Keyboard shortcuts overlay -->
+<div id="kbd-overlay" onclick="if(event.target===this)closeKbd()">
+  <div class="kbd-card">
+    <h3>⌨ Keyboard Shortcuts</h3>
+    <div class="kbd-list">
+      <div class="kbd-row"><span class="kbd-desc">Run / Stop</span><div class="kbd-keys"><kbd>Space</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Reset / Shuffle</span><div class="kbd-keys"><kbd>R</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Step forward (during paused run)</span><div class="kbd-keys"><kbd>→</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Previous / Next algorithm</span><div class="kbd-keys"><kbd>↑</kbd><kbd>↓</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Toggle code panel</span><div class="kbd-keys"><kbd>C</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Focus search</span><div class="kbd-keys"><kbd>⌘</kbd><kbd>K</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Slower / Faster</span><div class="kbd-keys"><kbd>−</kbd><kbd>+</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Show this help</span><div class="kbd-keys"><kbd>?</kbd></div></div>
+    </div>
+    <button class="kbd-close" onclick="closeKbd()">Close (Esc)</button>
+  </div>
+</div>
+<div class="kbd-hint" id="kbd-hint">Press <kbd style="font-size:0.66rem;padding:1px 5px;">?</kbd> for keyboard shortcuts</div>
+
 </body>
 </html>
