@@ -1,0 +1,85 @@
+name: QA — html-validate · link check · Lighthouse
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  html-validate:
+    name: HTML validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Install html-validate
+        run: npm install -g html-validate@^9.0.0
+      - name: Run on every .html file
+        run: |
+          shopt -s globstar nullglob
+          files=( **/*.html )
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No HTML files."; exit 0
+          fi
+          # --max-warnings 50 lets us land minor warnings without blocking; only errors fail.
+          html-validate --max-warnings 50 "${files[@]}"
+
+  link-check:
+    name: Link check (internal only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: lychee (offline mode)
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # Internal links only; external links can be flaky in CI and we don't want
+          # to fail the build because LinkedIn rate-limited us.
+          args: >-
+            --offline
+            --no-progress
+            --include-fragments
+            --exclude-mail
+            --exclude '^https?://'
+            './**/*.html'
+            './**/*.md'
+          fail: true
+
+  lighthouse:
+    name: Lighthouse CI (homepage + algo + tupa + aimem)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+      - name: Run Lighthouse against four key pages
+        env:
+          LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          # Serve the static site locally then audit.
+          npx --yes http-server -p 8080 -s . &
+          SERVER_PID=$!
+          sleep 2
+          lhci collect \
+            --url=http://localhost:8080/ \
+            --url=http://localhost:8080/algorithms.html \
+            --url=http://localhost:8080/tupa.html \
+            --url=http://localhost:8080/aimem.html \
+            --numberOfRuns=1 \
+            --settings.preset=desktop
+          # Don't fail the build on score regression yet — first observe.
+          # Once baselines stabilise, add `lhci assert --preset=lighthouse:recommended`.
+          lhci upload --target=filesystem --outputDir=./lhci-reports || true
+          kill $SERVER_PID || true
+      - name: Upload Lighthouse reports as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: lhci-reports/
+          retention-days: 14
+          if-no-files-found: ignore
