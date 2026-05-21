@@ -11,4 +11,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://lx8.dev/sitemap.xml
+Sitemap: https://lx8labs.com/sitemap.xml

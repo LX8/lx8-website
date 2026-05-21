@@ -8,21 +8,21 @@ Stack is intentionally simple: vanilla HTML + CSS + JavaScript, Three.js r128 fr
 
 ## Pages
 
-- [Home](https://lx8.dev/): Studio hero, stats strip, partners, pillars, about, courses preview, Algorithm Lab feature, projects, consulting, theory, insights, footer
-- [Products](https://lx8.dev/products.html): IA hub with orbital diagram — four artifacts of one small studio (Tupã, aimem, Algorithm Lab, Light/Gravity/Time)
-- [Team](https://lx8.dev/team.html): "Small team. Long horizons." How Lx8 Labs is run — studio philosophy, founder card, "specialists per engagement" working model
-- [Research](https://lx8.dev/research.html): Open research surface — bipartite Einstein–Maxwell (under peer review at Foundations of Physics), Algorithm Lab as history-of-CS pedagogy, aimem as memory-architecture implementation
-- [Tupã IDE](https://lx8.dev/tupa.html): A native macOS development environment (Swift + Rust + Metal). Multi-language, AI-native, wearables-aware. In active private development.
-- [aimem](https://lx8.dev/aimem.html): Personal AI memory system. One canonical markdown source, per-tool adapters built from it. CoALA taxonomy, MCP-native, 42% token reduction. Open source at github.com/LeKCei/ai-memory.
-- [Algorithm Lab](https://lx8.dev/algorithms.html): Three-column 3D visualizer — sidebar (chronological or by-category view, search filter), Three.js scene, permanent code panel with synchronized line highlighting + live STATE inspector. 39 algorithms, 7 categories, keyboard shortcuts (Space/R/→/↑↓/C/⌘K/+−/?)
-- [Light, Gravity & Time](https://lx8.dev/theory.html): 5-scene Three.js exploration of the bipartite reading of Einstein–Maxwell. Companion to the paper submitted to Foundations of Physics (Springer Nature) in May 2026.
-- [Courses](https://lx8.dev/courses.html): Six engineering courses from the studio — Kubernetes for Production, AI in Production, Cloud Architecture (AWS+GCP), DevSecOps Practitioner, DevOps Foundations, Theoretical Physics for Engineers
-- [About (founder)](https://lx8.dev/about.html): Long-form bio for Alexei Ferreira — career timeline 2013→2026, stack, what I write about, the bipartite-theory physics work. The studio overview lives on /team.
-- [Now](https://lx8.dev/now.html): What the studio is currently working on, reading, watching. Following the nownownow.com convention. Updated monthly.
-- [Changelog](https://lx8.dev/changelog.html): Every shipped update on lx8.dev in reverse chronological order. Subscribe via the RSS feed for new entries.
-- [Insights: Building a 3D algorithm visualizer in pure HTML](https://lx8.dev/insights/3d-algorithm-visualizer.html): Engineering article — single-file HTML, no framework, Three.js from CDN.
-- [Insights: 13 years of DevOps consulting · eight lessons](https://lx8.dev/insights/13-years-consulting-lessons.html): Consulting article — sell outcomes, charge for thinking, hire your replacement.
-- [Unity 6 placeholder](https://lx8.dev/unity.html): WebGL placeholder that auto-detects and loads a build dropped at `unity-build/`
+- [Home](https://lx8labs.com/): Studio hero, stats strip, partners, pillars, about, courses preview, Algorithm Lab feature, projects, consulting, theory, insights, footer
+- [Products](https://lx8labs.com/products.html): IA hub with orbital diagram — four artifacts of one small studio (Tupã, aimem, Algorithm Lab, Light/Gravity/Time)
+- [Team](https://lx8labs.com/team.html): "Small team. Long horizons." How Lx8 Labs is run — studio philosophy, founder card, "specialists per engagement" working model
+- [Research](https://lx8labs.com/research.html): Open research surface — bipartite Einstein–Maxwell (under peer review at Foundations of Physics), Algorithm Lab as history-of-CS pedagogy, aimem as memory-architecture implementation
+- [Tupã IDE](https://lx8labs.com/tupa.html): A native macOS development environment (Swift + Rust + Metal). Multi-language, AI-native, wearables-aware. In active private development.
+- [aimem](https://lx8labs.com/aimem.html): Personal AI memory system. One canonical markdown source, per-tool adapters built from it. CoALA taxonomy, MCP-native, 42% token reduction. Open source at github.com/LeKCei/ai-memory.
+- [Algorithm Lab](https://lx8labs.com/algorithms.html): Three-column 3D visualizer — sidebar (chronological or by-category view, search filter), Three.js scene, permanent code panel with synchronized line highlighting + live STATE inspector. 39 algorithms, 7 categories, keyboard shortcuts (Space/R/→/↑↓/C/⌘K/+−/?)
+- [Light, Gravity & Time](https://lx8labs.com/theory.html): 5-scene Three.js exploration of the bipartite reading of Einstein–Maxwell. Companion to the paper submitted to Foundations of Physics (Springer Nature) in May 2026.
+- [Courses](https://lx8labs.com/courses.html): Six engineering courses from the studio — Kubernetes for Production, AI in Production, Cloud Architecture (AWS+GCP), DevSecOps Practitioner, DevOps Foundations, Theoretical Physics for Engineers
+- [About (founder)](https://lx8labs.com/about.html): Long-form bio for Alexei Ferreira — career timeline 2013→2026, stack, what I write about, the bipartite-theory physics work. The studio overview lives on /team.
+- [Now](https://lx8labs.com/now.html): What the studio is currently working on, reading, watching. Following the nownownow.com convention. Updated monthly.
+- [Changelog](https://lx8labs.com/changelog.html): Every shipped update on lx8labs.com in reverse chronological order. Subscribe via the RSS feed for new entries.
+- [Insights: Building a 3D algorithm visualizer in pure HTML](https://lx8labs.com/insights/3d-algorithm-visualizer.html): Engineering article — single-file HTML, no framework, Three.js from CDN.
+- [Insights: 13 years of DevOps consulting · eight lessons](https://lx8labs.com/insights/13-years-consulting-lessons.html): Consulting article — sell outcomes, charge for thinking, hire your replacement.
+- [Unity 6 placeholder](https://lx8labs.com/unity.html): WebGL placeholder that auto-detects and loads a build dropped at `unity-build/`
 
 ## What the studio does
 
@@ -35,8 +35,8 @@ Stack is intentionally simple: vanilla HTML + CSS + JavaScript, Three.js r128 fr
 
 - [GitHub organization (LX8)](https://github.com/LX8): Source of the website + product code
 - [LinkedIn (Alexei Ferreira)](https://de.linkedin.com/in/lx8-alexei): Founder profile
-- [Insights RSS feed](https://lx8.dev/feed.xml): Subscribe to new articles
-- [Sitemap](https://lx8.dev/sitemap.xml)
-- [Manifest](https://lx8.dev/manifest.json): PWA installable
-- [Impressum](https://lx8.dev/impressum.html): Legal notice (TMG § 5, German law)
-- [Privacy Policy / Datenschutzerklärung](https://lx8.dev/privacy.html): GDPR-compliant data policy
+- [Insights RSS feed](https://lx8labs.com/feed.xml): Subscribe to new articles
+- [Sitemap](https://lx8labs.com/sitemap.xml)
+- [Manifest](https://lx8labs.com/manifest.json): PWA installable
+- [Impressum](https://lx8labs.com/impressum.html): Legal notice (TMG § 5, German law)
+- [Privacy Policy / Datenschutzerklärung](https://lx8labs.com/privacy.html): GDPR-compliant data policy

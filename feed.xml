@@ -2,24 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>
   <title>Lx8 Labs — Insights</title>
-  <link>https://lx8.dev/</link>
+  <link>https://lx8labs.com/</link>
   <description>Field notes from the lab. DevOps post-mortems, AI experiments, paper breakdowns. Once or twice a month.</description>
   <language>en-us</language>
   <lastBuildDate>Sun, 11 May 2026 12:00:00 +0000</lastBuildDate>
-  <atom:link href="https://lx8.dev/feed.xml" rel="self" type="application/rss+xml" />
+  <atom:link href="https://lx8labs.com/feed.xml" rel="self" type="application/rss+xml" />
   <image>
     <url>https://avatars.githubusercontent.com/u/7157081?v=4</url>
     <title>Lx8 Labs</title>
-    <link>https://lx8.dev/</link>
+    <link>https://lx8labs.com/</link>
   </image>
   <copyright>© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira</copyright>
-  <managingEditor>contact@lx8.dev (Alexei Ferreira)</managingEditor>
-  <generator>Hand-rolled — lx8.dev</generator>
+  <managingEditor>contact@lx8labs.com (Alexei Ferreira)</managingEditor>
+  <generator>Hand-rolled — lx8labs.com</generator>
 
   <item>
     <title>13 years of DevOps consulting: eight lessons</title>
-    <link>https://lx8.dev/insights/13-years-consulting-lessons.html</link>
-    <guid isPermaLink="true">https://lx8.dev/insights/13-years-consulting-lessons.html</guid>
+    <link>https://lx8labs.com/insights/13-years-consulting-lessons.html</link>
+    <guid isPermaLink="true">https://lx8labs.com/insights/13-years-consulting-lessons.html</guid>
     <pubDate>Sun, 11 May 2026 18:00:00 +0000</pubDate>
     <dc:creator>Alexei Ferreira</dc:creator>
     <category>Consulting</category>
@@ -28,8 +28,8 @@
 
   <item>
     <title>Building a 3D algorithm visualizer in pure HTML</title>
-    <link>https://lx8.dev/insights/3d-algorithm-visualizer.html</link>
-    <guid isPermaLink="true">https://lx8.dev/insights/3d-algorithm-visualizer.html</guid>
+    <link>https://lx8labs.com/insights/3d-algorithm-visualizer.html</link>
+    <guid isPermaLink="true">https://lx8labs.com/insights/3d-algorithm-visualizer.html</guid>
     <pubDate>Sun, 11 May 2026 12:00:00 +0000</pubDate>
     <dc:creator>Alexei Ferreira</dc:creator>
     <category>Engineering</category>
