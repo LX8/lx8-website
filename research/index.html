@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Zero-Cost Security Hardening -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
+  <meta name="referrer" content="no-referrer">
+  <script>if (window !== window.top) window.top.location = window.location;</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research — Lx8 Labs</title>
+  <meta name="description" content="Open research from Lx8 Labs — bipartite Einstein–Maxwell, Algorithm Lab as a history-of-CS artifact, aimem as a memory-architecture implementation. Read in the open." />
+  <link rel="canonical" href="https://lx8labs.com/research.html" />
+  <link rel="alternate" type="application/rss+xml" title="Lx8 Labs — Insights" href="/feed.xml" />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="color-scheme" content="dark" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lx8labs.com/research.html" />
+  <meta property="og:title" content="Research — Lx8 Labs" />
+  <meta property="og:description" content="Open research from a small studio." />
+  <meta property="og:image" content="https://lx8labs.com/og-image.png" />
+
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&family=JetBrains+Mono:400,500&display=swap" rel="stylesheet" />
+
+  <script type="speculationrules">
+  { "prerender": [{ "where": { "and": [{ "href_matches": "/*" }, { "not": { "href_matches": "/*.html?*" } }] }, "eagerness": "moderate" }] }
+  </script>
+
+  <style>
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.36s; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --bg1: rgba(255,255,255,0.025); --bg2: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.07); --border-hi: rgba(129,140,248,0.28);
+      --ind: #6366f1; --ind3: #a5b4fc; --ind4: #818cf8; --ind-d: rgba(99,102,241,0.12);
+      --amber: #fbbf24; --cyan: #67e8f9;
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
+      --r: 14px; --r-sm: 8px;
+      --ease-dream: cubic-bezier(0.22, 1, 0.36, 1);
+      --font-display: 'Fraunces', 'EB Garamond', Georgia, serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.85; font-feature-settings: 'ss01', 'cv11', 'cv10'; }
+    a { color: var(--ind4); text-decoration: none; border-bottom: 1px solid rgba(129,140,248,0.3); transition: all 0.4s var(--ease-dream); }
+    a:hover { color: var(--ind3); border-bottom-color: var(--ind3); }
+    p { color: #d1d9e8; margin-bottom: 1.3rem; font-size: 1.05rem; }
+    p strong { color: var(--text); font-weight: 600; }
+    p em { color: var(--ind3); font-style: italic; }
+
+    #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    #bg::before { content:''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.045) 1px, transparent 1px); background-size: 32px 32px; mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 30%, transparent 100%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(120px); }
+    .b1 { width: 55vw; height: 45vh; background: radial-gradient(circle, rgba(99,102,241,0.14), transparent 70%); top: -10vh; left: -8vw; animation: b1 18s ease-in-out infinite alternate; }
+    .b2 { width: 40vw; height: 45vh; background: radial-gradient(circle, rgba(251,191,36,0.06), transparent 70%); bottom: 5vh; right: -8vw; animation: b2 22s ease-in-out infinite alternate; }
+    @keyframes b1 { to { transform: translate(3vw, 4vh) scale(1.05); } }
+    @keyframes b2 { to { transform: translate(-3vw, -3vh) scale(1.04); } }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 2.5rem; transition: all 0.4s var(--ease-dream); }
+    nav.solid { background: rgba(0,0,0,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 2.5rem; }
+    .logo-a { display: flex; align-items: center; gap: 9px; border: none; }
+    .logo-img { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.5); }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: #fff; }
+    .logo-txt span { color: var(--ind4); }
+    .back-link { font-size: 0.84rem; color: var(--text2); padding: 0.4rem 1rem; border-radius: var(--r-sm); border: 1px solid var(--border); border-bottom: 1px solid var(--border); transition: all 0.3s var(--ease-dream); }
+    .back-link:hover { color: var(--text); border-color: var(--border-hi); background: var(--bg2); border-bottom-color: var(--border-hi); }
+
+    /* Hero */
+    #hero { position: relative; z-index: 1; padding: 9rem 1.75rem 3rem; max-width: 740px; margin: 0 auto; text-align: center; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-hi); background: var(--ind-d); border-radius: 999px; padding: 5px 14px; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ind3); margin-bottom: 1.6rem; }
+    .chip-dot { width: 6px; height: 6px; background: var(--ind4); border-radius: 50%; animation: blink 2.4s ease-in-out infinite; }
+    @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.35 } }
+    h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.4rem, 5.6vw, 4rem); letter-spacing: -0.035em; line-height: 1.04; color: #fff; margin-bottom: 0.8rem; }
+    h1 em { font-style: italic; font-weight: 400; color: var(--amber); }
+    .hero-sub { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text2); max-width: 540px; margin: 0 auto; }
+
+    /* Article body */
+    article { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 0 1.75rem 3rem; }
+    h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.5rem, 3vw, 2rem); color: #fff; letter-spacing: -0.025em; margin: 3rem 0 1rem; }
+    h2 em { font-style: italic; color: var(--ind3); font-weight: 400; }
+    h2 a { color: inherit; border: none; }
+    h2 a:hover { color: var(--ind3); }
+
+    blockquote { margin: 1.8rem 0; padding: 1.1rem 1.5rem; border-left: 3px solid var(--amber); background: rgba(251,191,36,0.04); border-radius: 0 var(--r-sm) var(--r-sm) 0; font-family: var(--font-display); font-style: italic; color: var(--ind3); font-size: 1.05rem; line-height: 1.7; }
+    blockquote cite { display: block; margin-top: 0.6rem; font-family: 'Space Grotesk', sans-serif; font-style: normal; font-size: 0.8rem; color: var(--text3); letter-spacing: 0.02em; }
+
+    .res-meta { display: flex; gap: 0.85rem; flex-wrap: wrap; margin: 1rem 0 2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text3); }
+    .res-meta span { padding: 4px 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--bg1); }
+    .res-meta .status-active { color: var(--amber); border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.06); }
+    .res-meta .status-live { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.06); }
+    .res-meta .status-oss { color: var(--cyan); border-color: rgba(103,232,249,0.3); background: rgba(103,232,249,0.06); }
+
+    /* Reading list */
+    .reading-list { display: flex; flex-direction: column; gap: 8px; margin: 1.4rem 0 1.6rem; padding: 1.1rem 1.4rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); }
+    .reading-list-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
+    .reading-list .item { font-size: 0.88rem; color: var(--text2); line-height: 1.6; padding-left: 1.2rem; position: relative; border: none; }
+    .reading-list .item::before { content: '◦'; position: absolute; left: 0; color: var(--ind4); font-weight: 700; }
+    .reading-list .item .y { font-family: 'JetBrains Mono', monospace; color: var(--text3); font-size: 0.8em; margin-left: 4px; }
+
+    /* Footer */
+    footer { padding: 2.5rem 2.5rem; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+    .ft-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 2rem; max-width: 1100px; margin: 0 auto 1.5rem; }
+    .ft-col-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 0.85rem; }
+    .ft-col a { display: block; font-size: 0.85rem; color: var(--text2); margin-bottom: 0.35rem; border: none; }
+    .ft-col a:hover { color: var(--ind4); }
+    .ft-bottom { max-width: 1100px; margin: 0 auto; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .ft-left { display: flex; align-items: center; gap: 9px; }
+    .ft-logo { width: 24px; height: 24px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); }
+    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ft-copy { font-size: 0.77rem; color: var(--text3); }
+    .ft-copy a { color: var(--ind4); border: none; }
+
+    .skip-link { position: absolute; top: -100px; left: 0; background: var(--ind); color: #fff; padding: 0.6rem 1rem; border-radius: 0 0 6px 0; z-index: 999; font-weight: 600; font-size: 0.85rem; border: none; transition: top 0.15s; }
+    .skip-link:focus { top: 0; }
+    *:focus { outline: none; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--ind4); outline-offset: 3px; border-radius: 4px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1.1rem 1.25rem; } nav.solid { padding: 0.75rem 1.25rem; }
+      .ft-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+  <link rel="stylesheet" href="/global.css" />
+</head>
+<body>
+<script defer src="/i18n/translations.js"></script>
+<script defer src="/i18n/engine.js"></script>
+<script defer src="/a11y.js"></script>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<nav id="nav">
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async"/></div>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
+  </a>
+  <a href="/" class="back-link">← Home</a>
+</nav>
+
+<section id="hero">
+  <div class="chip"><div class="chip-dot"></div>Research</div>
+  <h1>Open research,<br/><em>quietly kept.</em></h1>
+  <p class="hero-sub">Three threads of work the studio is doing in public. The physics, the CS history, and the memory.</p>
+</section>
+
+<article id="main">
+
+  <h2><a href="/theory/"><em>I.</em> The bipartite reading of Einstein–Maxwell</a></h2>
+
+  <div class="res-meta">
+    <span class="status-active">● Under peer review · Foundations of Physics (Springer Nature)</span>
+    <span>Submitted 2026-05-10</span>
+    <span>SNAPP <code style="background:none;border:none;color:var(--ind3);padding:0;">6ee9ff0b-fc04-…</code></span>
+  </div>
+
+  <p>The studio's primary physics output to date. A reading of the Einstein–Maxwell system that organises <strong>light–gravity coupling</strong> into <em>three orthogonal channels</em> — gravitoelectric, gravitomagnetic, and Λ-cosmological — rather than collapsing them into a single tensor expression. Each channel is examined in its own right; together they form a complete <em>three-channel taxonomy</em>.</p>
+
+  <blockquote>
+    A 54-round computational audit (v1 → v2.57) has held the conjecture frozen at 0.5 / 11 SPECULATION promotion conditions met — the correct answer when the open problems are open.
+    <cite>— from the corpus, Apr 2026</cite>
+  </blockquote>
+
+  <p>The <a href="/theory/"><strong>interactive 3D companion</strong></a> lets a reader walk through each channel visually. Built in Three.js, lives at /theory.html. The paper itself is awaiting editor decision by ~June 10 2026.</p>
+
+  <h2><a href="/algorithms/"><em>II.</em> The Algorithm Lab as research</a></h2>
+
+  <div class="res-meta">
+    <span class="status-live">● Live</span>
+    <span>39 algorithms · 2,300 years</span>
+    <span>3D · synced pseudocode · live STATE</span>
+  </div>
+
+  <p>It's a product. But it's also a piece of <em>history-of-CS pedagogy</em>: every algorithm carries its year, its author, and a brief origin story. The chronological view starts with Euclid's GCD (300 BCE) and ends with Tim Sort (2002). What started as a homepage demo became, quietly, the most comprehensive visual archive of mainline CS algorithms on the open web.</p>
+
+  <p>The studio's research thesis on it: <em>interactive figures beat passive video at every measure of learning retention worth measuring</em>. Bret Victor's *explorable explanations* applied to a curriculum domain where the standard pedagogy stopped evolving in the 1980s.</p>
+
+  <h2><a href="/aimem/"><em>III.</em> aimem as a memory-architecture implementation</a></h2>
+
+  <div class="res-meta">
+    <span class="status-oss">● Open source · MCP-ready</span>
+    <span>github.com/LeKCei/ai-memory</span>
+    <span>Used in production</span>
+  </div>
+
+  <p>A working markdown implementation of seven separate research-paper architectures. Not a thought-piece. Not a framework. A single canonical store of personal context, with per-tool adapters built from it, that you can clone and run today.</p>
+
+  <p>The interesting part is what the existence of <a href="/aimem/"><strong>aimem</strong></a> claims: that the right memory layer for an AI assistant is <em>not</em> a vector database with a magic-retrieval API. It is plain markdown files, organised by a research-grounded taxonomy, with a build step that emits per-tool views. The complexity goes into the structure; the storage stays inspectable.</p>
+
+  <div class="reading-list">
+    <div class="reading-list-h">Source papers</div>
+    <div class="item">Sumers et al. — <em>Cognitive Architectures for Language Agents</em> (CoALA) <span class="y">· Princeton, 2023</span></div>
+    <div class="item">Packer et al. — <em>MemGPT: Towards LLMs as Operating Systems</em> <span class="y">· UC Berkeley, 2023</span></div>
+    <div class="item">Xu et al. — <em>A-MEM: Atomic Memory for Language Agents</em> <span class="y">· NeurIPS, 2025</span></div>
+    <div class="item">Fang et al. — <em>MEMP: Procedural Memory Distillation</em> <span class="y">· Aug 2025</span></div>
+    <div class="item">Zhong et al. — <em>MemoryBank: Enhancing LLMs with Long-Term Memory</em> <span class="y">· AAAI, 2024</span></div>
+    <div class="item">Park et al. — <em>Generative Agents: Interactive Simulacra of Human Behaviour</em> <span class="y">· Stanford, 2023</span></div>
+    <div class="item">Mem0 framework + TiMem reflection schedule <span class="y">· 2024–2026</span></div>
+  </div>
+
+<!--
+  <h2 id="aegis"><a href="/research/#aegis"><em>IV.</em> Aegis Morphic Swarm Suit</a></h2>
+
+  <div class="res-meta">
+    <span class="status-live" style="background:#064e3b;color:#34d399;border:none;">● Hardware prototype</span>
+    <span>Robotics</span>
+    <span>Real-time topology</span>
+  </div>
+
+  <p>An autonomous, self-organizing robotic mesh designed for extreme environments. Real-time topology adaptation and hive-mind resilience. The swarm suit demonstrates dynamic structural changes driven by collective intelligence rather than centralized control.</p>
+
+  <p>The core research focus is on multi-agent consensus algorithms functioning under severe signal degradation, allowing the mesh to maintain structural integrity and functional cohesion even when individual nodes fail or drop out.</p>
+-->
+
+  <h2>What's <em>next</em>.</h2>
+
+  <p>Three more threads quietly underway, in roughly the order they'll publish:</p>
+  <ul style="margin: 0.8rem 0 1.4rem 1.6rem; color:#d1d9e8;">
+    <li>An empirical write-up of <em>aimem token-economics across one author's twelve-month corpus</em> — the 42% reduction number, audited.</li>
+    <li>A short paper on the Algorithm Lab's pedagogical claims, with retention measurements against a control group reading the same content in prose.</li>
+    <li>Follow-up to the bipartite-theory submission, contingent on the editor decision.</li>
+  </ul>
+
+  <p>All of it will land on this page as it ships. <a href="/feed.xml">RSS feed</a> for the impatient; <a href="/changelog/">Changelog</a> for the curious.</p>
+
+</article>
+
+<footer>
+  <div class="ft-grid">
+    <div class="ft-col">
+      <div class="ft-col-h">Studio & Shop</div>
+      <a href="/">Home</a>
+      <a href="/shop/">Shop &amp; Books</a>
+      <a href="/courses/">Courses</a>
+    <a href="/products/">Products</a>
+    <a href="/changelog/">Log</a>
+      <a href="/team/">Team</a>
+      <a href="/about/">About (founder)</a>
+      <a href="/now/">Now</a>
+      <a href="/index.html#consulting">Contact</a>
+    </div>
+    <div class="ft-col">
+      <div class="ft-col-h">Products</div>
+      <a href="/tupa/">Tupã IDE</a>
+      <a href="/aimem/">aimem</a>
+      <a href="/algorithms/">Algorithm Lab</a>
+      <a href="/products/">All products</a>
+    </div>
+    <div class="ft-col">
+      <div class="ft-col-h">Research &amp; writing</div>
+      <a href="/theory/">Light, Gravity &amp; Time</a>
+      
+      <a href="/index.html#insights">Insights</a>
+      <a href="/changelog/">Changelog</a>
+      <a href="/feed.xml">RSS feed</a>
+    </div>
+        <div class="ft-col">
+      <div class="ft-col-h">Connect</div>
+      <div class="social-grid">
+        <a href="https://github.com/LX8" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.68.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+        </a>
+        <a href="https://x.com/lx8labs" target="_blank" rel="noopener" class="social-icon" aria-label="X (Twitter)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.9 2H22L15.3 9.6L23 22H17L12.2 14.8L6.8 22H3.7L10.8 13.9L3.4 2H9.7L14.1 8.8L18.9 2ZM17.8 20.3H19.5L8.3 3.6H6.5L17.8 20.3Z"/></svg>
+        </a>
+        <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="https://youtube.com/@AlexeiFerreira" target="_blank" rel="noopener" class="social-icon" aria-label="YouTube">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.5 6.2c-.2-1-.9-1.7-1.9-1.9C19.9 4 12 4 12 4s-7.9 0-9.6.3c-1 .2-1.7.9-1.9 1.9C.1 8.1 0 12 0 12s.1 3.9.4 5.8c.2 1 .9 1.7 1.9 1.9 1.7.3 9.6.3 9.6.3s7.9 0 9.6-.3c1-.2 1.7-.9 1.9-1.9.4-1.9.4-5.8.4-5.8s0-3.9-.3-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <div class="ft-left">
+      <div class="ft-logo"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8" width="24" height="24" loading="lazy" decoding="async"/></div>
+      <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="/">lx8labs.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 50), { passive: true });
+</script>
+</body>
+</html>

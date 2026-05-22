@@ -51,9 +51,32 @@ footer { padding: 2rem 2.5rem; border-top: 1px solid var(--border); display: fle
 *:focus { outline: none; }
 a:focus-visible, button:focus-visible, .filter:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--ind4); outline-offset: 2px; border-radius: 4px; }
 .ft-links a, .filter, .back-link { min-height: 24px; display: inline-flex; align-items: center; }
+
+/* Motion */
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } .r { opacity: 1 !important; transform: none !important; } .blob, .chip-dot { animation: none !important; } }
+body.paused-animations *, body.paused-animations *::before, body.paused-animations *::after { animation-play-state: paused !important; transition: none !important; }
+body.paused-animations .blob, body.paused-animations .orbit-body, body.paused-animations path { animation: none !important; }
+
+/* Cognitive & Visual */
+body.dyslexic-mode { font-family: system-ui, -apple-system, sans-serif !important; letter-spacing: 0.05em !important; line-height: 1.8 !important; word-spacing: 0.1em !important; }
+body.dyslexic-mode h1, body.dyslexic-mode h2, body.dyslexic-mode h3, body.dyslexic-mode .logo-txt { font-family: system-ui, -apple-system, sans-serif !important; letter-spacing: 0.02em !important; }
+body.high-contrast { --bg: #000 !important; --bg1: #000 !important; --bg2: #000 !important; --text: #fff !important; --text2: #e2e8f0 !important; --text3: #cbd5e1 !important; --border: #fff !important; --border-hi: #fff !important; --ind: #ffff00 !important; --ind3: #ffff00 !important; --ind4: #ffff00 !important; --ind-d: #000 !important; }
+body.high-contrast a { text-decoration: underline !important; text-underline-offset: 3px; }
+body.high-contrast * { box-shadow: none !important; text-shadow: none !important; filter: none !important; }
 
 /* ── PROGRESSIVE DISCLOSURE (UX ALIGNMENT) ── */
+.projects-grid, .news-grid { 
+  display: flex !important; 
+  gap: 16px; 
+  overflow-x: auto; 
+}
+
+/* ── RENDERING PERFORMANCE ── */
+section:not(#hero), footer, .products-grid, .courses-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+
 .projects-grid, .news-grid { 
   display: flex !important; 
   gap: 16px; 

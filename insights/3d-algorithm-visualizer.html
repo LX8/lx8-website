@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Zero-Cost Security Hardening -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
+  <meta name="referrer" content="no-referrer">
+  <script>if (window !== window.top) window.top.location = window.location;</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Building a 3D algorithm visualizer in pure HTML · Lx8 Labs</title>
@@ -189,6 +194,9 @@
   </style>
 </head>
 <body>
+<script defer src="/i18n/translations.js"></script>
+<script defer src="/i18n/engine.js"></script>
+<script defer src="/a11y.js"></script>
 <a href="#main" class="skip-link">Skip to content</a>
 <div id="progress"></div>
 
@@ -232,7 +240,7 @@
     <div class="s-cell"><div class="s-n">0</div><div class="s-l">npm deps</div></div>
   </div>
 
-  <p>The file lives at <a href="/algorithms.html">/algorithms.html</a>. Open it. Inspect the source. The whole thing — sidebar, 3D canvas, code panel, search, keyboard shortcuts, every sorting algorithm, every graph algorithm, every DP solution — is in one document. The only external resources are Three.js r128 and OrbitControls from cdnjs, plus Google Fonts.</p>
+  <p>The file lives at <a href="/algorithms/">/algorithms.html</a>. Open it. Inspect the source. The whole thing — sidebar, 3D canvas, code panel, search, keyboard shortcuts, every sorting algorithm, every graph algorithm, every DP solution — is in one document. The only external resources are Three.js r128 and OrbitControls from cdnjs, plus Google Fonts.</p>
 
   <h2>The wins</h2>
 
@@ -241,7 +249,7 @@
   <p>Compare to a Vite-built React app: the browser sees an empty <code>&lt;div id="root"&gt;</code>, fetches a 200 KB bundle, parses it, runs React's first render. Then maybe paints something.</p>
 
   <h3>2. The "view-source" affordance</h3>
-  <p>Right-click → View Source on <a href="/algorithms.html">/algorithms.html</a> shows the entire app. Every CSS rule, every algorithm, every Three.js scene. If a CS student wants to learn how a 3D Quick Sort visualization works, they can — by reading it. No source maps, no minification, no JSX compiling to <code>React.createElement</code> noise.</p>
+  <p>Right-click → View Source on <a href="/algorithms/">/algorithms.html</a> shows the entire app. Every CSS rule, every algorithm, every Three.js scene. If a CS student wants to learn how a 3D Quick Sort visualization works, they can — by reading it. No source maps, no minification, no JSX compiling to <code>React.createElement</code> noise.</p>
   <p>This was the unexpected delight. The site teaches twice: once by what it shows, once by what it is.</p>
 
   <h3>3. Maintenance cost approaches zero</h3>
@@ -315,13 +323,13 @@ async function bubbleSort() {
       <div class="post-cta-h">Want to see the result?</div>
       <div class="post-cta-p">Open the Algorithm Lab and inspect the source. The whole 2,000-line file is right there.</div>
     </div>
-    <a href="/algorithms.html" class="btn btn-p">Open Algorithm Lab →</a>
+    <a href="/algorithms/" class="btn btn-p">Open Algorithm Lab →</a>
   </div>
 
   <div class="byline">
-    <a href="/about.html" class="by-avatar"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Alexei Ferreira"/></a>
+    <a href="/about/" class="by-avatar"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Alexei Ferreira"/></a>
     <div>
-      <a href="/about.html" class="by-name">Alexei Ferreira</a>
+      <a href="/about/" class="by-name">Alexei Ferreira</a>
       <span class="by-bio">DevOps engineer for 13 years, now also building AI tools and writing physics. Founder of <a href="/">Lx8 Labs</a>. Berlin.</span>
     </div>
   </div>
@@ -334,12 +342,14 @@ async function bubbleSort() {
   </div>
   <div class="ft-links">
     <a href="/">Home</a>
-    <a href="/about.html">About</a>
-    <a href="/algorithms.html">Algorithm Lab</a>
-    <a href="/courses.html">Courses</a>
+    <a href="/about/">About</a>
+    <a href="/algorithms/">Algorithm Lab</a>
+    <a href="/courses/">Courses</a>
+    <a href="/products/">Products</a>
+    <a href="/changelog/">Log</a>
     <a href="/index.html#insights">Insights</a>
-    <a href="/impressum.html">Impressum</a>
-    <a href="/privacy.html">Privacy</a>
+    <a href="/impressum/">Impressum</a>
+    <a href="/privacy/">Privacy</a>
     <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
     <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener">LinkedIn ↗</a>
   </div>

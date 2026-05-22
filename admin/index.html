@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Zero-Cost Security Hardening -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
+  <meta name="referrer" content="no-referrer">
+  <script>if (window !== window.top) window.top.location = window.location;</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Lx8 Labs</title>
+  <meta name="description" content="Administration interface for Lx8 Labs operations." />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <link href="https://fonts.bunny.net/css?family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&family=JetBrains+Mono:400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/global.css" />
+
+  <style>
+    /* Admin Specific Overrides */
+    body { background: #050505; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    
+    #bg::before { background-size: 20px 20px; opacity: 0.3; }
+    
+    .admin-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      margin-top: 80px; /* offset for nav */
+      height: calc(100vh - 80px);
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      background: rgba(10, 8, 20, 0.4);
+      backdrop-filter: blur(12px);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow-y: auto;
+    }
+    
+    .nav-section { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin: 1rem 0 0.5rem 1rem; }
+    
+    .nav-item {
+      padding: 0.75rem 1rem;
+      border-radius: var(--r-sm);
+      color: var(--text2);
+      font-weight: 500;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-item svg { stroke: var(--text3); transition: stroke 0.2s; }
+    .nav-item:hover { color: var(--text); background: var(--bg2); }
+    .nav-item:hover svg { stroke: var(--text); }
+    .nav-item.active { background: rgba(99,102,241,0.1); color: var(--ind4); border-left: 3px solid var(--ind); border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+    .nav-item.active svg { stroke: var(--ind4); }
+    
+    /* Social media section in sidebar */
+    .social-links { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 1rem; }
+    .social-links a { color: var(--text3); transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); }
+    .social-links a:hover { color: #fff; border-color: var(--border-hi); background: var(--bg2); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    
+    /* Main Content Area */
+    .admin-content {
+      padding: 2.5rem 3.5rem;
+      overflow-y: auto;
+      background: linear-gradient(135deg, rgba(0,0,0,0) 0%, rgba(99,102,241,0.03) 100%);
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .page-header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin: 0; font-weight: 600; letter-spacing: -0.5px; }
+    
+    .status-badge { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--green4); background: rgba(52,211,153,0.1); padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(52,211,153,0.2); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green4); box-shadow: 0 0 8px var(--green4); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+
+    /* Top Stats Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .metric-card {
+      background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; transition: transform 0.2s; position: relative; overflow: hidden;
+    }
+    .metric-card:hover { transform: translateY(-3px); border-color: var(--border-hi); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .metric-card::before { content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px; background: radial-gradient(circle at top right, rgba(99,102,241,0.15), transparent); border-radius: 0 var(--r) 0 100%; }
+    .metric-title { font-size: 0.8rem; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+    .metric-value { font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700; color: #fff; line-height: 1.1; }
+    .metric-delta { font-size: 0.85rem; color: var(--green4); margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
+    .metric-delta.neg { color: #f87171; }
+
+    /* Layout Grids */
+    .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+
+    /* Charts & Panels */
+    .panel { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; display: flex; flex-direction: column; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .panel-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 600; color: #fff; }
+    
+    /* Mock Chart (CSS only) */
+    .chart-container { flex: 1; display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-bottom: 1rem; border-bottom: 1px solid var(--border); position: relative; }
+    .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; height: 100%; position: relative; }
+    .bar { width: 100%; background: linear-gradient(180deg, var(--ind4) 0%, var(--ind2) 100%); border-radius: 4px 4px 0 0; min-height: 10px; transition: height 1s cubic-bezier(0.2, 0.8, 0.2, 1); cursor: pointer; opacity: 0.8; }
+    .bar:hover { opacity: 1; filter: brightness(1.2); }
+    .bar-label { font-size: 0.7rem; color: var(--text3); position: absolute; bottom: -24px; font-family: 'JetBrains Mono', monospace; }
+
+    /* Activity List */
+    .activity-list { display: flex; flex-direction: column; gap: 1rem; }
+    .activity-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .act-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.8rem; }
+    .act-icon.blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .act-icon.green { background: rgba(52,211,153,0.15); color: #34d399; }
+    .act-icon.purple { background: rgba(167,139,250,0.15); color: #c084fc; }
+    .act-details { flex: 1; }
+    .act-text { font-size: 0.85rem; color: var(--text); line-height: 1.4; margin-bottom: 2px; }
+    .act-text strong { color: #fff; font-weight: 500; }
+    .act-time { font-size: 0.75rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+    /* Tables */
+    .table-container { overflow-x: auto; margin-top: 1.5rem; border: 1px solid var(--border); border-radius: var(--r-sm); background: rgba(0,0,0,0.2); }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: rgba(255,255,255,0.02); color: var(--text3); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.5rem; font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; color: var(--text2); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.015); color: var(--text); }
+    
+    .badge { display: inline-flex; align-items: center; justify-content: center; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge.active { background: rgba(52,211,153,0.1); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .badge.inactive { background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+    .badge.pro { background: rgba(99,102,241,0.1); color: var(--ind4); border: 1px solid rgba(99,102,241,0.2); }
+
+    /* Button */
+    .btn-action { background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 0.4rem 0.8rem; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+    .btn-action:hover { background: var(--ind); color: #fff; border-color: var(--ind); }
+    .btn-primary { background: var(--ind); color: #fff; border: 1px solid var(--ind); }
+    .btn-primary:hover { background: #4f51e8; box-shadow: 0 4px 15px rgba(99,102,241,0.4); }
+    
+    /* Auth Overlay */
+    #auth-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--ind4); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .admin-content { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<script defer src="/i18n/translations.js"></script>
+<script defer src="/i18n/engine.js"></script>
+<script defer src="/a11y.js"></script>
+
+<!-- Authentication Shield -->
+<div id="auth-overlay">
+  <div class="spinner"></div>
+  <p style="color: var(--text2); font-size: 0.9rem;">Verifying Firebase credentials...</p>
+</div>
+
+<div id="bg"><div class="blob b1"></div></div>
+
+<nav>
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async"/></div>
+    <span class="logo-txt">Lx8 <span>Admin</span></span>
+  </a>
+  <div style="display: flex; gap: 1rem; align-items: center;">
+    <a href="/index.html" style="font-size: 0.85rem; color: var(--text2); text-decoration: none;">Live Site ↗</a>
+    <button type="button" class="btn-action" id="logout-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      Sign Out
+    </button>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      Dashboard
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      Feedback & Issues
+    </div>
+    
+    <div class="nav-section">Commerce</div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      Users & Roles
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+      Stripe Revenue
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      Course Access
+    </div>
+
+    <div class="nav-section">System</div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+      Analytics
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      Settings
+    </div>
+
+    <!-- Socials strip in admin sidebar -->
+    <div class="social-links">
+      <a href="https://github.com/LX8" target="_blank" aria-label="GitHub" title="GitHub">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.68.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+      </a>
+      <a href="https://x.com/lx8labs" target="_blank" aria-label="X (Twitter)" title="X">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.9 2H22L15.3 9.6L23 22H17L12.2 14.8L6.8 22H3.7L10.8 13.9L3.4 2H9.7L14.1 8.8L18.9 2ZM17.8 20.3H19.5L8.3 3.6H6.5L17.8 20.3Z"/></svg>
+      </a>
+      <a href="https://youtube.com/@AlexeiFerreira" target="_blank" aria-label="YouTube" title="YouTube">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.5 6.2c-.2-1-.9-1.7-1.9-1.9C19.9 4 12 4 12 4s-7.9 0-9.6.3c-1 .2-1.7.9-1.9 1.9C.1 8.1 0 12 0 12s.1 3.9.4 5.8c.2 1 .9 1.7 1.9 1.9 1.7.3 9.6.3 9.6.3s7.9 0 9.6-.3c1-.2 1.7-.9 1.9-1.9.4-1.9.4-5.8.4-5.8s0-3.9-.3-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/></svg>
+      </a>
+    </div>
+  </aside>
+
+  <main class="admin-content">
+    <div class="page-header">
+      <div>
+        <h1>Dashboard</h1>
+        <div class="status-badge" style="margin-top: 10px;">
+          <div class="status-dot"></div>
+          All systems operational
+        </div>
+      </div>
+      <button type="button" class="btn-action btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Export CSV
+      </button>
+    </div>
+
+    <!-- Metrics Grid -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          Total Users
+        </div>
+        <div class="metric-value">1,248</div>
+        <div class="metric-delta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+          +12% vs last month
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          Monthly Revenue
+        </div>
+        <div class="metric-value">$23.7k</div>
+        <div class="metric-delta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+          +8.4% vs last month
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          Active Course Sessions
+        </div>
+        <div class="metric-value">342</div>
+        <div class="metric-delta neg">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"></polyline><polyline points="16 17 22 17 22 11"></polyline></svg>
+          -2.1% vs last week
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Chart Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Signups Overview</div>
+          <select style="background:var(--bg); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; cursor:pointer; outline:none;">
+            <option>Last 7 days</option>
+            <option>Last 30 days</option>
+          </select>
+        </div>
+        <div class="chart-container">
+          <div class="bar-group"><div class="bar" style="height: 30%;"></div><span class="bar-label">Mon</span></div>
+          <div class="bar-group"><div class="bar" style="height: 50%;"></div><span class="bar-label">Tue</span></div>
+          <div class="bar-group"><div class="bar" style="height: 80%;"></div><span class="bar-label">Wed</span></div>
+          <div class="bar-group"><div class="bar" style="height: 40%;"></div><span class="bar-label">Thu</span></div>
+          <div class="bar-group"><div class="bar" style="height: 90%;"></div><span class="bar-label">Fri</span></div>
+          <div class="bar-group"><div class="bar" style="height: 100%;"></div><span class="bar-label">Sat</span></div>
+          <div class="bar-group"><div class="bar" style="height: 60%;"></div><span class="bar-label">Sun</span></div>
+        </div>
+      </div>
+
+      <!-- Activity Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent Events</div>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="act-icon green">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div class="act-details">
+              <div class="act-text"><strong>John Doe</strong> upgraded to Pro</div>
+              <div class="act-time">10 mins ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon blue">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div class="act-details">
+              <div class="act-text"><strong>Alice Smith</strong> completed <em>Docker Intro</em></div>
+              <div class="act-time">1 hr ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon purple">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <div class="act-details">
+              <div class="act-text"><strong>Bob Johnson</strong> opened a ticket</div>
+              <div class="act-time">2 hrs ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mock User Table -->
+    <div style="margin-top: 2.5rem; display: flex; justify-content: space-between; align-items: flex-end;">
+      <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; color: #fff;">Recent Signups</h3>
+      <a href="#" style="font-size: 0.85rem; color: var(--ind4); text-decoration: none; font-weight: 500;">View All →</a>
+    </div>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Subscription</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>John Doe</strong></td>
+        <tbody id="users-tbody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+  import { auth, db, collection, getDocs, onAuthStateChanged, signOut } from '/firebase-init.js';
+
+  async function loadUsers() {
+    const tbody = document.getElementById('users-tbody');
+    try {
+      const snapshot = await getDocs(collection(db, 'users'));
+      tbody.innerHTML = '';
+      if (snapshot.empty) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text2);">No users found.</td></tr>';
+        return;
+      }
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${d.email ? d.email.split('@')[0] : 'Unknown'}</strong></td>
+          <td>${d.email || ''}</td>
+          <td><span class="badge ${d.subscription === 'Pro ($19/mo)' ? 'pro' : ''}">${d.subscription || 'None'}</span></td>
+          <td><span class="badge ${d.status === 'Active' ? 'active' : 'inactive'}">${d.status || 'Pending'}</span></td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${d.joined ? new Date(d.joined.seconds * 1000).toISOString().split('T')[0] : ''}</td>
+          <td><button type="button" class="btn-action">Edit</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #f43f5e;">Access Denied or Database Error</td></tr>`;
+    }
+  }
+
+  onAuthStateChanged(auth, user => {
+    const overlay = document.getElementById('auth-overlay');
+    if (!user) {
+      window.location.href = '/login/';
+    } else {
+      if (overlay) {
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.4s ease';
+        setTimeout(() => overlay.remove(), 400);
+      }
+      loadUsers();
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  });
+</script>
+
+</body>
+</html>

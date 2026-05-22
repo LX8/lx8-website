@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Zero-Cost Security Hardening -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
+  <meta name="referrer" content="no-referrer">
+  <script>if (window !== window.top) window.top.location = window.location;</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>404 — Lost in Phase Space · Lx8 Labs</title>
@@ -88,6 +93,9 @@
   <link rel="stylesheet" href="/global.css" />
 </head>
 <body>
+<script defer src="/i18n/translations.js"></script>
+<script defer src="/i18n/engine.js"></script>
+<script defer src="/a11y.js"></script>
   <canvas id="stars"></canvas>
   <main>
     <div class="chip"><div class="chip-dot"></div>Error · 404</div>
@@ -97,8 +105,8 @@
     <p class="code">// throw new PageNotFound("/" + location.pathname.slice(1));</p>
     <div class="actions">
       <a class="btn btn-p" href="/">← Return home</a>
-      <a class="btn btn-g" href="/algorithms.html">Algorithm Lab</a>
-      <a class="btn btn-g" href="/theory.html">Light, Gravity &amp; Time</a>
+      <a class="btn btn-g" href="/algorithms/">Algorithm Lab</a>
+      <a class="btn btn-g" href="/theory/">Light, Gravity &amp; Time</a>
     </div>
   </main>
   <footer class="ft">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="https://lx8labs.com">lx8labs.com</a></footer>

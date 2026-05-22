@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Zero-Cost Security Hardening -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
+  <meta name="referrer" content="no-referrer">
+  <script>if (window !== window.top) window.top.location = window.location;</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Now — What I'm working on · Lx8 Labs</title>
+  <meta name="description" content="What Alexei Ferreira is focused on right now: current work, what I'm reading, what I'm shipping. Updated monthly. A /now page." />
+  <link rel="canonical" href="https://lx8labs.com/now.html" />
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="color-scheme" content="dark" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lx8labs.com/now.html" />
+  <meta property="og:title" content="Now — Alexei Ferreira" />
+  <meta property="og:description" content="What I'm working on right now. Updated monthly." />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/7157081?v=4" />
+
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  
+  <link href="https://fonts.bunny.net/css?family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.bunny.net/css?family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" /></noscript>
+
+  <script type="speculationrules">
+  {
+    "prerender": [{
+      "where": { "and": [{ "href_matches": "/*" }, { "not": { "href_matches": "/*.html?*" } }] },
+      "eagerness": "moderate"
+    }]
+  }
+  </script>
+
+  <style>
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.28s; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000; --bg1: rgba(255,255,255,0.025); --bg2: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.07); --border-hi: rgba(129,140,248,0.28);
+      --ind: #6366f1; --ind3: #a5b4fc; --ind4: #818cf8; --ind-d: rgba(99,102,241,0.12);
+      --green4: #34d399; --amber: #fbbf24; --rose: #fb7185;
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
+      --r: 14px; --r-sm: 8px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.8; font-feature-settings: 'ss01', 'cv11', 'cv10'; }
+    a { color: var(--ind4); text-decoration: none; border-bottom: 1px solid rgba(129,140,248,0.3); transition: all 0.15s; }
+    a:hover { color: var(--ind3); border-bottom-color: var(--ind3); }
+    p { color: #d1d9e8; margin-bottom: 1.2rem; }
+    p strong { color: var(--text); font-weight: 600; }
+    p em { color: var(--ind3); font-style: italic; }
+
+    #bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    #bg::before { content:''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px); background-size: 30px 30px; mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 30%, transparent 100%); }
+    .blob { position: absolute; border-radius: 50%; filter: blur(110px); }
+    .b1 { width: 50vw; height: 50vh; background: radial-gradient(circle, rgba(99,102,241,0.18), transparent 70%); top: -10vh; left: -10vw; }
+    .b2 { width: 45vw; height: 50vh; background: radial-gradient(circle, rgba(251,191,36,0.06), transparent 70%); bottom: 10vh; right: -5vw; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 2.5rem; transition: all 0.3s; }
+    nav.solid { background: rgba(0,0,0,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 2.5rem; }
+    .logo-a { display: flex; align-items: center; gap: 9px; border: none; }
+    .logo-img { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.5); box-shadow: 0 0 10px rgba(99,102,241,0.35); }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: #fff; }
+    .logo-txt span { color: var(--ind4); }
+    .back-link { font-size: 0.84rem; color: var(--text2); padding: 0.4rem 1rem; border-radius: var(--r-sm); border: 1px solid var(--border); transition: all 0.2s; }
+    .back-link:hover { color: var(--text); border-color: var(--border-hi); background: var(--bg2); }
+
+    /* Article */
+    article { max-width: 700px; margin: 0 auto; padding: 7rem 1.75rem 4rem; position: relative; z-index: 1; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-hi); background: var(--ind-d); border-radius: 999px; padding: 5px 14px; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ind3); margin-bottom: 1.4rem; }
+    .chip-dot { width: 6px; height: 6px; background: var(--ind4); border-radius: 50%; box-shadow: 0 0 6px var(--ind4); animation: blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.35 } }
+    h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 700; letter-spacing: -1.8px; line-height: 1.05; margin-bottom: 0.6rem; }
+    h1 span { background: linear-gradient(120deg, #818cf8, #fbbf24); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .updated { font-size: 0.84rem; color: var(--text3); margin-bottom: 2.5rem; }
+    h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; letter-spacing: -0.6px; margin: 2.5rem 0 0.7rem; padding-top: 0.5rem; display: flex; align-items: center; gap: 10px; }
+    h2 .h-ico { width: 30px; height: 30px; border-radius: 8px; background: var(--ind-d); border: 1px solid var(--border-hi); display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+
+    ul { list-style: none; margin: 0.8rem 0 1.5rem; padding: 0; }
+    ul li { padding: 0.55rem 0 0.55rem 1.6rem; position: relative; font-size: 0.96rem; color: #d1d9e8; }
+    ul li::before { content: '›'; position: absolute; left: 0; top: 0.55rem; color: var(--ind4); font-weight: 700; font-size: 1.05rem; }
+    ul li strong { color: var(--text); font-weight: 600; }
+    ul li em { color: var(--ind3); font-style: italic; }
+
+    /* Status legend */
+    .legend { display: flex; gap: 12px; flex-wrap: wrap; margin: 1.5rem 0 2.5rem; padding: 0.85rem 1.1rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); font-size: 0.78rem; color: var(--text2); }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .ld-now { background: var(--green4); box-shadow: 0 0 6px var(--green4); }
+    .ld-watch { background: var(--amber); }
+    .ld-paused { background: var(--text3); }
+
+    /* Stamp */
+    .stamp { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 8px; vertical-align: middle; }
+    .stamp-now { background: rgba(52,211,153,0.12); color: var(--green4); border: 1px solid rgba(52,211,153,0.25); }
+    .stamp-watch { background: rgba(251,191,36,0.1); color: var(--amber); border: 1px solid rgba(251,191,36,0.25); }
+    .stamp-paused { background: var(--bg2); color: var(--text3); border: 1px dashed var(--border); }
+
+    /* Why a /now page section */
+    .meta-card { margin-top: 3rem; padding: 1.4rem 1.6rem; background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98)); border: 1px solid var(--border-hi); border-radius: var(--r); }
+    .meta-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+    .meta-card p { font-size: 0.88rem; color: var(--text2); margin: 0; }
+    .meta-card a { color: var(--ind3); }
+
+    footer { padding: 2rem 2.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; position: relative; z-index: 1; }
+    .ft-left { display: flex; align-items: center; gap: 9px; }
+    .ft-logo { width: 24px; height: 24px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); }
+    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ft-copy { font-size: 0.77rem; color: var(--text3); }
+    .ft-copy a { color: var(--ind4); border: none; }
+    .ft-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .ft-links a { font-size: 0.77rem; color: var(--text3); transition: color 0.2s; border: none; }
+    .ft-links a:hover { color: var(--ind4); }
+
+    .skip-link { position: absolute; top: -100px; left: 0; background: var(--ind); color: #fff; padding: 0.6rem 1rem; border-radius: 0 0 6px 0; z-index: 999; font-weight: 600; font-size: 0.85rem; text-decoration: none; border: none; transition: top 0.15s; }
+    .skip-link:focus { top: 0; }
+    *:focus { outline: none; }
+    a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--ind4); outline-offset: 3px; border-radius: 4px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1.1rem 1.25rem; } nav.solid { padding: 0.75rem 1.25rem; }
+      article { padding: 6rem 1.25rem 3rem; }
+      footer { flex-direction: column; }
+    }
+  </style>
+  <link rel="stylesheet" href="/global.css" />
+</head>
+<body>
+<script defer src="/i18n/translations.js"></script>
+<script defer src="/i18n/engine.js"></script>
+<script defer src="/a11y.js"></script>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<nav id="nav">
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async"/></div>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
+  </a>
+  <a href="/" class="back-link">← Home</a>
+</nav>
+
+<article id="main">
+  <div class="chip"><div class="chip-dot"></div>What I'm doing now</div>
+  <h1>Now <span>· May 2026</span></h1>
+  <p class="updated">Updated May 11, 2026 · Berlin · Next refresh ~June 2026</p>
+
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot ld-now"></span> Active</span>
+    <span class="legend-item"><span class="legend-dot ld-watch"></span> Watching / blocked</span>
+    <span class="legend-item"><span class="legend-dot ld-paused"></span> Paused</span>
+  </div>
+
+  <h2><span class="h-ico">🔬</span> Research</h2>
+  <ul>
+    <li><strong>TOE / Bipartite Universe Corpus<span class="stamp stamp-watch">Awaiting review</span></strong> — Paper "The Three-Channel Taxonomy of Light–Gravity Coupling: A Bipartite Reading of Einstein–Maxwell" submitted to <em>Foundations of Physics</em> (Springer Nature) on May 10. SNAPP ID <code>6ee9ff0b-fc04-452d-94fb-262ea3197a35</code>. Editor decision expected by ~June 10. Desk-reject probability ~50% for independent authors; alternative is 2-4 month review cycle.</li>
+    <li><strong>Promotion of the submission</strong> — ORCID set up, Google Scholar profile live, Zenodo DOI pending (server slow), arXiv pending physicist endorsement, LinkedIn outreach drafted, Research Square preprint auto-routing via SNAPP opt-in.</li>
+    <li><strong>Audit position frozen at v2.57<span class="stamp stamp-now">Holding</span></strong> — 0.5/11 SPECULATION promotion conditions met across 54 audit rounds. That's the <em>correct</em> answer when the open problems are open. Not manufacturing solutions.</li>
+  </ul>
+
+  <h2><span class="h-ico">🛠</span> Products</h2>
+  <ul>
+    <li><strong>Tupã IDE<span class="stamp stamp-now">Active dev</span></strong> — Native macOS editor (Swift + Rust + Metal). Editor core, LSP integration, and Vim emulation shipped. AI sidebar and settings-sync in progress. Public beta when it's faster than what I use today.</li>
+    <li><strong>Lx8 Labs website (lx8labs.com)<span class="stamp stamp-now">Polish</span></strong> — You're reading it. Polishing UX, adding course pages, building out the Insights section.</li>
+  </ul>
+
+  <h2><span class="h-ico">📚</span> Reading + watching</h2>
+  <ul>
+    <li><em>"How to Take Smart Notes"</em> by Sönke Ahrens — second read, finally implementing Zettelkasten properly via my AI memory system.</li>
+    <li><em>The Mem0 paper</em> (arXiv:2504.19413) — adopted the ADD/UPDATE/DELETE/NOOP reflection prompt pattern.</li>
+    <li><em>CoALA</em> (Sumers et al., Princeton 2023) — informs the structure of my <code>~/ai-memory</code> repo.</li>
+    <li><strong>arXiv physics-gr-qc</strong> — daily skim while waiting for the editor decision.</li>
+  </ul>
+
+  <h2><span class="h-ico">📝</span> Writing</h2>
+  <ul>
+    <li><a href="/insights/3d-algorithm-visualizer.html">Building a 3D algorithm visualizer in pure HTML</a> — shipped May 11.</li>
+    <li><em>Why I rewrote our deploy pipeline in Go</em> — draft. ETA late May.</li>
+    <li><em>Lessons from 13 years of consulting</em> — draft. ETA June.</li>
+  </ul>
+
+  <h2><span class="h-ico">💼</span> Work</h2>
+  <ul>
+    <li><strong>Consulting capacity<span class="stamp stamp-now">2 slots open</span></strong> — fixed-scope DevOps audits, AI feature productionization, platform reviews. Not retainers.</li>
+    <li><strong>Courses<span class="stamp stamp-watch">Pilot cohort soon</span></strong> — first live cohort of "Kubernetes for Production" planned for July 2026. Private team cohorts available now.</li>
+  </ul>
+
+  <h2><span class="h-ico">🌅</span> Life</h2>
+  <ul>
+    <li>Berlin. Long walks in Tempelhof. Trying to keep guitar practice to 4 sessions a week.</li>
+    <li>German B1 grind ongoing. Comprehension way ahead of speaking.</li>
+    <li>One <strong>strict no-screens hour</strong> in the morning before opening anything.</li>
+  </ul>
+
+  <h2><span class="h-ico">⏸</span> Paused</h2>
+  <ul>
+    <li><span class="stamp stamp-paused">Paused</span> Side projects unrelated to Lx8 Labs. Until Tupã IDE ships beta.</li>
+    <li><span class="stamp stamp-paused">Paused</span> Conference speaking. Reading more than performing this year.</li>
+    <li><span class="stamp stamp-paused">Paused</span> Social media. RSS-and-email only diet through end of 2026.</li>
+  </ul>
+
+  <div class="meta-card">
+    <h3>What's a <code>/now</code> page?</h3>
+    <p>A <a href="https://nownownow.com" target="_blank" rel="noopener">/now</a> page is what I'd tell you if we met for coffee right now and you asked "what are you up to?" Convention started by Derek Sivers in 2015 and adopted by 1,000+ indie sites. Updated when life shifts — not when I post on social media.</p>
+  </div>
+</article>
+
+<footer>
+  <div class="ft-left">
+    <div class="ft-logo"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8" width="24" height="24" loading="lazy" decoding="async"/></div>
+    <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="/">lx8labs.com</a></span>
+  </div>
+  <div class="ft-links">
+    <a href="/">Home</a>
+    <a href="/shop/">Shop & Books</a>
+    <a href="/courses/">Courses</a>
+    <a href="/products/">Products</a>
+    <a href="/changelog/">Log</a>
+    
+    
+    
+    <a href="/team/">Studio</a>
+    <a href="/index.html#consulting">Consulting</a>
+    <a href="https://youtube.com/@AlexeiFerreira" target="_blank" rel="noopener">YouTube ↗</a>
+    <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a href="https://x.com/lx8labs" target="_blank" rel="noopener">X ↗</a>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 50), { passive: true });
+</script>
+</body>
+</html>

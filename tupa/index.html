@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Zero-Cost Security Hardening -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
+  <meta name="referrer" content="no-referrer">
+  <script>if (window !== window.top) window.top.location = window.location;</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tupã IDE — A native macOS dev environment · Lx8 Labs</title>
+  <meta name="description" content="Tupã is a native macOS IDE built for developers who want their tools to get out of the way. Multi-language, wearables-aware, AI-native." />
+  <link rel="canonical" href="https://lx8labs.com/tupa.html" />
+
+  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
+  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" />
+  <meta name="theme-color" content="#6366f1" />
+
+  <!-- OG -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lx8labs.com/tupa.html" />
+  <meta property="og:title" content="Tupã IDE — A native macOS dev environment" />
+  <meta property="og:description" content="Multi-language, wearables-aware, AI-native. Built by Lx8 Labs." />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/7157081?v=4" />
+
+  <link rel="preconnect" href="https://fonts.bunny.net" />
+  
+  <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Inter:300,400,500,600,700&family=Space+Grotesk:400,500,600,700&family=JetBrains+Mono:400,600&display=swap" rel="stylesheet" />
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tupã IDE",
+    "operatingSystem": "macOS",
+    "applicationCategory": "DeveloperApplication",
+    "creator": {
+      "@type": "Organization",
+      "name": "Lx8 Labs",
+      "url": "https://lx8labs.com"
+    },
+    "description": "A native macOS development environment built for developers who want their tools to get out of the way.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000;
+      --bg1: rgba(255,255,255,0.025);
+      --bg2: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.06);
+      --border-hi: rgba(99,102,241,0.18);
+      --text: #fff;
+      --text2: #94a3b8;
+      --text3: #64748b;
+      --ind: #6366f1;
+      --ind2: #4f46e5;
+      --ind3: #818cf8;
+      --ind4: #a5b4fc;
+      --ind-d: rgba(99,102,241,0.08);
+      --r: 16px;
+      --r-sm: 8px;
+      --green4: #4ade80;
+      --amber4: #fbbf24;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.7; }
+    html { scroll-behavior: smooth; }
+    body { overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Background blobs */
+    #bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.35; }
+    .b1 { width: 580px; height: 580px; background: #6366f1; top: -200px; left: -120px; animation: drift 22s ease-in-out infinite; }
+    .b2 { width: 480px; height: 480px; background: #4338ca; top: 40%; right: -150px; animation: drift 26s ease-in-out infinite reverse; }
+    .b3 { width: 400px; height: 400px; background: #67e8f9; bottom: -100px; left: 30%; opacity: 0.18; animation: drift 30s ease-in-out infinite; }
+    @keyframes drift { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(40px,-40px) scale(1.05)} 66%{transform:translate(-30px,30px) scale(0.95)} }
+
+    /* Nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 2.5rem; transition: all 0.3s; }
+    nav.solid { background: rgba(0,0,0,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 2.5rem; }
+    .logo-a { display: flex; align-items: center; gap: 9px; }
+    .logo-img { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; border: 1.5px solid rgba(129,140,248,0.5); box-shadow: 0 0 10px rgba(99,102,241,0.35); }
+    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; }
+    .logo-txt span { color: var(--ind4); }
+    .back-link { font-size: 0.84rem; color: var(--text2); padding: 0.4rem 1rem; border-radius: var(--r-sm); border: 1px solid var(--border); transition: all 0.2s; }
+    .back-link:hover { color: var(--text); border-color: var(--border-hi); background: var(--bg2); }
+
+    /* Hero */
+    #hero { position: relative; z-index: 1; padding: 9rem 1.75rem 5rem; max-width: 1140px; margin: 0 auto; text-align: center; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-hi); background: var(--ind-d); border-radius: 999px; padding: 5px 14px; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ind3); margin-bottom: 1.6rem; }
+    .chip-dot { width: 6px; height: 6px; background: var(--ind4); border-radius: 50%; box-shadow: 0 0 6px var(--ind4); animation: blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.35 } }
+    .product-mark {
+      width: 90px; height: 90px; margin: 0 auto 1.5rem;
+      border-radius: 22px; background: linear-gradient(135deg, #6366f1, #4338ca);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 20px 60px rgba(99,102,241,0.4);
+      font-family: 'Space Grotesk', sans-serif; font-size: 2.6rem; font-weight: 700; color: #fff;
+      position: relative;
+    }
+    .product-mark::after {
+      content: ''; position: absolute; inset: -2px; border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.4), transparent);
+      mix-blend-mode: overlay; pointer-events: none;
+    }
+    h1.hero-h { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1; margin-bottom: 1.4rem; }
+    h1.hero-h span { font-style: italic; font-weight: 400; background: linear-gradient(120deg, #818cf8, #a78bfa, #67e8f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200%; animation: gf 10s ease-in-out infinite alternate; }
+    @keyframes gf { from { background-position: 0%; } to { background-position: 100%; } }
+    .hero-sub { font-size: 1.08rem; color: var(--text2); max-width: 620px; margin: 0 auto 2.4rem; line-height: 1.75; }
+    .hero-sub strong { color: var(--text); font-weight: 500; }
+    .hero-sub em { color: var(--ind3); font-style: normal; }
+    .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 2.5rem; }
+    .hero-tag { font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: var(--text2); }
+    .hero-tag.gr { color: var(--green4); border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.06); }
+    .hero-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: var(--r-sm); transition: all 0.2s; border: none; cursor: pointer; font-family: inherit; }
+    .btn-p { background: var(--ind); color: #fff; box-shadow: 0 4px 18px rgba(99,102,241,0.35); }
+    .btn-p:hover { background: var(--ind2); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(99,102,241,0.5); }
+    .btn-g { background: var(--bg1); color: var(--text2); border: 1px solid var(--border); }
+    .btn-g:hover { color: var(--text); border-color: var(--border-hi); transform: translateY(-2px); }
+
+    /* Mockup */
+    #mockup-wrap { padding: 2rem 1.5rem; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+    .mockup {
+      background: #0a0a14; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 50px 120px rgba(99,102,241,0.15), 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .mock-bar { display: flex; align-items: center; gap: 6px; padding: 0.6rem 1rem; background: #07070f; border-bottom: 1px solid var(--border); }
+    .mock-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .md-r { background: #ef4444; } .md-y { background: #f59e0b; } .md-g { background: #10b981; }
+    .mock-title { margin-left: 0.6rem; font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--text3); }
+    .mock-body { display: grid; grid-template-columns: 200px 1fr 220px; min-height: 380px; }
+    .mock-side { background: #050511; border-right: 1px solid var(--border); padding: 0.8rem 0.6rem; font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--text2); }
+    .mock-side .ms-h { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text3); padding: 0.3rem 0.5rem 0.5rem; }
+    .mock-side .ms-f { padding: 3px 0.5rem; cursor: pointer; border-radius: 5px; }
+    .mock-side .ms-f.active { background: rgba(99,102,241,0.2); color: var(--ind4); }
+    .mock-side .ms-f:hover { background: var(--bg2); }
+    .mock-edit { padding: 1rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.85; color: #cbd5e1; overflow-x: auto; }
+    .tk-key { color: #818cf8; }
+    .tk-str { color: #4ade80; }
+    .tk-num { color: #fbbf24; }
+    .tk-com { color: #475569; font-style: italic; }
+    .tk-fn { color: #67e8f9; }
+    .tk-typ { color: #a78bfa; }
+    .ln { display: inline-block; width: 22px; color: #2e3057; padding-right: 8px; user-select: none; text-align: right; }
+    .mock-ai { background: #06060e; border-left: 1px solid var(--border); padding: 1rem; font-size: 0.76rem; color: var(--text2); }
+    .mock-ai-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ind4); margin-bottom: 0.7rem; display: flex; align-items: center; gap: 6px; }
+    .mock-ai-h::before { content: ''; width: 6px; height: 6px; background: var(--ind4); border-radius: 50%; box-shadow: 0 0 6px var(--ind4); animation: blink 2s ease-in-out infinite; }
+    .mock-ai-msg { padding: 0.6rem 0.7rem; background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.18); border-radius: 8px; margin-bottom: 0.5rem; font-size: 0.72rem; line-height: 1.6; color: var(--text2); }
+    .mock-ai-msg.user { background: var(--bg1); border-color: var(--border); color: #c7d2fe; }
+    .mock-ai-input { margin-top: 0.5rem; background: var(--bg1); border: 1px solid var(--border); border-radius: 8px; padding: 0.45rem 0.6rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text3); }
+
+    @media (max-width: 760px) {
+      .mock-body { grid-template-columns: 1fr; }
+      .mock-side, .mock-ai { display: none; }
+    }
+
+    /* Sections */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent); }
+    section { position: relative; z-index: 1; }
+    .inner { max-width: 1100px; margin: 0 auto; padding: 5.5rem 1.75rem; }
+    .lbl { display: inline-flex; align-items: center; gap: 8px; font-size: 0.69rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ind4); margin-bottom: 1rem; }
+    .lbl::before { content: ''; width: 16px; height: 1px; background: var(--ind4); }
+    h2.sh { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.9rem,3.5vw,2.75rem); font-weight: 700; letter-spacing: -1.2px; line-height: 1.1; margin-bottom: 1rem; }
+    .sdesc { color: var(--text2); font-size: 1rem; max-width: 560px; line-height: 1.7; margin-bottom: 3rem; }
+
+    /* Features */
+    .features { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .feat { padding: 1.6rem 1.4rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); transition: all 0.3s; }
+    .feat:hover { transform: translateY(-3px); border-color: rgba(129,140,248,0.3); box-shadow: 0 12px 36px rgba(0,0,0,0.4); }
+    .feat-ico { width: 42px; height: 42px; border-radius: 10px; background: var(--ind-d); border: 1px solid rgba(99,102,241,0.25); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--ind3); margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+    .feat h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .feat p { font-size: 0.86rem; color: var(--text2); line-height: 1.7; }
+
+    /* Stack */
+    #stack { background: rgba(3,3,14,0.5); }
+    .stack-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .stack-pill { font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 600; padding: 6px 14px; border-radius: 999px; background: var(--bg1); border: 1px solid var(--border); color: var(--text2); }
+    .stack-pill strong { color: var(--ind3); font-weight: 700; }
+
+    /* Roadmap - Horizontal Scroll Snap */
+    .roadmap { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 1.5rem; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .roadmap::-webkit-scrollbar { display: none; }
+    .road-item { scroll-snap-align: center; display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem 1.4rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); min-width: 280px; max-width: 320px; flex: 0 0 auto; transition: transform 0.3s; }
+    .road-item:hover { border-color: rgba(129,140,248,0.3); transform: translateY(-3px); }
+    .road-status { font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; width: fit-content; }
+    .rs-done { background: rgba(74,222,128,0.12); color: var(--green4); border: 1px solid rgba(74,222,128,0.25); }
+    .rs-now { background: rgba(99,102,241,0.18); color: var(--ind4); border: 1px solid var(--border-hi); }
+    .rs-next { background: rgba(251,191,36,0.1); color: var(--amber4); border: 1px solid rgba(251,191,36,0.25); }
+    .rs-soon { background: var(--bg2); color: var(--text3); border: 1px dashed var(--border); }
+    .road-body h4 { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .road-body p { font-size: 0.84rem; color: var(--text2); line-height: 1.6; }
+
+    /* Waitlist */
+    #waitlist { background: linear-gradient(180deg, transparent, rgba(10,8,28,0.6) 50%, transparent); }
+    .wait-card {
+      max-width: 540px; margin: 0 auto; text-align: center;
+      background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98));
+      border: 1px solid var(--border-hi); border-radius: var(--r);
+      padding: 2.5rem 2rem;
+    }
+    .wait-card h2 { margin-bottom: 0.7rem; }
+    .wait-card p { color: var(--text2); margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .wait-form { display: flex; gap: 8px; flex-wrap: wrap; }
+    .wait-form input {
+      flex: 1; min-width: 200px; padding: 0.7rem 1rem;
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm);
+      color: var(--text); font-family: inherit; font-size: 0.9rem;
+    }
+    .wait-form input:focus { outline: none; border-color: var(--ind3); }
+    .wait-success { color: var(--green4); font-size: 0.85rem; margin-top: 0.8rem; display: none; }
+    .wait-success.show { display: block; }
+
+    /* Footer */
+    footer { position: relative; z-index: 1; background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .ft-left { display: flex; align-items: center; gap: 9px; }
+    .ft-logo { width: 28px; height: 28px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); background: #111; }
+    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ft-copy { font-size: 0.8rem; color: var(--text3); display: flex; flex-direction: column; gap: 2px; }
+    .ft-links { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
+    .ft-links > a.text-link { font-size: 0.8rem; font-weight: 500; color: var(--text3); text-decoration: none; transition: color 0.2s; }
+    .ft-links > a.text-link:hover { color: var(--ind4); }
+    .social-row { display: flex; gap: 12px; margin-left: 1.5rem; padding-left: 1.5rem; border-left: 1px solid var(--border); }
+    .social-icon { color: var(--text3); transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
+    .social-icon:hover { color: #fff; background: var(--bg2); border-color: var(--border-hi); transform: translateY(-2px); }
+
+    /* Reveal */
+    .r { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .r.in { opacity: 1; transform: translateY(0); }
+    .r.d1 { transition-delay: 0.07s; } .r.d2 { transition-delay: 0.14s; } .r.d3 { transition-delay: 0.21s; }
+
+    @media (max-width: 880px) {
+      .features { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 1.1rem 1.25rem; }
+      nav.solid { padding: 0.75rem 1.25rem; }
+      .features { grid-template-columns: 1fr; }
+      .inner { padding: 3.5rem 1.1rem; }
+      footer { flex-direction: column; }
+    }
+  </style>
+  <link rel="stylesheet" href="/global.css" />
+</head>
+<body>
+<script defer src="/i18n/translations.js"></script>
+<script defer src="/i18n/engine.js"></script>
+<script defer src="/a11y.js"></script>
+
+<div id="bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<nav id="nav">
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async"/></div>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
+  </a>
+  <a href="/index.html#projects" class="back-link">← Projects</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="chip"><div class="chip-dot"></div>Active development · macOS native</div>
+  <div class="product-mark">T</div>
+  <h1 class="hero-h">Tupã <span>IDE</span></h1>
+  <p class="hero-sub">A native <strong>macOS</strong> development environment built for developers who want their tools to <em>get out of the way</em>. Multi-language, wearables-aware, AI-native — and crafted to feel like an extension of how you think.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">macOS</span>
+    <span class="hero-tag">Multi-language</span>
+    <span class="hero-tag">AI Native</span>
+    <span class="hero-tag">Wearables</span>
+    <span class="hero-tag gr">● Active</span>
+  </div>
+  <div class="hero-cta">
+    <a href="#waitlist" class="btn btn-p">Join Waitlist</a>
+    <a href="#features" class="btn btn-g">See Features ↓</a>
+  </div>
+</section>
+
+<!-- MOCKUP -->
+<div id="mockup-wrap">
+  <div class="mockup r d1">
+    <div class="mock-bar">
+      <span class="mock-dot md-r"></span>
+      <span class="mock-dot md-y"></span>
+      <span class="mock-dot md-g"></span>
+      <span class="mock-title">~/projects/lx8 — main · tupã</span>
+    </div>
+    <div class="mock-body">
+      <aside class="mock-side">
+        <div class="ms-h">EXPLORER</div>
+        <div class="ms-f">📁 src</div>
+        <div class="ms-f active">  ⌥ engine.rs</div>
+        <div class="ms-f">  ⌥ render.swift</div>
+        <div class="ms-f">  ⌥ ai_link.ts</div>
+        <div class="ms-f">📁 tests</div>
+        <div class="ms-f">⚙ Cargo.toml</div>
+      </aside>
+      <div class="mock-edit">
+        <span class="ln">1</span><span class="tk-com">// Tupã engine — render loop</span><br/>
+        <span class="ln">2</span><span class="tk-key">use</span> <span class="tk-typ">metal</span>::<span class="tk-typ">CommandQueue</span>;<br/>
+        <span class="ln">3</span><br/>
+        <span class="ln">4</span><span class="tk-key">pub fn</span> <span class="tk-fn">render_frame</span>(queue: &amp;<span class="tk-typ">CommandQueue</span>) -&gt; <span class="tk-typ">Result</span> {<br/>
+        <span class="ln">5</span>  <span class="tk-key">let</span> buffer = queue.<span class="tk-fn">new_command_buffer</span>();<br/>
+        <span class="ln">6</span>  buffer.<span class="tk-fn">commit</span>();<br/>
+        <span class="ln">7</span>  <span class="tk-com">// AI suggestion: batch with previous frame?</span><br/>
+        <span class="ln">8</span>  <span class="tk-key">log</span>::<span class="tk-fn">debug</span>(<span class="tk-str">"frame committed"</span>, <span class="tk-num">42</span>);<br/>
+        <span class="ln">9</span>  <span class="tk-typ">Ok</span>(())<br/>
+        <span class="ln">10</span>}<br/>
+      </div>
+      <aside class="mock-ai">
+        <div class="mock-ai-h">Tupã AI</div>
+        <div class="mock-ai-msg user">Why is render_frame allocating per call?</div>
+        <div class="mock-ai-msg">The <code style="color:#a78bfa">CommandQueue::new_command_buffer()</code> call creates a new buffer each frame. Reuse via <code style="color:#a78bfa">CommandQueue::pool</code> on line 4 to avoid 60 allocations/sec.</div>
+        <div class="mock-ai-input">› Apply this refactor</div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div class="divider" style="margin-top: 4rem;"></div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="inner">
+    <div class="lbl r">Features</div>
+    <h2 class="sh r d1">Built for the way developers actually work.</h2>
+    <p class="sdesc r d2">No bloat, no telemetry, no popups asking you to upgrade. Just a fast editor that respects your attention and gets sharper the more you use it.</p>
+
+    <div class="features">
+      <div class="feat r d1">
+        <div class="feat-ico">⚡</div>
+        <h3>Native-first architecture</h3>
+        <p>Built with a Rust engine and WebView host (`tao` + `wry`). Zero React/Vite in the shipped path. Sub-second cold starts with JSON IPC bridging the native OS to the vanilla TypeScript shell.</p>
+      </div>
+      <div class="feat r d1">
+        <div class="feat-ico">⌘</div>
+        <h3>Command Palette & Settings</h3>
+        <p>A lightning-fast ⌘P palette for rapid navigation. A full-page, searchable settings view configured entirely via JSON.</p>
+      </div>
+      <div class="feat r d1">
+        <div class="feat-ico">AI</div>
+        <h3>Tupã Composer & Agents</h3>
+        <p>A real AI Agent panel with streaming transcripts and MCP-backed flows. Deep integration with local LLMs (vLLM, Ollama, LM Studio) or cloud endpoints via ⌘L.</p>
+      </div>
+      <div class="feat r d2">
+        <div class="feat-ico">🔍</div>
+        <h3>Workspace Diagnostics</h3>
+        <p>LSP diagnostics mapped natively to the UI. Live problem counts in the status bar and inline error overlays.</p>
+      </div>
+      <div class="feat r d2">
+        <div class="feat-ico">📐</div>
+        <h3>Designed by a developer</h3>
+        <p>Vim mode, Outline panel, and an intuitive breadcrumb navigation. Configurable to your bone with sane defaults.</p>
+      </div>
+      <div class="feat r d2">
+        <div class="feat-ico">🔒</div>
+        <h3>Local-first, private</h3>
+        <p>No telemetry. Code never leaves your machine unless you explicitly invoke cloud AI. Sync config securely via iCloud.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STACK -->
+<section id="stack">
+  <div class="inner">
+    <div class="lbl r">Built with</div>
+    <h2 class="sh r d1">Stack we trust.</h2>
+    <p class="sdesc r d2">Tupã itself is a showcase of what Lx8 Labs ships: native, low-latency, no-compromise.</p>
+    <div class="stack-grid">
+      <span class="stack-pill"><strong>Native Core</strong> · high-performance host</span>
+      <span class="stack-pill"><strong>Typesafe UI</strong> · zero-overhead shell</span>
+      <span class="stack-pill"><strong>Secure IPC</strong> · robust communication</span>
+      <span class="stack-pill"><strong>Portable Execution</strong> · sandboxed extensions</span>
+      <span class="stack-pill"><strong>Advanced Parsing</strong> · realtime syntax tree</span>
+      <span class="stack-pill"><strong>LSP</strong> · diagnostics & outline</span>
+      <span class="stack-pill"><strong>Local LLMs</strong> · private agent loop</span>
+      <span class="stack-pill"><strong>MCP</strong> · context-aware protocols</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="inner">
+    <div class="lbl r">Roadmap</div>
+    <h2 class="sh r d1">Where we are, where we're going.</h2>
+    <p class="sdesc r d2">Tupã is in active Phase 1.2 development. Scroll right to see the feature pipeline.</p>
+
+    <div class="roadmap">
+      <div class="road-item r d1">
+        <span class="road-status rs-done">Shipped</span>
+        <div class="road-body">
+          <h4>Editor core & LSP</h4>
+          <p>Buffer, undo tree, multi-cursor, Tree-sitter, generic LSP host. Goto-definition, diagnostics.</p>
+        </div>
+      </div>
+      <div class="road-item r d1">
+        <span class="road-status rs-done">Shipped</span>
+        <div class="road-body">
+          <h4>Command & Outline</h4>
+          <p>Global Command Palette (⌘P), Settings full page, and synchronized Outline Panel for large files.</p>
+        </div>
+      </div>
+      <div class="road-item r d1">
+        <span class="road-status rs-done">Shipped</span>
+        <div class="road-body">
+          <h4>AI Agent Panel</h4>
+          <p>Real-time sending and streaming transcript with agent endpoints (vLLM, Ollama, LM Studio, MLX).</p>
+        </div>
+      </div>
+      <div class="road-item r d2">
+        <span class="road-status rs-now">In progress</span>
+        <div class="road-body">
+          <h4>Editor Refinements</h4>
+          <p>Advanced workspace navigation, deepened diagnostic integrations, and enhanced multi-window workflows.</p>
+        </div>
+      </div>
+      <div class="road-item r d3">
+        <span class="road-status rs-next">Next</span>
+        <div class="road-body">
+          <h4>Next-Gen Render Engine</h4>
+          <p>Proprietary high-performance text rendering pipeline for an ultra-low latency typing experience.</p>
+        </div>
+      </div>
+      <div class="road-item r d3">
+        <span class="road-status rs-soon">Future</span>
+        <div class="road-body">
+          <h4>Wearables companion</h4>
+          <p>Apple Watch app for build status and breakpoint nudges. Vision Pro multi-window editor surface.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WAITLIST -->
+<section id="waitlist">
+  <div class="inner">
+    <div class="wait-card r">
+      <h2 class="sh">Get early access.</h2>
+      <p>Join the waitlist for the public beta. We'll email when invites go out — no spam, no marketing drips.</p>
+      <form class="wait-form" id="wait-form">
+        <input type="email" name="email" placeholder="you@domain.com" required />
+        <button class="btn btn-p" type="submit">Request Access →</button>
+      </form>
+      <div class="wait-success" id="wait-success">✓ You're on the list. Welcome.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-left">
+    <div class="ft-logo"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8" /></div>
+    <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="/">lx8labs.com</a></span>
+  </div>
+  <div class="ft-links">
+    <a href="/" class="text-link">Home</a>
+    <a href="/shop/" class="text-link">Shop & Books</a>
+    <a href="/courses/" class="text-link">Courses</a>
+    <a href="/products/" class="text-link">Products</a>
+    <a href="/changelog/" class="text-link">Log</a>
+    
+    
+    
+    <a href="/team/" class="text-link">Studio</a>
+    <a href="/index.html#consulting" class="text-link">Consulting</a>
+    
+    <div class="social-row">
+      <a href="https://github.com/LX8" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.68.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+      </a>
+      <a href="https://x.com/lx8labs" target="_blank" rel="noopener" class="social-icon" aria-label="X (Twitter)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.9 2H22L15.3 9.6L23 22H17L12.2 14.8L6.8 22H3.7L10.8 13.9L3.4 2H9.7L14.1 8.8L18.9 2ZM17.8 20.3H19.5L8.3 3.6H6.5L17.8 20.3Z"/></svg>
+      </a>
+      <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <a href="https://youtube.com/@AlexeiFerreira" target="_blank" rel="noopener" class="social-icon" aria-label="YouTube">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.5 6.2c-.2-1-.9-1.7-1.9-1.9C19.9 4 12 4 12 4s-7.9 0-9.6.3c-1 .2-1.7.9-1.9 1.9C.1 8.1 0 12 0 12s.1 3.9.4 5.8c.2 1 .9 1.7 1.9 1.9 1.7.3 9.6.3 9.6.3s7.9 0 9.6-.3c1-.2 1.7-.9 1.9-1.9.4-1.9.4-5.8.4-5.8s0-3.9-.3-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav solid on scroll
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 50), { passive: true });
+
+  // Reveal
+  const ro = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.r').forEach(el => ro.observe(el));
+
+  // Waitlist form: Zero-cost mailto integration
+  const form = document.getElementById('wait-form');
+  const success = document.getElementById('wait-success');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = form.querySelector('input[type=email]').value;
+    location.href = `mailto:hi@lx8labs.com?subject=Tup%C3%A3%20IDE%20waitlist%20Request&body=${encodeURIComponent('I would like to join the waitlist. Email: ' + email)}`;
+    form.style.display = 'none';
+    success.classList.add('show');
+  });
+</script>
+
+</body>
+</html>

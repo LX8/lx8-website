@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Zero-Cost Security Hardening -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
+  <meta name="referrer" content="no-referrer">
+  <script>if (window !== window.top) window.top.location = window.location;</script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Al-Khwarizmi's Lab — Lx8 Labs</title>
+  <link rel="preconnect" href="https://fonts.bunny.net"/>
+  <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Space+Grotesk:400,600,700&family=Inter:400,500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { color: #e2e8f0; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+    #app-container {
+      max-width: 1400px;
+      margin: 4rem auto;
+      height: 80vh;
+      min-height: 600px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      position: relative;
+      z-index: 10;
+    }
+
+    #app { display: flex; height: 100%; width: 100%; }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      width: 320px; min-width: 320px; height: 100%;
+      background: rgba(6, 6, 14, 0.95); border-right: 1px solid #18183a;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+    
+    #timeline-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 1rem;
+      scrollbar-width: none;
+    }
+    #timeline-wrap::-webkit-scrollbar { display: none; }
+    
+    .tl-node {
+      display: flex; gap: 1rem; position: relative; padding-bottom: 2rem; cursor: pointer;
+      opacity: 0.6; transition: opacity 0.3s, transform 0.3s;
+    }
+    .tl-node:hover { opacity: 1; transform: translateX(5px); }
+    .tl-node.active { opacity: 1; }
+    
+    .tl-line {
+      width: 2px; background: #18183a; position: absolute; left: 24px; top: 24px; bottom: 0;
+    }
+    .tl-node:last-child .tl-line { display: none; }
+    
+    .tl-year {
+      width: 48px; font-family: 'Space Grotesk', monospace; font-size: 0.75rem; color: #818cf8;
+      text-align: right; font-weight: 700; flex-shrink: 0; padding-top: 3px;
+    }
+    
+    .tl-dot {
+      width: 12px; height: 12px; border-radius: 50%; background: #06060e;
+      border: 2px solid #3a3a6a; position: relative; z-index: 2; margin-top: 4px;
+      transition: all 0.3s;
+    }
+    .tl-node:hover .tl-dot { border-color: #fbbf24; background: #fbbf24; box-shadow: 0 0 10px rgba(251,191,36,0.5); }
+    .tl-node.active .tl-dot { border-color: #10b981; background: #10b981; box-shadow: 0 0 15px rgba(16,185,129,0.5); }
+    
+    .tl-content { flex: 1; }
+    .tl-name { font-weight: 600; color: #e2e8f0; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .tl-creator { font-size: 0.7rem; color: #5c5c8a; font-family: 'Space Grotesk', sans-serif; }
+
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-thumb { background: #2a2a50; border-radius: 2px; }
+
+    .sb-logo {
+      padding: 0.85rem 1rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem; font-weight: 700; color: #818cf8;
+      letter-spacing: 0.06em; border-bottom: 1px solid #18183a;
+    }
+
+    .sb-section { padding: 0.6rem 0.4rem 0.1rem; }
+    .sb-section-title {
+      font-size: 0.6rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #3a3a6a;
+      padding: 0 0.6rem; margin-bottom: 0.2rem;
+    }
+
+    .sb-btn {
+      display: block; width: 100%; background: none; border: none; cursor: pointer;
+      text-align: left; padding: 0.38rem 0.75rem;
+      font-family: 'Inter', sans-serif; font-size: 0.78rem;
+      color: #7070a0; border-radius: 6px; transition: all 0.15s;
+    }
+    .sb-btn:hover { background: #10102a; color: #c0c0e0; }
+    .sb-btn.active { background: rgba(99,102,241,0.18); color: #a5b4fc; font-weight: 600; }
+    .sb-btn .yr { font-size: 0.62rem; color: #4c4c7a; margin-left: auto; padding-left: 6px; font-family: 'Space Grotesk', sans-serif; flex-shrink: 0; }
+    .sb-btn { display: flex; align-items: center; }
+    .sb-btn .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Search */
+    .sb-search { padding: 0.55rem 0.75rem 0; position: relative; }
+    .sb-search input {
+      width: 100%; background: #0a0a1a; border: 1px solid #18183a;
+      color: #c0c0e0; padding: 0.42rem 0.65rem 0.42rem 1.85rem;
+      border-radius: 8px; font-size: 0.78rem; font-family: 'Inter', sans-serif;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .sb-search input:focus { outline: none; border-color: rgba(99,102,241,0.5); background: #10102a; }
+    .sb-search input::placeholder { color: #4c4c7a; }
+    .sb-search-icon { position: absolute; left: 1.4rem; top: 50%; transform: translateY(-50%); color: #4c4c7a; pointer-events: none; font-size: 0.85rem; }
+    .sb-search-clear { position: absolute; right: 1.4rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: #4c4c7a; cursor: pointer; font-size: 0.85rem; padding: 2px 5px; border-radius: 4px; display: none; }
+    .sb-search-clear:hover { color: #c0c0e0; background: #18183a; }
+    .sb-search.has-value .sb-search-clear { display: block; }
+    .sb-empty { padding: 1rem 0.95rem; color: #4c4c7a; font-size: 0.72rem; font-style: italic; text-align: center; }
+
+    /* Step button */
+    .ctrl-btn.step { background: rgba(167,139,250,0.14); border-color: rgba(167,139,250,0.35); color: #c4b5fd; }
+    .ctrl-btn.step:hover { background: rgba(167,139,250,0.28); }
+    .ctrl-btn.step:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
+
+    /* Keyboard shortcuts overlay */
+    #kbd-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(8px);
+      z-index: 200; display: none; align-items: center; justify-content: center; padding: 1.5rem;
+      animation: kbdFade 0.2s ease;
+    }
+    @keyframes kbdFade { from { opacity: 0; } to { opacity: 1; } }
+    #kbd-overlay.show { display: flex; }
+    .kbd-card {
+      background: linear-gradient(180deg, #0a0a1a, #060614); border: 1px solid #2a2a50;
+      border-radius: 14px; padding: 1.6rem 1.8rem; max-width: 460px; width: 100%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+    .kbd-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .kbd-list { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.1rem; }
+    .kbd-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .kbd-desc { font-size: 0.85rem; color: #c0c0e8; }
+    .kbd-keys { display: flex; gap: 4px; flex-shrink: 0; }
+    kbd {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 600;
+      background: #18183a; color: #a5b4fc; padding: 3px 8px; border-radius: 5px;
+      border: 1px solid #2a2a50; border-bottom-width: 2px; min-width: 26px; text-align: center;
+    }
+    .kbd-close { display: block; width: 100%; background: rgba(99,102,241,0.18); border: 1px solid rgba(99,102,241,0.4); color: #a5b4fc; padding: 0.6rem; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .kbd-close:hover { background: rgba(99,102,241,0.3); }
+    .kbd-hint {
+      position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+      background: rgba(7,7,15,0.92); border: 1px solid #18183a; color: #6c7299;
+      font-size: 0.7rem; padding: 0.45rem 1rem; border-radius: 999px;
+      z-index: 50; backdrop-filter: blur(6px);
+      animation: kbdHintFade 5s ease forwards;
+    }
+    @keyframes kbdHintFade { 0% { opacity: 0; transform: translate(-50%, 8px); } 8%, 80% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -8px); pointer-events: none; } }
+
+    /* First-time onboarding card */
+    #onboard-hint { position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 180; animation: obIn 0.35s ease-out; }
+    @keyframes obIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .ob-card { background: linear-gradient(180deg, #0a0a1a, #06060e); border: 1px solid rgba(99,102,241,0.4); border-radius: 12px; padding: 1.1rem 1.25rem; max-width: 280px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+    .ob-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 700; color: #a5b4fc; margin-bottom: 0.75rem; letter-spacing: 0.02em; }
+    .ob-row { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #c0c0e0; margin-bottom: 0.3rem; }
+    .ob-row kbd { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; background: #18183a; color: #a5b4fc; padding: 1px 6px; border-radius: 4px; border: 1px solid #2a2a50; border-bottom-width: 2px; min-width: 22px; text-align: center; flex-shrink: 0; }
+    .ob-close { margin-top: 0.85rem; width: 100%; background: rgba(99,102,241,0.18); border: 1px solid rgba(99,102,241,0.4); color: #a5b4fc; padding: 0.42rem; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+    .ob-close:hover { background: rgba(99,102,241,0.3); }
+
+    /* View toggle */
+    .view-toggle { display: flex; gap: 4px; padding: 0.55rem 0.75rem 0.4rem; }
+    .vt-btn { flex: 1; background: #0a0a1a; border: 1px solid #18183a; color: #5c5c8a; padding: 0.32rem 0.5rem; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+    .vt-btn:hover { color: #c0c0e0; border-color: #2a2a50; }
+    .vt-btn.active { background: rgba(99,102,241,0.18); border-color: rgba(99,102,241,0.4); color: #a5b4fc; }
+
+    /* Era headers in chronological view */
+    .era-hdr { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #4c4c7a; padding: 0.7rem 0.95rem 0.25rem; }
+    .era-hdr:first-child { padding-top: 0.4rem; }
+
+    /* Timeline Overlay */
+    #timeline-overlay {
+      position: absolute; inset: 0; background: rgba(4,4,17,0.95); backdrop-filter: blur(8px);
+      z-index: 100; display: none; flex-direction: column; padding: 2rem;
+    }
+    #timeline-overlay.show { display: flex; }
+    .tl-svg-wrap { flex: 1; position: relative; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: #2a2a50 transparent; }
+    .tl-svg-wrap::-webkit-scrollbar { height: 6px; }
+    .tl-svg-wrap::-webkit-scrollbar-thumb { background: #2a2a50; border-radius: 3px; }
+    .tl-node { cursor: pointer; transition: all 0.2s; }
+    .tl-node:hover circle { fill: #a5b4fc; filter: drop-shadow(0 0 10px #6366f1); }
+    .tl-node:hover text { fill: #fff; }
+
+    /* Info panel additions */
+    .info-meta { display: flex; gap: 6px; margin-bottom: 0.55rem; flex-wrap: wrap; }
+    .info-year { font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); padding: 1px 8px; border-radius: 999px; letter-spacing: 0.04em; }
+    .info-creator { font-size: 0.7rem; color: #818cf8; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.22); padding: 1px 8px; border-radius: 999px; }
+    .algo-history { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed #18183a; color: #52527a; font-style: italic; font-size: 0.66rem; line-height: 1.55; }
+
+    /* ── INFO PANEL ── */
+    .algo-info {
+      margin-top: auto; padding: 0.75rem;
+      border-top: 1px solid #18183a; font-size: 0.71rem; color: #5c5c8a;
+    }
+    .algo-info-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.84rem; font-weight: 700; color: #a5b4fc; margin-bottom: 0.55rem;
+    }
+    .cx-row { display: flex; justify-content: space-between; margin-bottom: 0.22rem; }
+    .cx-lbl { color: #3a3a6a; }
+    .cx-val { color: #c0c0e8; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; }
+    .algo-desc { margin-top: 0.55rem; color: #4c4c80; line-height: 1.55; font-size: 0.68rem; }
+
+    /* ── MAIN ── */
+    #main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-width: 0; background: #0a0a1a; padding: 2rem; overflow-y: auto; }
+    #canvas-wrap { width: 100%; max-width: 500px; aspect-ratio: 1/1; position: relative; overflow: hidden; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); background: #000; flex-shrink: 0; }
+    #three-canvas { display: block; width: 100%; height: 100%; }
+    #code-panel { width: 100%; max-width: 500px; margin-top: 1.5rem; flex-shrink: 0; }
+
+    /* overlay labels */
+    #algo-label {
+      position: absolute; top: 0.9rem; left: 50%; transform: translateX(-50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem; font-weight: 700;
+      color: rgba(165,180,252,0.65); pointer-events: none; white-space: nowrap;
+    }
+
+    #legend {
+      position: absolute; bottom: 0.5rem; right: 0.75rem;
+      display: flex; gap: 0.65rem; flex-wrap: wrap; justify-content: flex-end;
+    }
+    .leg { display: flex; align-items: center; gap: 4px; font-size: 0.62rem; color: #4c4c7a; }
+    .leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+    /* ── CODE PANEL (permanent right column) ── */
+    #code-panel {
+      width: 360px; min-width: 360px; height: 100%;
+      background: linear-gradient(180deg, #06060e, #07070f);
+      border-left: 1px solid #18183a;
+      display: flex; flex-direction: column;
+      transition: width 0.28s ease, min-width 0.28s ease;
+    }
+    #code-panel.collapsed { width: 0; min-width: 0; border-left: none; overflow: hidden; }
+    #code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 0.95rem; border-bottom: 1px solid #18183a;
+      background: #07070f; flex-shrink: 0;
+    }
+    .ch-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    #code-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 700; color: #a5b4fc; letter-spacing: 0.04em; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ch-tag { font-family: 'Space Grotesk', sans-serif; font-size: 0.62rem; font-weight: 700; color: #fbbf24; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); padding: 1px 7px; border-radius: 999px; flex-shrink: 0; }
+    #code-close, #code-copy { background: none; border: 1px solid #18183a; color: #5c5c8a; font-size: 0.78rem; cursor: pointer; padding: 3px 8px; border-radius: 6px; transition: all 0.15s; min-width: 26px; min-height: 24px; }
+    #code-close:hover, #code-copy:hover { color: #e2e8f0; border-color: #2a2a50; }
+    #code-copy.ok { color: #34d399; border-color: rgba(52,211,153,0.5); }
+    .ch-actions { display: flex; gap: 5px; align-items: center; }
+    #code-body {
+      flex: 1; overflow-y: auto; padding: 0.65rem 0;
+      font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 0.74rem; line-height: 1.75;
+      scrollbar-width: thin; scrollbar-color: #2a2a50 transparent;
+    }
+    #code-body::-webkit-scrollbar { width: 4px; }
+    #code-body::-webkit-scrollbar-thumb { background: #2a2a50; border-radius: 2px; }
+    .code-line {
+      display: flex; padding: 1px 0.95rem; color: #6c7299; transition: all 0.18s;
+    }
+    .code-line.active {
+      background: linear-gradient(90deg, rgba(99,102,241,0.32), rgba(99,102,241,0.04));
+      color: #fff;
+      border-left: 3px solid #818cf8;
+      padding-left: calc(0.95rem - 3px);
+      box-shadow: 0 0 18px rgba(99,102,241,0.18) inset;
+    }
+    .code-line.active .code-num { color: #818cf8; }
+    .code-num {
+      display: inline-block; width: 22px; flex-shrink: 0; color: #2e3057; text-align: right; padding-right: 10px;
+      user-select: none; font-variant-numeric: tabular-nums;
+    }
+    .code-empty { padding: 1rem; color: #4c4c7a; font-style: italic; font-size: 0.72rem; }
+
+    /* Variable inspector */
+    #var-panel {
+      border-top: 1px solid #18183a; background: #050511;
+      padding: 0.55rem 0.95rem 0.7rem; min-height: 80px; max-height: 32%;
+      overflow-y: auto; flex-shrink: 0;
+    }
+    .vp-title { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #4c4c7a; margin-bottom: 0.4rem; }
+    .vp-list { display: flex; flex-direction: column; gap: 3px; }
+    .vp-row { display: flex; gap: 8px; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; }
+    .vp-key { color: #818cf8; min-width: 80px; }
+    .vp-val { color: #e2e8f0; word-break: break-all; }
+    .vp-empty { font-style: italic; color: #3a3a6a; font-size: 0.66rem; }
+
+    /* Code toggle button (overlaid on canvas) */
+    #code-toggle {
+      position: absolute; top: 0.85rem; right: 0.85rem; z-index: 11;
+      background: rgba(7,7,15,0.85); border: 1px solid #2a2a50;
+      color: #a5b4fc; padding: 0.42rem 0.8rem; border-radius: 8px;
+      font-size: 0.74rem; font-weight: 600; cursor: pointer;
+      font-family: 'Inter', sans-serif; transition: all 0.15s;
+      display: none; align-items: center; gap: 6px;
+    }
+    #code-toggle.show { display: flex; }
+    #code-toggle:hover { background: rgba(99,102,241,0.18); border-color: rgba(99,102,241,0.4); }
+
+    @media (max-width: 1200px) {
+      #code-panel { width: 320px; min-width: 320px; }
+    }
+    @media (max-width: 1000px) {
+      #code-panel { width: 280px; min-width: 280px; }
+      #sidebar { width: 180px; min-width: 180px; }
+    }
+    @media (max-width: 760px) {
+      #code-panel { width: 0; min-width: 0; border-left: none; }
+      #code-panel.show-mobile { width: 100%; min-width: 100%; position: absolute; right: 0; top: 0; z-index: 50; border-left: 1px solid #18183a; }
+      #code-toggle { display: flex; }
+    }
+
+    /* ── CONTROL BAR ── */
+    #ctrl-bar {
+      height: 68px; min-height: 68px; background: #06060e;
+      border-top: 1px solid #18183a;
+      display: flex; align-items: center; gap: 0.75rem; padding: 0 1.2rem;
+      flex-wrap: nowrap; overflow-x: auto;
+    }
+
+    .ctrl-btn {
+      background: rgba(99,102,241,0.14); border: 1px solid rgba(99,102,241,0.35);
+      color: #a5b4fc; padding: 0.42rem 1rem;
+      border-radius: 8px; font-size: 0.76rem; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+    }
+    .ctrl-btn:hover { background: rgba(99,102,241,0.28); transform: translateY(-1px); }
+    .ctrl-btn.run  { background: #6366f1; color: #fff; border-color: #6366f1; }
+    .ctrl-btn.run:hover { background: #4f52e8; }
+    .ctrl-btn.stop { background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.35); color: #fca5a5; }
+
+    .speed-wrap { display: flex; align-items: center; gap: 0.45rem; flex-shrink: 0; }
+    .speed-lbl { font-size: 0.7rem; color: #4c4c7a; white-space: nowrap; }
+    input[type=range] { accent-color: #6366f1; width: 80px; cursor: pointer; }
+
+    #target-wrap {
+      display: none; align-items: center; gap: 0.45rem;
+      font-size: 0.76rem; color: #4c4c7a; flex-shrink: 0;
+    }
+    #target-input {
+      background: #10102a; border: 1px solid #2a2a50; color: #c0c0e8;
+      padding: 0.28rem 0.55rem; border-radius: 6px; font-size: 0.76rem;
+      width: 56px; font-family: 'Inter', sans-serif;
+    }
+
+    .stats-wrap { margin-left: auto; display: flex; gap: 1.2rem; flex-shrink: 0; }
+    .stat { text-align: center; }
+    .stat-n {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem; font-weight: 700; color: #a5b4fc;
+    }
+    .stat-l { font-size: 0.58rem; color: #3a3a6a; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 1px; }
+  <link rel="stylesheet" href="/global.css" />
+
+<script>
+// If embedded in an iframe (e.g. the homepage preview), remove the container's margins and borders
+// so it seamlessly fills the mock window frame.
+if (window.self !== window.top) {
+  document.addEventListener("DOMContentLoaded", () => {
+    const appC = document.getElementById('app-container');
+    if (appC) {
+      appC.style.margin = '0';
+      appC.style.border = 'none';
+      appC.style.boxShadow = 'none';
+      appC.style.borderRadius = '0';
+      appC.style.maxWidth = '100%';
+      appC.style.height = '100vh';
+      appC.style.aspectRatio = 'auto';
+    }
+  });
+}
+</script>
+</head>
+<body>
+<script defer src="/i18n/translations.js"></script>
+<script defer src="/i18n/engine.js"></script>
+<script defer src="/a11y.js"></script>
+
+<div id="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<nav id="nav">
+  <a href="/" class="logo-a">
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async"/></div>
+    <span class="logo-txt">Lx8 <span>Labs</span></span>
+  </a>
+  <a href="/" class="back-link">← Home</a>
+</nav>
+
+<div id="app-container">
+    <div id="live-announcer" aria-live="polite" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;"></div>
+<div id="app">
+
+  <!-- ── SIDEBAR ── -->
+    <aside id="sidebar">
+    <div class="sb-logo">⚗ Chronology of Algorithms</div>
+    
+    <div class="sb-search" id="sb-search-wrap" style="border-bottom: 1px solid #18183a;">
+      <span class="sb-search-icon">⌕</span>
+      <input id="sb-search" type="text" placeholder="Search history..." autocomplete="off" spellcheck="false"/>
+      <button type="button" class="sb-search-clear" id="sb-search-clear" aria-label="Clear">✕</button>
+    </div>
+
+    <div id="timeline-wrap">
+        <div id="sb-list"></div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main id="main">
+    <div id="canvas-wrap">
+      <canvas id="three-canvas"></canvas>
+      <div id="timeline-overlay">
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 1rem; color: #a5b4fc;">The Chronological Line of Algorithms</h2>
+        <div class="tl-svg-wrap" id="tl-svg-wrap"></div>
+      </div>
+      <div id="algo-label">Bubble Sort</div>
+      <div id="legend"></div>
+      <button type="button" id="code-toggle" onclick="toggleCode()"><span>{ }</span><span class="ct-lbl"> Code</span></button>
+    </div>
+
+    <div id="ctrl-bar">
+      <button type="button" class="ctrl-btn run" id="btn-run" title="Run / Stop (Space)">▶ Run</button>
+      <button type="button" class="ctrl-btn step" id="btn-step" title="Step forward one operation (→)">⏭ Step</button>
+      <button type="button" class="ctrl-btn" id="btn-reset" title="Reset (R)">⟳ Reset</button>
+      <div id="target-wrap">
+        <span>Target:</span>
+        <input type="number" id="target-input" value="12" min="1" max="30"/>
+      </div>
+      <div class="speed-wrap">
+        <span class="speed-lbl">Speed</span>
+        <input type="range" id="speed-slider" min="1" max="10" value="5"/>
+      </div>
+      <div class="stats-wrap">
+        <div class="stat"><div class="stat-n" id="stat-cmp">0</div><div class="stat-l">Comparisons</div></div>
+        <div class="stat"><div class="stat-n" id="stat-swp">0</div><div class="stat-l">Swaps/Moves</div></div>
+        <div class="stat"><div class="stat-n" id="stat-time">0ms</div><div class="stat-l">Time</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CODE PANEL (permanent right column) ── -->
+  <aside id="code-panel">
+    <div id="code-header">
+      <div class="ch-left">
+        <h3 id="code-title">Bubble Sort</h3>
+        <span class="ch-tag" id="code-year">1956</span>
+      </div>
+      <div class="ch-actions">
+        <button type="button" id="code-copy" onclick="copyCode()" aria-label="Copy pseudocode" title="Copy pseudocode">⎘</button>
+        <button type="button" id="code-close" onclick="toggleCode()" aria-label="Hide code">→</button>
+      </div>
+    </div>
+    <div id="code-body"></div>
+    <div id="var-panel">
+      <div class="vp-title">State</div>
+      <div class="vp-list" id="vp-list">
+        <div class="vp-empty">Run an algorithm to see live variables.</div>
+      </div>
+    </div>
+  </aside>
+</div>
+</div> <!-- Close #app-container -->
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ── THREE.JS CORE ─────────────────────────────────────────────────────────────
+const canvas = document.getElementById('three-canvas');
+const wrap   = document.getElementById('canvas-wrap');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x040411, 1);
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x040411, 0.018);
+
+const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 500);
+
+const ambLight = new THREE.AmbientLight(0x8899ff, 0.4);
+scene.add(ambLight);
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.1);
+dirLight.position.set(10, 20, 10);
+dirLight.castShadow = true;
+scene.add(dirLight);
+const fillLight = new THREE.DirectionalLight(0x6366f1, 0.35);
+fillLight.position.set(-10, -5, -10);
+scene.add(fillLight);
+
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 2;
+controls.maxDistance = 100;
+
+function resizeRenderer() {
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resizeRenderer);
+resizeRenderer();
+
+
+let needsRender = true;
+controls.addEventListener('change', () => { needsRender = true; });
+// Also trigger render when hovering elements or resizing
+window.addEventListener('resize', () => { needsRender = true; });
+document.addEventListener('mousemove', () => { if(!isRunning) needsRender = true; });
+
+(function loop() {
+  requestAnimationFrame(loop);
+  controls.update();
+  // Render if running, or if a manual interaction flagged it
+  if (isRunning || needsRender) {
+    renderer.render(scene, camera);
+    needsRender = false;
+  }
+})();
+
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let isRunning = false, stopFlag = false;
+let currentCat = 'sort', currentAlgo = 'bubble';
+let vizObjects = [];
+let speed = 5;
+let cmp = 0, swp = 0, tStart = 0;
+
+const sleep  = ms => new Promise(r => setTimeout(r, ms));
+// Speed 1 = 900ms (read code line by line) · Speed 5 = 100ms · Speed 10 = 14ms
+let stepMode = false;
+let stepResolver = null;
+const tick = () => {
+  if (stepMode) {
+    return new Promise(resolve => { stepResolver = resolve; });
+  }
+  return sleep(Math.max(8, Math.round(900 / Math.pow(speed, 1.6))));
+};
+function doStep() {
+  // Enter step mode (pauses any current pace), and advance one step.
+  if (!isRunning) return;
+  stepMode = true;
+  if (stepResolver) { const r = stepResolver; stepResolver = null; r(); }
+}
+const updateStats = () => {
+  document.getElementById('stat-cmp').textContent  = cmp;
+  document.getElementById('stat-swp').textContent  = swp;
+  document.getElementById('stat-time').textContent = (Date.now() - tStart) + 'ms';
+};
+
+// ── VIZ HELPERS ───────────────────────────────────────────────────────────────
+function clearViz() {
+  for (const obj of vizObjects) {
+    scene.remove(obj);
+    if (obj.geometry) obj.geometry.dispose();
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    mats.forEach(m => m && m.dispose());
+  }
+  vizObjects = [];
+}
+
+const textureCache = {};
+function createPatternTexture(hex, type) {
+  const key = hex + '_' + type;
+  if(textureCache[key]) return textureCache[key];
+  
+  const c = document.createElement('canvas');
+  c.width = 64; c.height = 64;
+  const ctx = c.getContext('2d');
+  
+  ctx.fillStyle = '#' + hex.toString(16).padStart(6, '0');
+  ctx.fillRect(0,0,64,64);
+  
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  if (type === 'stripes') {
+    for(let i=0; i<64; i+=16) ctx.fillRect(i, 0, 8, 64);
+  } else if (type === 'dots') {
+    for(let y=8; y<64; y+=16) {
+      for(let x=8; x<64; x+=16) {
+        ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+      }
+    }
+  } else if (type === 'grid') {
+    for(let i=0; i<64; i+=16) { ctx.fillRect(i,0,4,64); ctx.fillRect(0,i,64,4); }
+  }
+  
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(1, 1);
+  textureCache[key] = tex;
+  return tex;
+}
+
+function makeMat(hex) {
+  const isHighContrast = document.documentElement.classList.contains('a11y-high-contrast');
+  let map = null;
+  
+  if (isHighContrast) {
+    if (hex === C.cmp) map = createPatternTexture(hex, 'stripes');
+    else if (hex === C.swap) map = createPatternTexture(hex, 'grid');
+    else if (hex === C.pivot) map = createPatternTexture(hex, 'dots');
+    else if (hex === C.sorted || hex === C.found || hex === C.visit) map = createPatternTexture(hex, 'dots');
+  }
+  
+  return new THREE.MeshPhongMaterial({ color: hex, map: map, shininess: 75, specular: 0x223355 });
+}
+
+function addGrid(size = 20) {
+  const g = new THREE.GridHelper(size, Math.floor(size), 0x181838, 0x10102e);
+  scene.add(g); vizObjects.push(g);
+}
+
+// Palette
+const C = {
+  def:      0x3d3dcc,
+  cmp:      0xf59e0b,
+  swap:     0xef4444,
+  pivot:    0xa78bfa,
+  sorted:   0x10b981,
+  found:    0x22c55e,
+  miss:     0x2a2a4a,
+  node:     0x3b3bcc,
+  visit:    0x10b981,
+  curr:     0xfbbf24,
+  frontier: 0xf59e0b,
+  path:     0xa78bfa,
+  edge:     0x222248,
+  edgeHi:   0x6366f1,
+};
+
+// ── LEGEND ────────────────────────────────────────────────────────────────────
+const LEG_COLORS = [0x3d3dcc, 0xf59e0b, 0xef4444, 0xfbbf24, 0x10b981];
+function showLegend(labels) {
+  const el = document.getElementById('legend');
+  el.innerHTML = '';
+  labels.forEach((lbl, i) => {
+    if (!lbl) return;
+    const d = document.createElement('div'); d.className = 'leg';
+    const c = LEG_COLORS[i] || 0x888888;
+    d.innerHTML = `<div class="leg-dot" style="background:#${c.toString(16).padStart(6,'0')}"></div>${lbl}`;
+    el.appendChild(d);
+  });
+}
+
+// ── ALGORITHM INFO ────────────────────────────────────────────────────────────
+const INFO = {
+  // ── ANCIENT ───────────────────────────────────────────────────────────
+  euclid:        { name:"Euclid's GCD",          cat:'math', year:-300, creator:'Euclid',                    time:'O(log min(a,b))', space:'O(1)', stable:'—', desc:'Repeatedly replace the larger number with its remainder modulo the smaller.', history:'Described in Euclid\'s Elements (Book VII, ~300 BCE) — possibly the oldest non-trivial algorithm still in regular use today.' },
+  sieve:         { name:'Sieve of Eratosthenes', cat:'math', year:-240, creator:'Eratosthenes of Cyrene',    time:'O(n log log n)',  space:'O(n)', stable:'—', desc:'Cross out multiples of each prime up to √n. What remains are all the primes.', history:'Devised by Eratosthenes (~240 BCE), the Greek polymath who also calculated Earth\'s circumference. Still the standard primality sieve.' },
+  pascal:        { name:"Pascal's Triangle",     cat:'math', year:1654, creator:'Blaise Pascal',             time:'O(n²)',           space:'O(n²)', stable:'—', desc:'Each cell is the sum of the two above it. Generates binomial coefficients.', history:'Pascal published his treatise in 1654, but the pattern was known centuries earlier in Persia (al-Karaji, ~1000), India (Pingala, 200 BCE) and China (Yang Hui, 1303).' },
+
+  // ── 19TH CENTURY ──────────────────────────────────────────────────────
+  dfs:           { name:'Depth-First Search',     cat:'graph', year:1882, creator:'Charles Pierre Trémaux',   time:'O(V+E)',  space:'O(V)', stable:'—', desc:'Explore as deep as possible along each branch before backtracking.', history:'Originally a 19th-century maze-solving technique by French engineer Trémaux. Reformulated for computer science in the 1970s by Tarjan & Hopcroft.' },
+  radix:         { name:'Radix Sort',             cat:'sort', year:1887, creator:'Herman Hollerith',         time:'O(d·(n+k))', space:'O(n+k)', stable:'Yes', desc:'Sort digit-by-digit from least to most significant.', history:'Used by Hollerith\'s tabulating machines in the 1890 US census — the device that founded the company that became IBM. Beats comparison-based sorts on integer keys.' },
+
+  // ── 1930s–1940s ───────────────────────────────────────────────────────
+  jarnik:        { name:"Jarník's MST",           cat:'graph', year:1930, creator:'Vojtěch Jarník',           time:'O(E log V)', space:'O(V)', stable:'—', desc:'Grow minimum spanning tree one edge at a time from a start node.', history:'Jarník (1930) was the original — Prim rediscovered it in 1957, Dijkstra in 1959. The same algorithm, three independent inventors.' },
+  merge:         { name:'Merge Sort',             cat:'sort', year:1945, creator:'John von Neumann',         time:'O(n log n)', space:'O(n)', stable:'Yes', desc:'Divide, sort halves recursively, then merge.', history:'Invented by von Neumann in 1945 for the EDVAC computer. The first divide-and-conquer sorting algorithm, and the basis for Tim Sort and Java\'s default sort.' },
+  binary:        { name:'Binary Search',          cat:'search', year:1946, creator:'John Mauchly',           time:'O(log n)',   space:'O(1)', stable:'—', desc:'Halve the search space each step on a sorted array.', history:'First published by Mauchly (co-designer of ENIAC) in 1946. Famously hard to implement correctly — Knuth notes that the first bug-free version took 16 years to appear.' },
+
+  // ── 1950s ─────────────────────────────────────────────────────────────
+  hash:          { name:'Hash Table',             cat:'ds',   year:1953, creator:'Hans Peter Luhn (IBM)',    time:'O(1) avg',   space:'O(n)', stable:'—', desc:'Map keys to bucket indices via a hash function.', history:'Invented by Luhn at IBM in 1953 in an internal memo. Now the foundation of dictionaries, sets, caches and almost every database index.' },
+  counting:      { name:'Counting Sort',          cat:'sort', year:1954, creator:'Harold H. Seward',         time:'O(n+k)',     space:'O(k)', stable:'Yes', desc:'Count occurrences of each value, then write them back in order.', history:'Introduced by Seward at MIT in his 1954 thesis. Linear time when the value range is small — used as the inner loop of Radix Sort.' },
+  bubble:        { name:'Bubble Sort',            cat:'sort', year:1956, creator:'Edward Friend',            time:'O(n²)',      space:'O(1)', stable:'Yes', desc:'Adjacent-pair swaps bubble the largest element to the end each pass.', history:'First analysed in Friend\'s 1956 paper "Sorting on Electronic Computer Systems". Knuth famously called it "the wrong algorithm" — easy to teach but rarely the right choice.' },
+  dijkstra:      { name:"Dijkstra's Shortest Path", cat:'graph', year:1956, creator:'Edsger W. Dijkstra',    time:'O(E log V)', space:'O(V)', stable:'—', desc:'Greedy shortest paths from a source to all other nodes.', history:'Designed by Dijkstra in 1956 over coffee in Amsterdam in about 20 minutes (he said), published 1959. Won him the Turing Award.' },
+  bellman:       { name:'Bellman–Ford',           cat:'graph', year:1956, creator:'Bellman, Ford, Shimbel',  time:'O(V·E)',     space:'O(V)', stable:'—', desc:'Relax all edges V−1 times. Handles negative edge weights.', history:'Published independently by Shimbel (1955), Bellman (1958) and Ford (1956). Slower than Dijkstra but works with negative weights — used in distance-vector routing.' },
+  kruskal:       { name:"Kruskal's MST",          cat:'graph', year:1956, creator:'Joseph Kruskal',          time:'O(E log E)', space:'O(V)', stable:'—', desc:'Sort edges by weight, add the cheapest one that doesn\'t form a cycle.', history:'Published by Kruskal in 1956 in the Proceedings of the AMS. Powered by union-find — the simplest greedy MST algorithm.' },
+  selection:     { name:'Selection Sort',         cat:'sort', year:1957, creator:'Early IBM era',            time:'O(n²)',      space:'O(1)', stable:'No',  desc:'Find the minimum element and swap it into position.', history:'Among the earliest in-place sorts. Minimises swaps — useful when writes are expensive (e.g., to flash memory).' },
+  prim:          { name:"Prim's MST",             cat:'graph', year:1957, creator:'Robert C. Prim',          time:'O(E log V)', space:'O(V)', stable:'—', desc:'Grow MST one edge at a time from a start node (same as Jarník 1930).', history:'Prim (Bell Labs, 1957) rediscovered Jarník\'s 1930 algorithm. Dijkstra rediscovered it again in 1959 — three independent inventions.' },
+  interpolation: { name:'Interpolation Search',   cat:'search', year:1957, creator:'W. W. Peterson',         time:'O(log log n)', space:'O(1)', stable:'—', desc:'Estimate position by value distribution rather than always picking the middle.', history:'Peterson\'s 1957 paper "Addressing for Random-Access Storage". Beats binary search on uniformly distributed data.' },
+  shell:         { name:'Shell Sort',             cat:'sort', year:1959, creator:'Donald Shell',             time:'O(n log² n)', space:'O(1)', stable:'No',  desc:'Insertion sort with a decreasing gap sequence.', history:'Shell published the first sort beating O(n²) in 1959. Still used in embedded systems thanks to its simple in-place loop.' },
+  quick:         { name:'Quick Sort',             cat:'sort', year:1959, creator:'Tony Hoare',               time:'O(n log n)', space:'O(log n)', stable:'No', desc:'Partition around a pivot, recurse on both halves.', history:'Hoare invented it in Moscow (1959) while working on machine translation. Won him the Turing Award. Still the basis of std::sort and qsort().' },
+
+  // ── 1960s ─────────────────────────────────────────────────────────────
+  insertion:     { name:'Insertion Sort',         cat:'sort', year:1959, creator:'Folklore (formalised 1959)', time:'O(n²)',    space:'O(1)', stable:'Yes', desc:'Grow a sorted prefix by inserting each new element into its correct place.', history:'Used by humans sorting playing cards for centuries. Formalised in computer science with the rise of stored-program computers. Optimal for small or nearly-sorted arrays.' },
+  linear:        { name:'Linear Search',          cat:'search', year:1960, creator:'Folklore',                time:'O(n)',       space:'O(1)', stable:'—', desc:'Scan every element until the target is found.', history:'The trivial baseline — older than computers themselves. Optimal when the array is unsorted and accessed only once.' },
+  bst:           { name:'BST Search',             cat:'tree', year:1960, creator:'Booth & Colin (multiple)', time:'O(log n)',   space:'O(n)', stable:'—', desc:'Follow left or right branch by comparing keys.', history:'Independently invented multiple times around 1960. The conceptual ancestor of every balanced tree (AVL, Red-Black, B-tree, splay).' },
+  inorder:       { name:'In-order Traversal',     cat:'tree', year:1960, creator:'Discovered with BST',      time:'O(n)',       space:'O(h)', stable:'—', desc:'Left → Root → Right. Visits BST nodes in sorted ascending order.', history:'Defined alongside the binary search tree itself. The reason in-order on a BST gives sorted output.' },
+  preorder:      { name:'Pre-order Traversal',    cat:'tree', year:1960, creator:'Discovered with BST',      time:'O(n)',       space:'O(h)', stable:'—', desc:'Root → Left → Right. Used to serialise or clone a tree.', history:'Used in tree serialisation, expression-tree printing, and interpreters that compile prefix notation.' },
+  postorder:     { name:'Post-order Traversal',   cat:'tree', year:1960, creator:'Discovered with BST',      time:'O(n)',       space:'O(h)', stable:'—', desc:'Left → Right → Root. Used to delete a tree or evaluate expressions.', history:'Used to free trees safely, evaluate postfix expressions and compile bottom-up DSLs.' },
+  bfs:           { name:'Breadth-First Search',   cat:'graph', year:1959, creator:'Edward F. Moore',         time:'O(V+E)',     space:'O(V)', stable:'—', desc:'Explore neighbours layer by layer using a queue.', history:'Moore published it in 1959 for routing telephone-network connections. Konrad Zuse independently described it in his 1945 (unpublished) Plankalkül thesis.' },
+  knapsack:      { name:'0/1 Knapsack',           cat:'dp',   year:1957, creator:'George Dantzig',           time:'O(n·W)',     space:'O(n·W)', stable:'—', desc:'Pick a subset of items with weights ≤ W to maximise total value.', history:'Dantzig studied it in 1957 as part of his work on linear programming. The classic example of dynamic programming on a 2D grid.' },
+  fibonacci:     { name:'Fibonacci (DP)',         cat:'dp',   year:1953, creator:'Richard Bellman',          time:'O(n)',       space:'O(n)', stable:'—', desc:'Memoise sub-problem answers to avoid exponential recursion.', history:'Bellman coined "dynamic programming" in 1953. The Fibonacci sequence itself dates to Leonardo of Pisa (1202), but the DP version is the textbook intro to memoisation.' },
+  heap:          { name:'Heap Sort',              cat:'sort', year:1964, creator:'J.W.J. Williams',          time:'O(n log n)', space:'O(1)', stable:'No', desc:'Build a max-heap, repeatedly extract the root.', history:'Williams introduced both the binary heap data structure and Heap Sort in a single 1964 CACM paper. In-place and worst-case O(n log n) — a rare combination.' },
+  edit:          { name:'Edit Distance',          cat:'dp',   year:1965, creator:'Vladimir Levenshtein',     time:'O(m·n)',     space:'O(m·n)', stable:'—', desc:'Min insertions/deletions/substitutions to turn one string into another.', history:'Levenshtein\'s 1965 paper at the Soviet Academy of Sciences. Now the engine behind spell-check, fuzzy search and DNA alignment.' },
+  astar:         { name:'A* Search',              cat:'graph', year:1968, creator:'Hart, Nilsson, Raphael',  time:'O(E log V)', space:'O(V)', stable:'—', desc:'Dijkstra plus a heuristic that estimates distance to the goal.', history:'Invented at Stanford (1968) for Shakey the robot. Optimal whenever the heuristic is admissible — the basis of GPS routing and game pathfinding.' },
+
+  // ── 1970s ─────────────────────────────────────────────────────────────
+  lcs:           { name:'Longest Common Subseq.', cat:'dp',   year:1974, creator:'Hunt & McIlroy',           time:'O(m·n)',     space:'O(m·n)', stable:'—', desc:'Find the longest sequence appearing in both strings (in order).', history:'Hunt & McIlroy (Bell Labs, 1974) used it to build diff. Today\'s git diff and IDE merge tools still rely on the same DP.' },
+  lis:           { name:'Longest Increasing Subseq.', cat:'dp', year:1975, creator:'Knuth (Patience sort)', time:'O(n log n)', space:'O(n)', stable:'—', desc:'Find the longest strictly-increasing subsequence.', history:'Knuth showed in 1973 the connection to "patience sorting" (the card game). The O(n log n) trick is one of the most elegant algorithms in CS.' },
+  jump:          { name:'Jump Search',            cat:'search', year:1986, creator:'Folklore (formal 1986)', time:'O(√n)',     space:'O(1)', stable:'—', desc:'Skip ahead by √n then linear-scan back.', history:'A compromise between linear (no preprocessing) and binary search (full random access). Useful when seek cost dominates compare cost.' },
+  kmp:           { name:'KMP String Search',      cat:'string', year:1977, creator:'Knuth, Morris, Pratt',  time:'O(n+m)',     space:'O(m)', stable:'—', desc:'Pre-compute failure function to skip impossible alignments.', history:'Knuth, Morris and Pratt independently arrived at the same solution in 1977. The first linear-time substring search.' },
+
+  // ── 1980s ─────────────────────────────────────────────────────────────
+  comb:          { name:'Comb Sort',              cat:'sort', year:1980, creator:'Włodzimierz Dobosiewicz', time:'O(n²) worst', space:'O(1)', stable:'No', desc:'Bubble sort with a shrinking gap (factor ≈ 1.3).', history:'Dobosiewicz (1980), popularised by Lacey & Box in BYTE Magazine (1991). Beats bubble sort by orders of magnitude with one tweak.' },
+  kadane:        { name:"Kadane's Algorithm",     cat:'dp',   year:1984, creator:'Joseph B. Kadane',         time:'O(n)',       space:'O(1)', stable:'—', desc:'Find the maximum-sum contiguous subarray in one pass.', history:'Kadane discovered it in 1984 while sitting in on a CMU lecture by Bentley. The textbook example of greedy + DP.' },
+  cocktail:      { name:'Cocktail Shaker Sort',   cat:'sort', year:1973, creator:'Knuth (TAOCP)',            time:'O(n²)',      space:'O(1)', stable:'Yes', desc:'Bidirectional bubble sort — sweep up then back down.', history:'Described in Knuth\'s Art of Computer Programming Vol. 3 (1973). Slightly faster than bubble on partially sorted data; rarely used in practice.' },
+  rabin:         { name:'Rabin–Karp',             cat:'string', year:1987, creator:'Michael Rabin, Richard Karp', time:'O(n+m) avg', space:'O(1)', stable:'—', desc:'Use a rolling hash to compare windows of the text against the pattern.', history:'Rabin & Karp\'s 1987 paper. The rolling hash is the same idea behind plagiarism detection and rsync\'s file diffing.' },
+
+  // ── 1990s+ ────────────────────────────────────────────────────────────
+  cycle:         { name:'Cycle Sort',             cat:'sort', year:1990, creator:'B. K. Haddon',             time:'O(n²)',      space:'O(1)', stable:'No',  desc:'Minimise writes by directly placing each element at its final cycle position.', history:'Haddon (1990). The theoretically write-optimal sort — used in EEPROM/flash environments where every write is expensive.' },
+  tim:           { name:'Tim Sort',               cat:'sort', year:2002, creator:'Tim Peters',               time:'O(n log n)', space:'O(n)', stable:'Yes', desc:'Hybrid: detect natural runs (insertion sort) then merge them.', history:'Peters wrote it in 2002 for Python\'s list.sort(). Adopted by Java (2009), Android, V8, Rust — the default sort of half the modern world.' },
+};
+
+function fmtYear(y) {
+  if (y < 0) return Math.abs(y) + ' BCE';
+  return String(y);
+}
+
+// ── CODE PANEL ────────────────────────────────────────────────────────────
+const CODE = {
+  bubble: [
+    'for i = 0 to n-1:',
+    '  for j = 0 to n-i-1:',
+    '    if arr[j] > arr[j+1]:',
+    '      swap(arr[j], arr[j+1])',
+    '  mark arr[n-1-i] sorted',
+  ],
+  selection: [
+    'for i = 0 to n-1:',
+    '  min = i',
+    '  for j = i+1 to n:',
+    '    if arr[j] < arr[min]:',
+    '      min = j',
+    '  swap(arr[i], arr[min])',
+  ],
+  insertion: [
+    'for i = 1 to n:',
+    '  j = i',
+    '  while j > 0 and arr[j-1] > arr[j]:',
+    '    swap(arr[j-1], arr[j])',
+    '    j = j - 1',
+  ],
+  quick: [
+    'function quicksort(arr, lo, hi):',
+    '  if lo >= hi: return',
+    '  pivot = arr[hi]',
+    '  i = lo - 1',
+    '  for j = lo to hi-1:',
+    '    if arr[j] <= pivot:',
+    '      i = i + 1',
+    '      swap(arr[i], arr[j])',
+    '  swap(arr[i+1], arr[hi])',
+    '  quicksort(arr, lo, i)',
+    '  quicksort(arr, i+2, hi)',
+  ],
+  merge: [
+    'function mergesort(arr, lo, hi):',
+    '  if lo >= hi: return',
+    '  mid = (lo + hi) / 2',
+    '  mergesort(arr, lo, mid)',
+    '  mergesort(arr, mid+1, hi)',
+    '  merge(arr, lo, mid, hi)',
+  ],
+  heap: [
+    'build_max_heap(arr)',
+    'for i = n-1 down to 1:',
+    '  swap(arr[0], arr[i])',
+    '  heapify(arr, i, 0)',
+  ],
+  shell: [
+    'gap = n / 2',
+    'while gap > 0:',
+    '  for i = gap to n:',
+    '    while j >= gap and arr[j-gap] > arr[j]:',
+    '      swap(arr[j], arr[j-gap])',
+    '      j = j - gap',
+    '  gap = gap / 2',
+  ],
+  counting: [
+    'for x in arr: count[x]++',
+    'k = 0',
+    'for v = 0 to max:',
+    '  while count[v] > 0:',
+    '    arr[k++] = v',
+    '    count[v]--',
+  ],
+  radix: [
+    'for digit = LSD to MSD:',
+    '  for x in arr:',
+    '    bucket[digit_of(x)].push(x)',
+    '  rebuild arr from buckets',
+  ],
+  cocktail: [
+    'do:',
+    '  for i = lo to hi:',
+    '    if arr[i] > arr[i+1]: swap',
+    '  hi = hi - 1',
+    '  for i = hi down to lo:',
+    '    if arr[i-1] > arr[i]: swap',
+    '  lo = lo + 1',
+    'while swapped',
+  ],
+  comb: [
+    'gap = n',
+    'while not sorted:',
+    '  gap = gap / 1.3',
+    '  for i = 0 to n - gap:',
+    '    if arr[i] > arr[i+gap]:',
+    '      swap(arr[i], arr[i+gap])',
+  ],
+  cycle: [
+    'for cs = 0 to n-1:',
+    '  item = arr[cs]; pos = cs',
+    '  for i = cs+1 to n:',
+    '    if arr[i] < item: pos++',
+    '  swap into final position',
+    '  repeat until pos == cs',
+  ],
+  tim: [
+    '# Phase 1: insertion-sort runs of size RUN',
+    'for s = 0 to n step RUN:',
+    '  insertion_sort(arr, s, s + RUN - 1)',
+    '# Phase 2: merge runs',
+    'for size = RUN; size < n; size *= 2:',
+    '  for lo = 0; lo < n; lo += 2*size:',
+    '    merge(arr, lo, mid, hi)',
+  ],
+  linear: [
+    'for i = 0 to n-1:',
+    '  if arr[i] == target:',
+    '    return i',
+    'return -1',
+  ],
+  binary: [
+    'lo = 0; hi = n - 1',
+    'while lo <= hi:',
+    '  mid = (lo + hi) / 2',
+    '  if arr[mid] == target: return mid',
+    '  if arr[mid] < target:',
+    '    lo = mid + 1',
+    '  else:',
+    '    hi = mid - 1',
+  ],
+  jump: [
+    'step = sqrt(n)',
+    'while arr[min(step,n)-1] < target:',
+    '  prev = step; step += sqrt(n)',
+    'for i = prev to min(step, n):',
+    '  if arr[i] == target: return i',
+  ],
+  interpolation: [
+    'while lo <= hi and target in [arr[lo], arr[hi]]:',
+    '  pos = lo + (target-arr[lo])*(hi-lo) / (arr[hi]-arr[lo])',
+    '  if arr[pos] == target: return pos',
+    '  if arr[pos] < target: lo = pos + 1',
+    '  else: hi = pos - 1',
+  ],
+  bfs: [
+    'queue = [start]; visited[start] = true',
+    'while queue not empty:',
+    '  u = queue.shift()',
+    '  for v in neighbours(u):',
+    '    if not visited[v]:',
+    '      visited[v] = true',
+    '      queue.push(v)',
+  ],
+  dfs: [
+    'function dfs(u):',
+    '  visited[u] = true',
+    '  for v in neighbours(u):',
+    '    if not visited[v]:',
+    '      dfs(v)',
+  ],
+  dijkstra: [
+    'dist[source] = 0',
+    'while unvisited not empty:',
+    '  u = unvisited node with min dist',
+    '  visited[u] = true',
+    '  for (v, w) in neighbours(u):',
+    '    if dist[u] + w < dist[v]:',
+    '      dist[v] = dist[u] + w',
+  ],
+  astar: [
+    'g[start] = 0; f[start] = h(start)',
+    'while open not empty:',
+    '  u = open with min f',
+    '  if u == goal: return path',
+    '  for (v, w) in neighbours(u):',
+    '    new_g = g[u] + w',
+    '    if new_g < g[v]:',
+    '      g[v] = new_g; f[v] = new_g + h(v)',
+  ],
+  prim: [
+    'key[start] = 0',
+    'while MST has fewer than V nodes:',
+    '  u = unvisited node with min key',
+    '  add u to MST',
+    '  for (v, w) in neighbours(u):',
+    '    if not in MST and w < key[v]:',
+    '      key[v] = w',
+  ],
+  kruskal: [
+    'sort edges by weight',
+    'for each edge (u, v, w):',
+    '  if find(u) != find(v):',
+    '    union(u, v)',
+    '    add edge to MST',
+  ],
+  bellman: [
+    'dist[source] = 0',
+    'repeat V - 1 times:',
+    '  for each edge (u, v, w):',
+    '    if dist[u] + w < dist[v]:',
+    '      dist[v] = dist[u] + w',
+  ],
+  bst: [
+    'node = root',
+    'while node:',
+    '  if target == node.val: return node',
+    '  if target < node.val:',
+    '    node = node.left',
+    '  else:',
+    '    node = node.right',
+  ],
+  inorder: [
+    'function inorder(node):',
+    '  if node is null: return',
+    '  inorder(node.left)',
+    '  visit(node)',
+    '  inorder(node.right)',
+  ],
+  preorder: [
+    'function preorder(node):',
+    '  if node is null: return',
+    '  visit(node)',
+    '  preorder(node.left)',
+    '  preorder(node.right)',
+  ],
+  postorder: [
+    'function postorder(node):',
+    '  if node is null: return',
+    '  postorder(node.left)',
+    '  postorder(node.right)',
+    '  visit(node)',
+  ],
+  sieve: [
+    'isPrime[2..n] = true',
+    'for p = 2 to sqrt(n):',
+    '  if isPrime[p]:',
+    '    for m = p*p to n step p:',
+    '      isPrime[m] = false',
+    'return primes from isPrime',
+  ],
+  euclid: [
+    'while b != 0:',
+    '  r = a mod b',
+    '  a = b',
+    '  b = r',
+    'return a',
+  ],
+  pascal: [
+    'tri[0] = [1]',
+    'for r = 1 to N:',
+    '  for c = 0 to r:',
+    '    left  = (c > 0) ? tri[r-1][c-1] : 0',
+    '    right = (c < r) ? tri[r-1][c]   : 0',
+    '    tri[r][c] = left + right',
+  ],
+  fibonacci: [
+    'memo[0] = 0; memo[1] = 1',
+    'for i = 2 to n:',
+    '  memo[i] = memo[i-1] + memo[i-2]',
+    'return memo[n]',
+  ],
+  kadane: [
+    'curSum = 0; maxSum = -inf',
+    'for x in arr:',
+    '  if curSum < 0: curSum = x',
+    '  else: curSum = curSum + x',
+    '  maxSum = max(maxSum, curSum)',
+    'return maxSum',
+  ],
+  edit: [
+    'dp[i][0] = i; dp[0][j] = j',
+    'for i = 1 to m:',
+    '  for j = 1 to n:',
+    '    if A[i-1] == B[j-1]:',
+    '      dp[i][j] = dp[i-1][j-1]',
+    '    else:',
+    '      dp[i][j] = 1 + min(',
+    '        dp[i-1][j], dp[i][j-1], dp[i-1][j-1])',
+  ],
+  lcs: [
+    'for i = 1 to m:',
+    '  for j = 1 to n:',
+    '    if A[i-1] == B[j-1]:',
+    '      dp[i][j] = dp[i-1][j-1] + 1',
+    '    else:',
+    '      dp[i][j] = max(dp[i-1][j], dp[i][j-1])',
+  ],
+  lis: [
+    'for i = 0 to n-1:',
+    '  for j = 0 to i-1:',
+    '    if arr[j] < arr[i]:',
+    '      dp[i] = max(dp[i], dp[j] + 1)',
+    'return max(dp)',
+  ],
+  knapsack: [
+    'for r = 1 to n:',
+    '  for c = 0 to W:',
+    '    if items[r-1].w <= c:',
+    '      dp[r][c] = max(',
+    '        dp[r-1][c],',
+    '        dp[r-1][c - w] + v)',
+    '    else:',
+    '      dp[r][c] = dp[r-1][c]',
+  ],
+  kmp: [
+    '# Build failure (lps) table from pattern',
+    'compute lps[0..m-1]',
+    'i = 0; j = 0',
+    'while i < n:',
+    '  if pat[j] == txt[i]:',
+    '    i++; j++',
+    '    if j == m: return i - j   # match',
+    '  else if j > 0: j = lps[j-1]',
+    '  else: i++',
+  ],
+  rabin: [
+    'patHash = hash(pat)',
+    'txtHash = hash(txt[0..m-1])',
+    'for i = 0 to n-m:',
+    '  if patHash == txtHash and txt[i..i+m-1] == pat:',
+    '    return i',
+    '  txtHash = roll(txtHash, txt[i], txt[i+m])',
+  ],
+};
+
+let codeLineEls = [];
+let lastHl = -1;
+function renderCode(algoKey) {
+  const lines = CODE[algoKey];
+  const body = document.getElementById('code-body');
+  const info = INFO[algoKey] || {};
+  document.getElementById('code-title').textContent = info.name || '—';
+  document.getElementById('code-year').textContent = info.year != null ? fmtYear(info.year) : '';
+  body.innerHTML = '';
+  codeLineEls = [];
+  if (!lines) {
+    const e = document.createElement('div'); e.className = 'code-empty';
+    e.textContent = 'Pseudocode view coming soon for this algorithm.';
+    body.appendChild(e);
+    setVars(null);
+    return;
+  }
+  lines.forEach((ln, i) => {
+    const el = document.createElement('div');
+    el.className = 'code-line';
+    el.innerHTML = `<span class="code-num">${i+1}</span><span>${ln.replace(/</g,'&lt;')}</span>`;
+    body.appendChild(el);
+    codeLineEls.push(el);
+  });
+  lastHl = -1;
+  setVars(null);
+}
+function hl(line) {
+  if (line === lastHl) return;
+  if (lastHl >= 0 && codeLineEls[lastHl]) codeLineEls[lastHl].classList.remove('active');
+  if (line >= 0 && codeLineEls[line]) {
+    codeLineEls[line].classList.add('active');
+    codeLineEls[line].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    
+    // Accessibility Screen Reader Announcer
+    const announcer = document.getElementById('live-announcer');
+    if (announcer) {
+        announcer.textContent = codeLineEls[line].textContent.replace(/[;{}]/g, '').trim();
+    }
+  }
+  lastHl = line;
+  needsRender = true;
+}
+
+// Variable inspector — pass an object {key: value} to update the right-panel state view
+function setVars(obj) {
+  const list = document.getElementById('vp-list');
+  if (!obj || Object.keys(obj).length === 0) {
+    list.innerHTML = '<div class="vp-empty">Run an algorithm to see live variables.</div>';
+    return;
+  }
+  list.innerHTML = Object.entries(obj).map(([k, v]) => {
+    let val = v;
+    if (Array.isArray(v)) val = '[' + v.slice(0, 12).join(', ') + (v.length > 12 ? ', …' : '') + ']';
+    else if (typeof v === 'string') val = '"' + v + '"';
+    return `<div class="vp-row"><span class="vp-key">${k}</span><span class="vp-val">${val}</span></div>`;
+  }).join('');
+}
+
+function toggleCode() {
+  const p = document.getElementById('code-panel');
+  const t = document.getElementById('code-toggle');
+  const isMobile = matchMedia('(max-width: 900px)').matches;
+  if (isMobile) {
+    const open = p.classList.toggle('show-mobile');
+    t.classList.toggle('active', open);
+    t.querySelector('.ct-lbl').textContent = open ? ' Hide' : ' Code';
+  } else {
+    const collapsed = p.classList.toggle('collapsed');
+    t.classList.toggle('show', collapsed); // show toggle when collapsed
+    if (!collapsed) t.classList.remove('show');
+  }
+}
+
+function updateInfoPanel(key) {
+  const d = INFO[key]; if (!d) return;
+  document.getElementById('info-name').textContent    = d.name;
+  document.getElementById('info-year').textContent    = fmtYear(d.year);
+  document.getElementById('info-creator').textContent = d.creator;
+  document.getElementById('info-time').textContent    = d.time;
+  document.getElementById('info-space').textContent   = d.space;
+  document.getElementById('info-stable').textContent  = d.stable;
+  document.getElementById('info-desc').textContent    = d.desc;
+  document.getElementById('info-history').textContent = d.history || '';
+  document.getElementById('algo-label').textContent   = `${d.name} · ${fmtYear(d.year)} · ${d.creator}`;
+}
+
+// ── DYNAMIC SIDEBAR ───────────────────────────────────────────────────────
+const CAT_NAMES = { sort:'Sorting', search:'Searching', graph:'Graph', tree:'Trees', dp:'Dynamic Programming', string:'Strings', ds:'Data Structures', math:'Mathematics' };
+const ERA_BUCKETS = [
+  { label:'Ancient (pre-1900)',  test: y => y < 1900 },
+  { label:'1930s–40s · Foundations', test: y => y >= 1900 && y < 1950 },
+  { label:'1950s · The Big Bang',    test: y => y >= 1950 && y < 1960 },
+  { label:'1960s · Theory Era',      test: y => y >= 1960 && y < 1970 },
+  { label:'1970s · String + DP',     test: y => y >= 1970 && y < 1980 },
+  { label:'1980s+ · Modern',         test: y => y >= 1980 },
+];
+const IMPLEMENTED = new Set([
+  // sorting
+  'bubble','selection','insertion','quick','merge','heap','shell','counting','radix','cocktail','comb','cycle','tim',
+  // searching
+  'linear','binary','jump','interpolation',
+  // graph
+  'bfs','dfs','dijkstra','astar','prim','bellman','kruskal',
+  // tree
+  'bst','inorder','preorder','postorder',
+  // math
+  'sieve','euclid','pascal',
+  // dp
+  'fibonacci','kadane','edit','lcs','lis','knapsack',
+  // string
+  'kmp','rabin',
+]);
+
+let currentView = 'chrono';
+let searchQuery = '';
+
+function matchesSearch(key, d) {
+  if (!searchQuery) return true;
+  const q = searchQuery.toLowerCase();
+  return d.name.toLowerCase().includes(q)
+      || (d.creator || '').toLowerCase().includes(q)
+      || (CAT_NAMES[d.cat] || '').toLowerCase().includes(q)
+      || key.toLowerCase().includes(q);
+}
+
+function renderSidebar() {
+  const list = document.getElementById('sb-list');
+  list.innerHTML = '';
+  const entries = Object.entries(INFO)
+    .filter(([k, d]) => IMPLEMENTED.has(k) && matchesSearch(k, d));
+
+  if (entries.length === 0) {
+    const e = document.createElement('div'); e.className = 'sb-empty';
+    e.textContent = `No matches for "${searchQuery}"`;
+    list.appendChild(e); return;
+  }
+
+  if (currentView === 'chrono') {
+    entries.sort((a, b) => a[1].year - b[1].year);
+    for (const era of ERA_BUCKETS) {
+      const bucket = entries.filter(([, d]) => era.test(d.year));
+      if (!bucket.length) continue;
+      const hdr = document.createElement('div'); hdr.className = 'era-hdr'; hdr.textContent = era.label;
+      list.appendChild(hdr);
+      for (const [k, d] of bucket) list.appendChild(makeBtn(k, d));
+    }
+  } else {
+    const groups = {};
+    for (const [k, d] of entries) (groups[d.cat] = groups[d.cat] || []).push([k, d]);
+    const order = ['sort','search','graph','tree','dp','string','ds','math'];
+    for (const cat of order) {
+      if (!groups[cat]) continue;
+      const hdr = document.createElement('div'); hdr.className = 'era-hdr'; hdr.textContent = CAT_NAMES[cat] || cat;
+      list.appendChild(hdr);
+      groups[cat].sort((a, b) => a[1].year - b[1].year);
+      for (const [k, d] of groups[cat]) list.appendChild(makeBtn(k, d));
+    }
+  }
+  // Re-mark active button
+  document.querySelector(`.sb-btn[data-algo="${currentAlgo}"]`)?.classList.add('active');
+}
+
+function makeBtn(key, d) {
+  const b = document.createElement('button');
+  b.className = 'sb-btn';
+  b.dataset.cat = d.cat; b.dataset.algo = key;
+  b.innerHTML = `<span class="nm">${d.name}</span><span class="yr">${fmtYear(d.year)}</span>`;
+  b.addEventListener('click', () => selectAlgo(d.cat, key));
+  return b;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── SORTING ───────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+const N = 26, BAR_W = 0.36, BAR_S = 0.50;
+let arr = [], bars = [];
+
+function initSort() {
+  clearViz();
+  addGrid((N + 3) * BAR_S);
+  arr = Array.from({length: N}, (_, i) => i + 1);
+  for (let i = N-1; i > 0; i--) {
+    const j = 0|Math.random()*(i+1); [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  bars = [];
+  const x0 = -(N-1) * BAR_S / 2;
+  for (let i = 0; i < N; i++) {
+    const h = arr[i] * 0.19 + 0.06;
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(BAR_W, h, BAR_W), makeMat(C.def));
+    mesh.position.set(x0 + i*BAR_S, h/2, 0);
+    mesh.castShadow = true;
+    scene.add(mesh); bars.push(mesh); vizObjects.push(mesh);
+  }
+  camera.position.set(0, 4, (N * BAR_S) * 0.68 + 4);
+  camera.lookAt(0, 2.2, 0); controls.target.set(0, 2.2, 0); controls.update();
+  showLegend(['Default', 'Comparing', 'Swapping', 'Pivot / Digit', 'Sorted']);
+}
+
+const bc  = (i, hex) => { if (bars[i]) bars[i].material.color.setHex(hex); };
+const bh  = (i, v)   => {
+  const h = v * 0.19 + 0.06;
+  bars[i].geometry.dispose();
+  bars[i].geometry = new THREE.BoxGeometry(BAR_W, h, BAR_W);
+  bars[i].position.y = h/2; arr[i] = v;
+};
+const bswap = (i, j) => {
+  const xi = bars[i].position.x; bars[i].position.x = bars[j].position.x; bars[j].position.x = xi;
+  [bars[i], bars[j]] = [bars[j], bars[i]]; [arr[i], arr[j]] = [arr[j], arr[i]];
+};
+const markAllSorted = () => { for (let i = 0; i < N; i++) bc(i, C.sorted); };
+
+// Bubble
+async function bubbleSort() {
+  for (let i = 0; i < N-1; i++) {
+    hl(0); setVars({ i, 'pass': i+1, 'unsorted': N-i });
+    for (let j = 0; j < N-1-i; j++) {
+      if (stopFlag) return;
+      hl(1); setVars({ i, j, 'arr[j]': arr[j], 'arr[j+1]': arr[j+1] });
+      bc(j, C.cmp); bc(j+1, C.cmp); cmp++; updateStats(); await tick();
+      hl(2);
+      if (arr[j] > arr[j+1]) { hl(3); setVars({ i, j, swap: `arr[${j}] ↔ arr[${j+1}]` }); bc(j, C.swap); bc(j+1, C.swap); await tick(); bswap(j, j+1); swp++; updateStats(); }
+      bc(j, C.def); bc(j+1, C.def);
+    }
+    hl(4); bc(N-1-i, C.sorted);
+  }
+  bc(0, C.sorted); hl(-1); setVars({ done: true, sorted: arr.slice() });
+}
+
+// Selection
+async function selectionSort() {
+  for (let i = 0; i < N-1; i++) {
+    hl(0);
+    let mi = i; hl(1); bc(i, C.pivot);
+    for (let j = i+1; j < N; j++) {
+      if (stopFlag) return;
+      hl(2);
+      bc(j, C.cmp); cmp++; updateStats(); await tick();
+      hl(3);
+      if (arr[j] < arr[mi]) { hl(4); if (mi !== i) bc(mi, C.def); mi = j; bc(j, C.swap); }
+      else bc(j, C.def);
+    }
+    if (mi !== i) { hl(5); bswap(i, mi); swp++; updateStats(); await tick(); }
+    bc(i, C.sorted);
+  }
+  bc(N-1, C.sorted); hl(-1);
+}
+
+// Insertion
+async function insertionSort() {
+  bc(0, C.sorted);
+  for (let i = 1; i < N; i++) {
+    if (stopFlag) return;
+    hl(0);
+    bc(i, C.cmp); await tick();
+    hl(1);
+    let j = i;
+    while (j > 0 && arr[j-1] > arr[j]) {
+      if (stopFlag) return;
+      hl(2);
+      cmp++; bc(j-1, C.swap); await tick();
+      hl(3); bswap(j-1, j); swp++; updateStats();
+      hl(4); bc(j, C.sorted); j--;
+    }
+    cmp++; bc(j, C.sorted);
+  }
+  hl(-1);
+}
+
+// Quick
+async function quickSort() { await _qs(0, N-1); markAllSorted(); }
+async function _qs(lo, hi) {
+  if (lo >= hi || stopFlag) return;
+  const p = await _qp(lo, hi); await _qs(lo, p-1); await _qs(p+1, hi);
+}
+async function _qp(lo, hi) {
+  hl(2); bc(hi, C.pivot); let i = lo-1; hl(3);
+  for (let j = lo; j < hi; j++) {
+    if (stopFlag) return hi;
+    hl(4); bc(j, C.cmp); cmp++; updateStats(); await tick();
+    hl(5);
+    if (arr[j] <= arr[hi]) { hl(6); i++; hl(7); bc(j, C.swap); bswap(i, j); swp++; updateStats(); await tick(); bc(i, C.def); }
+    bc(j, C.def);
+  }
+  hl(8); bswap(i+1, hi); swp++; bc(i+1, C.sorted); await tick(); return i+1;
+}
+
+// Merge
+async function mergeSort() { await _ms(0, N-1); markAllSorted(); hl(-1); }
+async function _ms(lo, hi) {
+  if (lo >= hi || stopFlag) return;
+  hl(1);
+  const m = (lo+hi)>>1;
+  hl(2); await _ms(lo, m);
+  hl(3); await _ms(m+1, hi);
+  hl(4); await _mg(lo, m, hi);
+}
+async function _mg(lo, m, hi) {
+  hl(5);
+  const L = arr.slice(lo, m+1), R = arr.slice(m+1, hi+1);
+  let i=0, j=0, k=lo;
+  setVars({ lo, mid: m, hi, leftSize: L.length, rightSize: R.length });
+  while (i<L.length && j<R.length) {
+    if (stopFlag) return;
+    bc(k, C.cmp); cmp++; updateStats();
+    setVars({ k, 'L[i]': L[i], 'R[j]': R[j], i, j });
+    await tick();
+    bh(k, L[i] <= R[j] ? L[i++] : R[j++]);
+    bc(k, C.swap); swp++; updateStats(); await tick(); bc(k, C.def); k++;
+  }
+  while (i<L.length) { if (stopFlag) return; bh(k, L[i++]); bc(k, C.swap); await tick(); bc(k, C.def); k++; }
+  while (j<R.length) { if (stopFlag) return; bh(k, R[j++]); bc(k, C.swap); await tick(); bc(k, C.def); k++; }
+}
+
+// Heap
+async function heapSort() {
+  hl(0);
+  setVars({ phase: 'build max-heap', n: N });
+  for (let i = (N>>1)-1; i >= 0; i--) await _hfy(N, i);
+  hl(1);
+  for (let i = N-1; i > 0; i--) {
+    if (stopFlag) return;
+    setVars({ phase: 'extract max', i, 'arr[0]': arr[0] });
+    hl(2); bc(0, C.swap); bc(i, C.swap); bswap(0, i); swp++; updateStats(); await tick(); bc(i, C.sorted);
+    hl(3); await _hfy(i, 0);
+  }
+  bc(0, C.sorted); hl(-1);
+}
+async function _hfy(n, i) {
+  let mx = i; const l=2*i+1, r=2*i+2; cmp+=2; updateStats();
+  if (l<n && arr[l]>arr[mx]) mx=l;
+  if (r<n && arr[r]>arr[mx]) mx=r;
+  if (mx!==i) { bc(i, C.cmp); bc(mx, C.cmp); await tick(); bswap(i, mx); swp++; bc(i, C.def); bc(mx, C.def); await _hfy(n, mx); }
+}
+
+// Shell
+async function shellSort() {
+  let gap = 1;
+  while (gap < N/3) gap = gap*3+1;
+  while (gap >= 1) {
+    for (let i = gap; i < N; i++) {
+      if (stopFlag) return;
+      bc(i, C.pivot); await tick();
+      let j = i;
+      while (j >= gap && arr[j-gap] > arr[j]) {
+        if (stopFlag) return;
+        cmp++; bc(j, C.swap); bc(j-gap, C.swap); bswap(j, j-gap); swp++; updateStats(); await tick();
+        bc(j, C.def); bc(j-gap, C.def); j -= gap;
+      }
+      bc(j, C.def);
+    }
+    bc(i => bc(i, C.sorted));
+    gap = (gap-1)/3|0;
+  }
+  markAllSorted();
+}
+
+// Counting
+async function countingSort() {
+  const max = Math.max(...arr);
+  const count = new Array(max+1).fill(0);
+  for (let i=0; i<N; i++) { if(stopFlag) return; bc(i, C.cmp); cmp++; count[arr[i]]++; updateStats(); await tick(); bc(i, C.def); }
+  let k=0;
+  for (let v=1; v<=max; v++) {
+    while (count[v]-- > 0) {
+      if (stopFlag) return;
+      bh(k, v); bc(k, C.pivot); swp++; updateStats(); await tick(); bc(k, C.sorted); k++;
+    }
+  }
+}
+
+// Radix
+async function radixSort() {
+  const getD = (v, p) => Math.floor(v / p) % 10;
+  let p = 1;
+  const max = Math.max(...arr);
+  while (Math.floor(max/p) > 0) {
+    const buckets = Array.from({length:10}, () => []);
+    for (let i=0; i<N; i++) { if(stopFlag) return; bc(i, C.pivot); cmp++; updateStats(); await tick(); buckets[getD(arr[i], p)].push(arr[i]); bc(i, C.def); }
+    let k=0;
+    for (const bk of buckets) for (const v of bk) { if(stopFlag) return; bh(k, v); bc(k, C.swap); swp++; updateStats(); await tick(); bc(k, C.def); k++; }
+    p *= 10;
+  }
+  markAllSorted();
+}
+
+// Cocktail Shaker — bidirectional bubble
+async function cocktailSort() {
+  let lo = 0, hi = N - 1, swapped = true;
+  while (swapped && lo < hi) {
+    swapped = false;
+    for (let i = lo; i < hi; i++) {
+      if (stopFlag) return;
+      bc(i, C.cmp); bc(i+1, C.cmp); cmp++; updateStats(); await tick();
+      if (arr[i] > arr[i+1]) { bswap(i, i+1); swp++; swapped = true; updateStats(); }
+      bc(i, C.def); bc(i+1, C.def);
+    }
+    bc(hi, C.sorted); hi--;
+    if (!swapped) break;
+    swapped = false;
+    for (let i = hi; i > lo; i--) {
+      if (stopFlag) return;
+      bc(i, C.cmp); bc(i-1, C.cmp); cmp++; updateStats(); await tick();
+      if (arr[i-1] > arr[i]) { bswap(i-1, i); swp++; swapped = true; updateStats(); }
+      bc(i, C.def); bc(i-1, C.def);
+    }
+    bc(lo, C.sorted); lo++;
+  }
+  markAllSorted();
+}
+
+// Comb Sort — bubble with shrinking gap
+async function combSort() {
+  let gap = N, sorted = false;
+  const shrink = 1.3;
+  while (!sorted) {
+    gap = Math.floor(gap / shrink);
+    if (gap <= 1) { gap = 1; sorted = true; }
+    for (let i = 0; i + gap < N; i++) {
+      if (stopFlag) return;
+      bc(i, C.cmp); bc(i+gap, C.cmp); cmp++; updateStats(); await tick();
+      if (arr[i] > arr[i+gap]) { bswap(i, i+gap); swp++; sorted = false; updateStats(); }
+      bc(i, C.def); bc(i+gap, C.def);
+    }
+  }
+  markAllSorted();
+}
+
+// Cycle Sort — minimum-write sort
+async function cycleSort() {
+  for (let cs = 0; cs < N - 1; cs++) {
+    if (stopFlag) return;
+    let item = arr[cs]; let pos = cs;
+    bc(cs, C.pivot); await tick();
+    for (let i = cs + 1; i < N; i++) { cmp++; if (arr[i] < item) pos++; }
+    updateStats();
+    if (pos === cs) { bc(cs, C.sorted); continue; }
+    while (item === arr[pos]) pos++;
+    [arr[pos], item] = [item, arr[pos]]; bh(pos, arr[pos]); bc(pos, C.swap); swp++; updateStats(); await tick(); bc(pos, C.sorted);
+    while (pos !== cs) {
+      pos = cs;
+      for (let i = cs + 1; i < N; i++) { cmp++; if (arr[i] < item) pos++; }
+      while (item === arr[pos]) pos++;
+      [arr[pos], item] = [item, arr[pos]]; bh(pos, arr[pos]); bc(pos, C.swap); swp++; updateStats(); await tick(); bc(pos, C.sorted);
+    }
+    bc(cs, C.sorted);
+  }
+  markAllSorted();
+}
+
+// Tim Sort (simplified) — runs of insertion-sort, then merge
+async function timSort() {
+  const RUN = 8;
+  for (let s = 0; s < N; s += RUN) {
+    const e = Math.min(s + RUN - 1, N - 1);
+    for (let i = s + 1; i <= e; i++) {
+      if (stopFlag) return;
+      bc(i, C.pivot); await tick();
+      let j = i;
+      while (j > s && arr[j-1] > arr[j]) {
+        cmp++; bc(j, C.swap); bswap(j-1, j); swp++; updateStats(); await tick();
+        bc(j, C.def); j--;
+      }
+      cmp++; bc(j, C.def);
+    }
+    for (let k = s; k <= e; k++) bc(k, C.sorted);
+  }
+  // Merge runs
+  for (let size = RUN; size < N; size *= 2) {
+    for (let lo = 0; lo < N; lo += 2 * size) {
+      const mid = Math.min(lo + size - 1, N - 1);
+      const hi = Math.min(lo + 2 * size - 1, N - 1);
+      if (mid < hi) await _mg(lo, mid, hi);
+    }
+  }
+  markAllSorted();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── SEARCHING ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+const SN = 22, SS = 0.68;
+let sArr = [], sMeshes = [], target = 12;
+
+function initSearch(sorted = false) {
+  clearViz();
+  addGrid((SN+2)*SS);
+  sArr = Array.from({length:SN}, (_,i) => i+1);
+  if (!sorted) for (let i=SN-1; i>0; i--) { const j=0|Math.random()*(i+1); [sArr[i],sArr[j]]=[sArr[j],sArr[i]]; }
+  sMeshes = [];
+  const x0 = -(SN-1)*SS/2;
+  for (let i=0; i<SN; i++) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.58, 0.58), makeMat(C.def));
+    mesh.position.set(x0+i*SS, 0.29, 0);
+    scene.add(mesh); sMeshes.push(mesh); vizObjects.push(mesh);
+  }
+  camera.position.set(0, 5, 15); camera.lookAt(0, 0.3, 0);
+  controls.target.set(0, 0.3, 0); controls.update();
+  showLegend(['Default', 'Comparing', null, null, 'Found / Miss']);
+}
+
+const sc = (i, hex) => { if (sMeshes[i]) sMeshes[i].material.color.setHex(hex); };
+
+async function linearSearch() {
+  initSearch(false); await sleep(150);
+  for (let i=0; i<SN; i++) {
+    if (stopFlag) return;
+    hl(0);
+    sc(i, C.cmp); cmp++; updateStats(); await tick();
+    hl(1);
+    if (sArr[i] === target) { hl(2); sc(i, C.found); swp++; updateStats(); hl(-1); return; }
+    sc(i, C.miss);
+  }
+  hl(3); hl(-1);
+}
+
+async function binarySearch() {
+  initSearch(true); await sleep(150);
+  hl(0); let lo=0, hi=SN-1; setVars({ target, lo, hi });
+  while (lo<=hi) {
+    if (stopFlag) return;
+    hl(1);
+    hl(2); const m=(lo+hi)>>1;
+    setVars({ target, lo, hi, mid: m, 'arr[mid]': sArr[m] });
+    sc(m, C.cmp); cmp++; updateStats(); await tick();
+    hl(3); if (sArr[m]===target) { sc(m, C.found); swp++; updateStats(); setVars({ found: true, index: m }); hl(-1); return; }
+    if (sArr[m]<target) { hl(4); hl(5); for(let i=lo;i<=m;i++) sc(i, C.miss); lo=m+1; setVars({ target, lo, hi, eliminated: 'left half' }); }
+    else { hl(6); hl(7); for(let i=m;i<=hi;i++) sc(i, C.miss); hi=m-1; setVars({ target, lo, hi, eliminated: 'right half' }); }
+  }
+  hl(-1); setVars({ found: false });
+}
+
+async function jumpSearch() {
+  initSearch(true); await sleep(150);
+  const step = Math.floor(Math.sqrt(SN));
+  let prev=0, curr=0;
+  while (curr<SN && sArr[Math.min(curr,SN)-1]<target) {
+    if (stopFlag) return;
+    sc(Math.min(curr,SN-1), C.pivot); cmp++; updateStats(); await tick();
+    sc(Math.min(curr,SN-1), C.miss);
+    prev=curr; curr+=step;
+  }
+  for (let i=prev; i<Math.min(curr,SN); i++) {
+    if (stopFlag) return;
+    sc(i, C.cmp); cmp++; updateStats(); await tick();
+    if (sArr[i]===target) { sc(i, C.found); swp++; updateStats(); return; }
+    sc(i, C.miss);
+  }
+}
+
+async function interpolationSearch() {
+  initSearch(true); await sleep(150);
+  let lo=0, hi=SN-1;
+  while (lo<=hi && target>=sArr[lo] && target<=sArr[hi]) {
+    if (stopFlag) return;
+    const pos = lo + Math.floor((target-sArr[lo])*(hi-lo)/(sArr[hi]-sArr[lo]));
+    sc(pos, C.cmp); cmp++; updateStats(); await tick();
+    if (sArr[pos]===target) { sc(pos, C.found); swp++; updateStats(); return; }
+    if (sArr[pos]<target) { sc(pos, C.miss); lo=pos+1; }
+    else { sc(pos, C.miss); hi=pos-1; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── GRAPH ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+const GV = 10;
+const gPos = [
+  new THREE.Vector3( 0,  0,  0),
+  new THREE.Vector3(-4,  0, -2),
+  new THREE.Vector3( 4,  0, -2),
+  new THREE.Vector3(-5,  0,  2),
+  new THREE.Vector3( 0,  0,  4),
+  new THREE.Vector3( 5,  0,  2),
+  new THREE.Vector3(-3,  0, -5),
+  new THREE.Vector3( 3,  0, -5),
+  new THREE.Vector3( 0,  2, -2),
+  new THREE.Vector3(-2,  0,  2),
+];
+const gAdj = [
+  [[1,4],[2,5],[4,3],[9,2]],
+  [[0,4],[3,2],[6,7],[8,6]],
+  [[0,5],[5,6],[7,3],[8,4]],
+  [[1,2],[4,5],[9,3]],
+  [[0,3],[3,5],[5,2],[9,1]],
+  [[2,6],[4,2],[7,8]],
+  [[1,7],[7,1]],
+  [[2,3],[5,8],[6,1],[8,2]],
+  [[1,6],[2,4],[7,2]],
+  [[0,2],[3,3],[4,1]],
+];
+
+let nMesh=[], eMat=[], edgeList=[];
+
+function initGraph() {
+  clearViz();
+  const pl = new THREE.Mesh(new THREE.PlaneGeometry(22,16), new THREE.MeshPhongMaterial({color:0x060616,transparent:true,opacity:0.5}));
+  pl.rotation.x=-Math.PI/2; pl.position.y=-0.01; scene.add(pl); vizObjects.push(pl);
+  addGrid(22);
+
+  edgeList = [];
+  for (let u=0; u<GV; u++) for (const [v] of gAdj[u]) if (v>u) {
+    const pts=[gPos[u].clone(),gPos[v].clone()]; pts[0].y+=0.45; pts[1].y+=0.45;
+    const geo=new THREE.BufferGeometry().setFromPoints(pts);
+    const mat=new THREE.LineBasicMaterial({color:C.edge});
+    const ln=new THREE.Line(geo,mat);
+    scene.add(ln); vizObjects.push(ln); edgeList.push({ln,mat,u,v});
+  }
+
+  nMesh=[]; eMat=[];
+  for (let i=0; i<GV; i++) {
+    const mat=makeMat(i===0?C.curr:C.node);
+    const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.45,20,20),mat);
+    mesh.position.copy(gPos[i]); mesh.position.y+=0.45;
+    scene.add(mesh); vizObjects.push(mesh); nMesh.push(mesh); eMat.push(mat);
+  }
+
+  camera.position.set(0,11,17); camera.lookAt(0,0.5,0);
+  controls.target.set(0,0.5,0); controls.update();
+  showLegend([null,'Frontier',null,'Current','Visited']);
+}
+
+const nc = (i,h) => { if(eMat[i]) eMat[i].color.setHex(h); };
+const ec = (u,v,h) => { edgeList.filter(e=>(e.u===u&&e.v===v)||(e.u===v&&e.v===u)).forEach(e=>e.mat.color.setHex(h)); };
+
+async function bfsGraph() {
+  initGraph(); await sleep(250);
+  hl(0);
+  const vis=new Array(GV).fill(false); const q=[0]; vis[0]=true;
+  while (q.length && !stopFlag) {
+    hl(1);
+    hl(2); const u=q.shift(); nc(u,C.curr); cmp++; updateStats(); await tick();
+    hl(3);
+    for (const [v] of gAdj[u]) {
+      hl(4);
+      if (!vis[v]) { hl(5); vis[v]=true; hl(6); nc(v,C.frontier); ec(u,v,C.edgeHi); hl(7); q.push(v); swp++; updateStats(); }
+    }
+    nc(u,C.visit); await tick();
+  }
+  hl(-1);
+}
+
+async function dfsGraph() {
+  initGraph(); await sleep(250);
+  const vis=new Array(GV).fill(false);
+  async function dfs(u) {
+    if(stopFlag||vis[u]) return;
+    hl(0); hl(1); vis[u]=true;
+    nc(u,C.curr); cmp++; updateStats(); await tick();
+    hl(2);
+    for (const [v] of gAdj[u]) {
+      hl(3); if(!vis[v]) { hl(4); ec(u,v,C.edgeHi); await dfs(v); }
+    }
+    nc(u,C.visit); swp++; updateStats();
+  }
+  await dfs(0);
+  hl(-1);
+}
+
+async function dijkstra() {
+  initGraph(); await sleep(250);
+  hl(0);
+  const dist=new Array(GV).fill(Infinity); const vis=new Array(GV).fill(false); dist[0]=0;
+  setVars({ source: 0, dist: dist.map(d => d === Infinity ? '∞' : d) });
+  for (let it=0; it<GV&&!stopFlag; it++) {
+    hl(1);
+    let u=-1; for(let i=0;i<GV;i++) if(!vis[i]&&(u===-1||dist[i]<dist[u])) u=i;
+    if(u===-1||dist[u]===Infinity) break;
+    hl(2); hl(3); vis[u]=true; nc(u,C.curr); cmp++; updateStats(); await tick();
+    setVars({ u, 'dist[u]': dist[u], dist: dist.map(d => d === Infinity ? '∞' : d) });
+    hl(4);
+    for (const [v,w] of gAdj[u]) {
+      hl(5);
+      if(!vis[v]&&dist[u]+w<dist[v]) {
+        hl(6); dist[v]=dist[u]+w; nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats();
+        setVars({ u, v, w, relax: `dist[${v}] = dist[${u}] + ${w} = ${dist[v]}`, dist: dist.map(d => d === Infinity ? '∞' : d) });
+      }
+    }
+    nc(u,C.visit); await tick();
+  }
+  hl(-1); setVars({ done: true, dist: dist.map(d => d === Infinity ? '∞' : d) });
+}
+
+async function aStar() {
+  initGraph(); await sleep(250);
+  const goal=7;
+  const h=i=>gPos[i].distanceTo(gPos[goal]);
+  hl(0);
+  const g=new Array(GV).fill(Infinity); g[0]=0;
+  const f=new Array(GV).fill(Infinity); f[0]=h(0);
+  const vis=new Array(GV).fill(false);
+  setVars({ start: 0, goal, 'h(start)': h(0).toFixed(2), 'f[start]': f[0].toFixed(2) });
+  for (let it=0; it<GV&&!stopFlag; it++) {
+    hl(1);
+    hl(2);
+    let u=-1; for(let i=0;i<GV;i++) if(!vis[i]&&(u===-1||f[i]<f[u])) u=i;
+    if(u===-1||f[u]===Infinity) break;
+    vis[u]=true; nc(u,u===goal?C.found:C.curr); cmp++; updateStats(); await tick();
+    setVars({ u, 'g[u]': g[u].toFixed(2), 'f[u]': f[u].toFixed(2), 'h(u)': h(u).toFixed(2) });
+    hl(3); if(u===goal) { hl(-1); return; }
+    hl(4);
+    for(const [v,w] of gAdj[u]) if(!vis[v]) {
+      hl(5); const ng=g[u]+w;
+      hl(6);
+      if(ng<g[v]) { hl(7); g[v]=ng; f[v]=ng+h(v); nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats();
+        setVars({ relaxed: `g[${v}]=${ng.toFixed(2)}, f[${v}]=${(ng+h(v)).toFixed(2)}` });
+      }
+    }
+    nc(u,C.visit); await tick();
+  }
+  hl(-1);
+}
+
+async function primMST() {
+  initGraph(); await sleep(250);
+  const inMST=new Array(GV).fill(false); const key=new Array(GV).fill(Infinity); key[0]=0;
+  for(let it=0; it<GV&&!stopFlag; it++) {
+    let u=-1; for(let i=0;i<GV;i++) if(!inMST[i]&&(u===-1||key[i]<key[u])) u=i;
+    if(u===-1) break;
+    inMST[u]=true; nc(u,C.curr); cmp++; updateStats(); await tick();
+    for(const [v,w] of gAdj[u]) if(!inMST[v]&&w<key[v]) { key[v]=w; nc(v,C.frontier); ec(u,v,C.edgeHi); swp++; updateStats(); }
+    nc(u,C.visit); await tick();
+  }
+}
+
+// Bellman–Ford — relax all edges V-1 times
+async function bellmanFord() {
+  initGraph(); await sleep(250);
+  const dist = new Array(GV).fill(Infinity); dist[0] = 0;
+  nc(0, C.curr);
+  for (let it = 0; it < GV - 1 && !stopFlag; it++) {
+    let updated = false;
+    for (let u = 0; u < GV; u++) {
+      for (const [v, w] of gAdj[u]) {
+        if (stopFlag) return;
+        cmp++;
+        if (dist[u] !== Infinity && dist[u] + w < dist[v]) {
+          dist[v] = dist[u] + w; nc(v, C.frontier); ec(u, v, C.edgeHi); swp++; updated = true; updateStats(); await tick();
+          nc(v, C.visit);
+        }
+      }
+    }
+    if (!updated) break;
+  }
+  for (let i = 0; i < GV; i++) if (dist[i] !== Infinity) nc(i, C.visit);
+}
+
+// Kruskal's MST — sort edges, add if no cycle (union-find)
+async function kruskalMST() {
+  initGraph(); await sleep(250);
+  const edges = [];
+  for (let u = 0; u < GV; u++) for (const [v, w] of gAdj[u]) if (v > u) edges.push({u, v, w});
+  edges.sort((a, b) => a.w - b.w);
+  const parent = Array.from({length: GV}, (_, i) => i);
+  const find = x => parent[x] === x ? x : (parent[x] = find(parent[x]));
+  for (const e of edges) {
+    if (stopFlag) return;
+    ec(e.u, e.v, C.cmp); cmp++; updateStats(); await tick();
+    const ru = find(e.u), rv = find(e.v);
+    if (ru !== rv) {
+      parent[ru] = rv;
+      ec(e.u, e.v, C.edgeHi);
+      nc(e.u, C.visit); nc(e.v, C.visit);
+      swp++; updateStats(); await tick();
+    } else {
+      ec(e.u, e.v, C.miss);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── TREE ──────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+class BSTNode { constructor(v){this.v=v;this.l=null;this.r=null;this.x=0;this.y=0;this.mat=null;} }
+
+let bstRoot=null, tNodes=[];
+
+function bstIns(root,v){ if(!root) return new BSTNode(v); if(v<root.v) root.l=bstIns(root.l,v); else root.r=bstIns(root.r,v); return root; }
+function layout(nd,d,lo,hi){ if(!nd) return; nd.x=(lo+hi)/2; nd.y=-d*2.3; layout(nd.l,d+1,lo,(lo+hi)/2); layout(nd.r,d+1,(lo+hi)/2,hi); }
+
+function buildTreeMeshes(nd) {
+  if(!nd) return;
+  nd.mat=makeMat(C.node);
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(0.42,18,18),nd.mat);
+  mesh.position.set(nd.x,nd.y,0); scene.add(mesh); vizObjects.push(mesh); tNodes.push(nd);
+  for(const ch of [nd.l,nd.r]) if(ch) {
+    const pts=[new THREE.Vector3(nd.x,nd.y,0),new THREE.Vector3(ch.x,ch.y,0)];
+    const ln=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:C.edge}));
+    scene.add(ln); vizObjects.push(ln);
+    buildTreeMeshes(ch);
+  }
+}
+
+function initTree() {
+  clearViz(); tNodes=[];
+  bstRoot=null;
+  for(const v of [8,4,12,2,6,10,14,1,3,5,7,9,11,13,15]) bstRoot=bstIns(bstRoot,v);
+  layout(bstRoot,0,-8,8);
+  buildTreeMeshes(bstRoot);
+  const grid=new THREE.GridHelper(20,20,0x181838,0x10102e); grid.position.y=-7; scene.add(grid); vizObjects.push(grid);
+  camera.position.set(0,4,24); camera.lookAt(0,-4,0); controls.target.set(0,-4,0); controls.update();
+  showLegend([null,null,null,'Current','Visited']);
+}
+
+const tnc=(nd,h)=>{ if(nd.mat) nd.mat.color.setHex(h); };
+
+async function bstSearch() {
+  initTree(); await sleep(250);
+  const t=9; hl(0); let nd=bstRoot;
+  while(nd&&!stopFlag) {
+    hl(1);
+    tnc(nd,C.curr); cmp++; updateStats(); await tick();
+    hl(2); if(nd.v===t) { tnc(nd,C.found); swp++; hl(-1); return; }
+    hl(3);
+    const prev=nd;
+    if (t<nd.v) { hl(4); nd=nd.l; }
+    else { hl(5); hl(6); nd=nd.r; }
+    tnc(prev,nd?C.visit:C.miss);
+  }
+  hl(-1);
+}
+
+async function traverse(order) {
+  initTree(); await sleep(250);
+  async function go(nd) {
+    if(!nd||stopFlag) return;
+    if(order==='pre') { tnc(nd,C.curr); cmp++; updateStats(); await tick(); tnc(nd,C.visit); swp++; }
+    await go(nd.l);
+    if(order==='in') { tnc(nd,C.curr); cmp++; updateStats(); await tick(); tnc(nd,C.visit); swp++; }
+    await go(nd.r);
+    if(order==='post') { tnc(nd,C.curr); cmp++; updateStats(); await tick(); tnc(nd,C.visit); swp++; }
+  }
+  await go(bstRoot);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── MATHEMATICS ───────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+let mathMeshes = [];
+
+// Sieve of Eratosthenes — numbers in 6×8 grid; primes glow green, composites darken
+async function sieve() {
+  clearViz(); mathMeshes = [];
+  const COLS = 8, ROWS = 6, NUM = COLS * ROWS, S = 0.85;
+  const isPrime = new Array(NUM + 2).fill(true); isPrime[0] = isPrime[1] = false;
+  // Build grid
+  for (let i = 0; i < NUM; i++) {
+    const r = Math.floor(i / COLS), c = i % COLS;
+    const x = (c - (COLS-1)/2) * S, y = -((r - (ROWS-1)/2) * S);
+    const mat = makeMat(C.def);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.2), mat);
+    mesh.position.set(x, y, 0);
+    scene.add(mesh); vizObjects.push(mesh); mathMeshes.push(mat);
+  }
+  camera.position.set(0, 0, 9); camera.lookAt(0, 0, 0);
+  controls.target.set(0, 0, 0); controls.update();
+  showLegend([null, 'Checking', null, 'Composite', 'Prime']);
+  await sleep(200);
+  // Run sieve
+  hl(0); mathMeshes[0].color.setHex(C.miss); mathMeshes[1].color.setHex(C.miss);
+  setVars({ n: NUM + 1 });
+  for (let p = 2; p * p <= NUM + 1 && !stopFlag; p++) {
+    hl(1);
+    hl(2); if (!isPrime[p]) continue;
+    setVars({ p, 'p²': p*p });
+    mathMeshes[p - 2]?.color.setHex(C.curr); cmp++; updateStats(); await tick();
+    for (let m = p * p; m <= NUM + 1; m += p) {
+      if (stopFlag) return;
+      hl(3); hl(4); isPrime[m] = false;
+      setVars({ p, m, 'cross out': m });
+      mathMeshes[m - 2]?.color.setHex(C.miss); swp++; updateStats(); await tick();
+    }
+    mathMeshes[p - 2]?.color.setHex(C.sorted);
+  }
+  hl(5);
+  for (let i = 2; i <= NUM + 1; i++) if (isPrime[i]) mathMeshes[i - 2]?.color.setHex(C.sorted);
+  const primes = [];
+  for (let i = 2; i <= NUM + 1; i++) if (isPrime[i]) primes.push(i);
+  setVars({ primes });
+  hl(-1);
+}
+
+// Euclid's GCD — two bars shrinking
+async function euclidGCD() {
+  clearViz(); mathMeshes = [];
+  let a = 84, b = 60;
+  const SCALE = 0.08;
+  function buildBars(av, bv) {
+    for (const m of mathMeshes) { scene.remove(m.mesh); m.mesh.geometry.dispose(); m.mesh.material.dispose(); }
+    mathMeshes = [];
+    const ha = Math.max(0.1, av * SCALE), hb = Math.max(0.1, bv * SCALE);
+    const m1 = new THREE.MeshPhongMaterial({color: C.pivot, shininess: 80});
+    const me1 = new THREE.Mesh(new THREE.BoxGeometry(1.2, ha, 1.2), m1);
+    me1.position.set(-1.2, ha/2, 0); scene.add(me1); vizObjects.push(me1);
+    const m2 = new THREE.MeshPhongMaterial({color: C.curr, shininess: 80});
+    const me2 = new THREE.Mesh(new THREE.BoxGeometry(1.2, hb, 1.2), m2);
+    me2.position.set(1.2, hb/2, 0); scene.add(me2); vizObjects.push(me2);
+    mathMeshes.push({mesh: me1, mat: m1}, {mesh: me2, mat: m2});
+  }
+  addGrid(8);
+  buildBars(a, b);
+  camera.position.set(0, 5, 14); camera.lookAt(0, 2, 0); controls.target.set(0, 2, 0); controls.update();
+  showLegend([null, null, null, 'a', 'b → remainder']);
+  await sleep(300);
+  setVars({ a, b });
+  while (b !== 0 && !stopFlag) {
+    hl(0);
+    cmp++; updateStats(); await tick();
+    hl(1); const r = a % b; setVars({ a, b, r: `${a} mod ${b} = ${r}` });
+    hl(2); a = b;
+    hl(3); b = r; swp++; updateStats();
+    setVars({ a, b });
+    buildBars(a, b);
+    await tick();
+  }
+  hl(4);
+  // Result
+  for (const m of mathMeshes) m.mat.color.setHex(C.sorted);
+  setVars({ gcd: a });
+  hl(-1);
+}
+
+// Pascal's Triangle — rows fill in as triangle pyramid
+async function pascal() {
+  clearViz(); mathMeshes = [];
+  const ROWS = 8, S = 0.55;
+  const tri = []; // tri[r][c] = value
+  for (let r = 0; r < ROWS; r++) tri.push(new Array(r + 1).fill(1));
+  // Build mesh grid
+  const meshGrid = [];
+  for (let r = 0; r < ROWS; r++) {
+    const rowMeshes = [];
+    for (let c = 0; c <= r; c++) {
+      const x = (c - r / 2) * S, y = -r * S * 0.95;
+      const mat = makeMat(C.def);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.18), mat);
+      mesh.position.set(x, y, 0);
+      mesh.material.color.setHex(C.miss);
+      scene.add(mesh); vizObjects.push(mesh); rowMeshes.push(mat);
+    }
+    meshGrid.push(rowMeshes);
+  }
+  camera.position.set(0, -1.5, 7); camera.lookAt(0, -1.5, 0);
+  controls.target.set(0, -1.5, 0); controls.update();
+  showLegend([null, 'Computing', null, null, 'Filled']);
+  // Fill in
+  hl(0); meshGrid[0][0].color.setHex(C.sorted); cmp++;
+  setVars({ 'tri[0]': [1] });
+  for (let r = 1; r < ROWS && !stopFlag; r++) {
+    hl(1);
+    for (let c = 0; c <= r; c++) {
+      if (stopFlag) return;
+      hl(2); meshGrid[r][c].color.setHex(C.cmp); cmp++;
+      hl(3); const left = c > 0 ? tri[r-1][c-1] : 0;
+      hl(4); const right = c < r ? tri[r-1][c] : 0;
+      hl(5); tri[r][c] = left + right;
+      setVars({ r, c, left, right, sum: tri[r][c], 'tri[r]': tri[r].slice(0, c+1) });
+      swp++; updateStats(); await tick();
+      meshGrid[r][c].color.setHex(C.sorted);
+    }
+  }
+  hl(-1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── DYNAMIC PROGRAMMING ───────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Fibonacci DP — 1D memo bar grows
+async function fibonacciDP() {
+  clearViz(); mathMeshes = [];
+  const NF = 14, S = 0.7;
+  const memo = new Array(NF).fill(null);
+  const meshes = [];
+  for (let i = 0; i < NF; i++) {
+    const x = (i - (NF-1)/2) * S;
+    const mat = makeMat(C.miss);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.4, 0.55), mat);
+    mesh.position.set(x, 0.2, 0); scene.add(mesh); vizObjects.push(mesh); meshes.push(mat);
+  }
+  addGrid(NF * S + 2);
+  camera.position.set(0, 4, 10); camera.lookAt(0, 1, 0); controls.target.set(0, 1, 0); controls.update();
+  showLegend([null, 'Reading memo', null, 'Computing', 'Filled']);
+  hl(0); memo[0] = 0; meshes[0].color.setHex(C.sorted); await tick();
+  memo[1] = 1; meshes[1].color.setHex(C.sorted); await tick();
+  setVars({ 'memo[0]': 0, 'memo[1]': 1 });
+  for (let i = 2; i < NF && !stopFlag; i++) {
+    hl(1);
+    meshes[i-2].color.setHex(C.cmp); meshes[i-1].color.setHex(C.cmp); cmp += 2; updateStats(); await tick();
+    hl(2); memo[i] = memo[i-1] + memo[i-2]; swp++;
+    setVars({ i, 'memo[i-1]': memo[i-1], 'memo[i-2]': memo[i-2], 'memo[i]': memo[i], memo: memo.slice(0, i+1) });
+    meshes[i].color.setHex(C.curr); updateStats(); await tick();
+    meshes[i-2].color.setHex(C.sorted); meshes[i-1].color.setHex(C.sorted); meshes[i].color.setHex(C.sorted);
+  }
+  hl(3); hl(-1);
+}
+
+// Kadane's — find max subarray; bars colored running
+async function kadanes() {
+  initSort();
+  await sleep(150);
+  hl(0); let maxSum = -Infinity, curSum = 0, bestL = 0, bestR = 0, curL = 0;
+  for (let i = 0; i < N && !stopFlag; i++) {
+    hl(1);
+    bc(i, C.cmp); cmp++; updateStats(); await tick();
+    hl(2);
+    if (curSum < 0) { curSum = arr[i]; curL = i; }
+    else { hl(3); curSum += arr[i]; }
+    hl(4); if (curSum > maxSum) { maxSum = curSum; bestL = curL; bestR = i; swp++; updateStats(); }
+    bc(i, C.def);
+  }
+  hl(5);
+  for (let i = bestL; i <= bestR; i++) bc(i, C.sorted);
+  hl(-1);
+}
+
+// Edit Distance — 2D grid (Levenshtein matrix)
+async function editDistance() {
+  clearViz();
+  const A = 'KITTEN', B = 'SITTING';
+  const m = A.length + 1, n = B.length + 1, S = 0.65;
+  const dp = Array.from({length: m}, () => new Array(n).fill(0));
+  const meshes = [];
+  for (let r = 0; r < m; r++) {
+    const rowMeshes = [];
+    for (let c = 0; c < n; c++) {
+      const x = (c - (n-1)/2) * S, y = -(r - (m-1)/2) * S;
+      const mat = makeMat(C.miss);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.18), mat);
+      mesh.position.set(x, y, 0); scene.add(mesh); vizObjects.push(mesh); rowMeshes.push(mat);
+    }
+    meshes.push(rowMeshes);
+  }
+  camera.position.set(0, 0, 8); camera.lookAt(0, 0, 0); controls.target.set(0, 0, 0); controls.update();
+  showLegend([null, 'Comparing', 'Substitute', null, 'Filled']);
+  // Initialize first row/col
+  hl(0);
+  for (let i = 0; i < m; i++) { dp[i][0] = i; meshes[i][0].color.setHex(C.sorted); }
+  for (let j = 0; j < n; j++) { dp[0][j] = j; meshes[0][j].color.setHex(C.sorted); }
+  setVars({ A, B, m: A.length, n: B.length });
+  await sleep(200);
+  for (let i = 1; i < m && !stopFlag; i++) {
+    hl(1);
+    for (let j = 1; j < n; j++) {
+      if (stopFlag) return;
+      hl(2); meshes[i][j].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+      hl(3);
+      if (A[i-1] === B[j-1]) { hl(4); dp[i][j] = dp[i-1][j-1]; setVars({ i, j, 'A[i-1]': A[i-1], 'B[j-1]': B[j-1], match: true, 'dp[i][j]': dp[i][j] }); }
+      else { hl(5); hl(6); hl(7); dp[i][j] = 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]); setVars({ i, j, 'A[i-1]': A[i-1], 'B[j-1]': B[j-1], match: false, 'min+1': dp[i][j] }); }
+      swp++; updateStats();
+      meshes[i][j].color.setHex(C.sorted);
+    }
+  }
+  setVars({ 'edit distance': dp[m-1][n-1] });
+  hl(-1);
+}
+
+// Longest Common Subsequence — 2D grid
+async function lcs() {
+  clearViz();
+  const A = 'AGCAT', B = 'GACTA';
+  const m = A.length + 1, n = B.length + 1, S = 0.7;
+  const dp = Array.from({length: m}, () => new Array(n).fill(0));
+  const meshes = [];
+  for (let r = 0; r < m; r++) {
+    const rowMeshes = [];
+    for (let c = 0; c < n; c++) {
+      const x = (c - (n-1)/2) * S, y = -(r - (m-1)/2) * S;
+      const mat = makeMat(C.miss);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.2), mat);
+      mesh.position.set(x, y, 0); scene.add(mesh); vizObjects.push(mesh); rowMeshes.push(mat);
+    }
+    meshes.push(rowMeshes);
+  }
+  camera.position.set(0, 0, 7); camera.lookAt(0, 0, 0); controls.target.set(0, 0, 0); controls.update();
+  showLegend([null, 'Comparing', null, 'Match', 'Filled']);
+  for (let i = 0; i < m; i++) meshes[i][0].color.setHex(C.def);
+  for (let j = 0; j < n; j++) meshes[0][j].color.setHex(C.def);
+  await sleep(200);
+  for (let i = 1; i < m && !stopFlag; i++) {
+    for (let j = 1; j < n; j++) {
+      if (stopFlag) return;
+      meshes[i][j].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+      if (A[i-1] === B[j-1]) { dp[i][j] = dp[i-1][j-1] + 1; meshes[i][j].color.setHex(C.curr); swp++; }
+      else { dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]); meshes[i][j].color.setHex(C.sorted); }
+      updateStats(); await tick();
+    }
+  }
+}
+
+// LIS — longest increasing subsequence (using bars)
+async function lis() {
+  initSort();
+  await sleep(150);
+  const dp = new Array(N).fill(1);
+  let bestEnd = 0;
+  for (let i = 0; i < N && !stopFlag; i++) {
+    bc(i, C.pivot); await tick();
+    for (let j = 0; j < i; j++) {
+      if (stopFlag) return;
+      cmp++;
+      if (arr[j] < arr[i]) {
+        bc(j, C.cmp); updateStats(); await tick();
+        if (dp[j] + 1 > dp[i]) { dp[i] = dp[j] + 1; swp++; }
+        bc(j, C.def);
+      }
+    }
+    bc(i, C.def);
+    if (dp[i] > dp[bestEnd]) bestEnd = i;
+    updateStats();
+  }
+  // Mark longest path
+  let cur = dp[bestEnd];
+  for (let i = bestEnd; i >= 0; i--) {
+    if (dp[i] === cur && (i === bestEnd || arr[i] < arr[i+1])) { bc(i, C.sorted); cur--; }
+  }
+}
+
+// 0/1 Knapsack — 2D grid
+async function knapsack() {
+  clearViz();
+  const items = [{w:2,v:3},{w:3,v:4},{w:4,v:5},{w:5,v:6}];
+  const W = 8, n = items.length;
+  const dp = Array.from({length: n+1}, () => new Array(W+1).fill(0));
+  const S = 0.55;
+  const meshes = [];
+  for (let r = 0; r <= n; r++) {
+    const rowMeshes = [];
+    for (let c = 0; c <= W; c++) {
+      const x = (c - W/2) * S, y = -(r - n/2) * S;
+      const mat = makeMat(C.miss);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 0.15), mat);
+      mesh.position.set(x, y, 0); scene.add(mesh); vizObjects.push(mesh); rowMeshes.push(mat);
+    }
+    meshes.push(rowMeshes);
+  }
+  camera.position.set(0, 0, 7); camera.lookAt(0, 0, 0); controls.target.set(0, 0, 0); controls.update();
+  showLegend([null, 'Considering', 'Skip', 'Take', 'Filled']);
+  for (let r = 1; r <= n && !stopFlag; r++) {
+    for (let c = 0; c <= W; c++) {
+      if (stopFlag) return;
+      meshes[r][c].color.setHex(C.cmp); cmp++; updateStats(); await tick();
+      const it = items[r-1];
+      if (it.w <= c) {
+        const take = dp[r-1][c-it.w] + it.v, skip = dp[r-1][c];
+        dp[r][c] = Math.max(take, skip);
+        meshes[r][c].color.setHex(take > skip ? C.curr : C.swap); swp++;
+      } else {
+        dp[r][c] = dp[r-1][c];
+        meshes[r][c].color.setHex(C.swap);
+      }
+      updateStats(); await tick();
+      meshes[r][c].color.setHex(C.sorted);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── STRINGS ───────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+const TXT = 'ABABCABABCABABCD', PAT = 'ABABCD';
+
+function initString() {
+  clearViz();
+  const S = 0.6;
+  const txtMats = [], patMats = [];
+  for (let i = 0; i < TXT.length; i++) {
+    const x = (i - (TXT.length-1)/2) * S;
+    const mat = makeMat(C.def);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), mat);
+    mesh.position.set(x, 1, 0); scene.add(mesh); vizObjects.push(mesh); txtMats.push(mat);
+  }
+  for (let i = 0; i < PAT.length; i++) {
+    const mat = makeMat(C.pivot);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), mat);
+    mesh.position.set((i - (TXT.length-1)/2) * S, 0, 0); scene.add(mesh); vizObjects.push(mesh); patMats.push({mat, mesh});
+  }
+  addGrid(TXT.length * S + 2);
+  camera.position.set(0, 4, 10); camera.lookAt(0, 0.5, 0); controls.target.set(0, 0.5, 0); controls.update();
+  showLegend(['Text', 'Comparing', 'Mismatch', 'Pattern', 'Match']);
+  return { txtMats, patMats, S };
+}
+
+// KMP — pre-compute failure, then slide
+async function kmpSearch() {
+  const { txtMats, patMats, S } = initString();
+  await sleep(200);
+  // Failure function
+  hl(0); hl(1);
+  const lps = new Array(PAT.length).fill(0);
+  for (let i = 1, len = 0; i < PAT.length;) {
+    if (PAT[i] === PAT[len]) { lps[i++] = ++len; }
+    else if (len) len = lps[len-1];
+    else lps[i++] = 0;
+  }
+  setVars({ text: TXT, pattern: PAT, lps });
+  hl(2); let i = 0, j = 0;
+  while (i < TXT.length && !stopFlag) {
+    hl(3);
+    // Slide pattern
+    for (let k = 0; k < PAT.length; k++) patMats[k].mesh.position.x = ((i - j + k) - (TXT.length-1)/2) * S;
+    txtMats[i].color.setHex(C.cmp); cmp++; updateStats();
+    setVars({ i, j, 'txt[i]': TXT[i], 'pat[j]': PAT[j] });
+    await tick();
+    hl(4);
+    if (PAT[j] === TXT[i]) {
+      hl(5); patMats[j].mat.color.setHex(C.sorted);
+      txtMats[i].color.setHex(C.sorted);
+      i++; j++;
+      hl(6); if (j === PAT.length) {
+        for (let k = 0; k < PAT.length; k++) patMats[k].mat.color.setHex(C.found);
+        setVars({ found: true, position: i - j });
+        hl(-1); return;
+      }
+    } else {
+      txtMats[i].color.setHex(C.swap); swp++; await tick();
+      txtMats[i].color.setHex(C.def);
+      for (let k = 0; k < PAT.length; k++) patMats[k].mat.color.setHex(C.pivot);
+      hl(7); if (j !== 0) { j = lps[j-1]; setVars({ i, j, 'skipped via lps': true }); }
+      else { hl(8); i++; }
+    }
+  }
+  hl(-1);
+}
+
+// Rabin–Karp — rolling hash
+async function rabinKarp() {
+  const { txtMats, patMats, S } = initString();
+  await sleep(200);
+  const m = PAT.length, n = TXT.length, BASE = 256, MOD = 101;
+  let patHash = 0, txtHash = 0, h = 1;
+  for (let i = 0; i < m - 1; i++) h = (h * BASE) % MOD;
+  for (let i = 0; i < m; i++) {
+    patHash = (BASE * patHash + PAT.charCodeAt(i)) % MOD;
+    txtHash = (BASE * txtHash + TXT.charCodeAt(i)) % MOD;
+  }
+  for (let i = 0; i <= n - m && !stopFlag; i++) {
+    for (let k = 0; k < m; k++) patMats[k].mesh.position.x = ((i + k) - (TXT.length-1)/2) * S;
+    for (let k = 0; k < m; k++) txtMats[i+k].color.setHex(C.cmp);
+    cmp++; updateStats(); await tick();
+    if (patHash === txtHash) {
+      let match = true;
+      for (let j = 0; j < m; j++) if (TXT[i+j] !== PAT[j]) { match = false; break; }
+      if (match) {
+        for (let k = 0; k < m; k++) { txtMats[i+k].color.setHex(C.found); patMats[k].mat.color.setHex(C.found); }
+        return;
+      }
+    }
+    for (let k = 0; k < m; k++) txtMats[i+k].color.setHex(C.def);
+    if (i < n - m) {
+      txtHash = (BASE * (txtHash - TXT.charCodeAt(i) * h) + TXT.charCodeAt(i + m)) % MOD;
+      if (txtHash < 0) txtHash += MOD;
+      swp++;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ── UI WIRING ─────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+function initViz(cat, algo) {
+  const sorted = algo==='binary'||algo==='jump'||algo==='interpolation';
+  if(cat==='sort')   initSort();
+  if(cat==='search') { target=parseInt(document.getElementById('target-input').value)||12; initSearch(sorted); }
+  if(cat==='graph')  initGraph();
+  if(cat==='tree')   initTree();
+  // math/dp/string init themselves inside their algo functions
+}
+
+async function runAlgo() {
+  if(isRunning) {
+    stopFlag=true; isRunning=false;
+    document.getElementById('btn-run').textContent='▶ Run';
+    document.getElementById('btn-run').className='ctrl-btn run'; return;
+  }
+  isRunning=true; stopFlag=false; cmp=0; swp=0; tStart=Date.now();
+  document.getElementById('btn-run').textContent='⏹ Stop';
+  document.getElementById('btn-run').className='ctrl-btn stop';
+
+  const map = {
+    bubble:bubbleSort, selection:selectionSort, insertion:insertionSort,
+    quick:quickSort, merge:mergeSort, heap:heapSort, shell:shellSort,
+    counting:countingSort, radix:radixSort,
+    cocktail:cocktailSort, comb:combSort, cycle:cycleSort, tim:timSort,
+    linear:linearSearch, binary:binarySearch, jump:jumpSearch, interpolation:interpolationSearch,
+    bfs:bfsGraph, dfs:dfsGraph, dijkstra, astar:aStar, prim:primMST,
+    bellman:bellmanFord, kruskal:kruskalMST,
+    bst:bstSearch, inorder:()=>traverse('in'), preorder:()=>traverse('pre'), postorder:()=>traverse('post'),
+    sieve, euclid:euclidGCD, pascal,
+    fibonacci:fibonacciDP, kadane:kadanes, edit:editDistance, lcs, lis, knapsack,
+    kmp:kmpSearch, rabin:rabinKarp,
+  };
+  if(map[currentAlgo]) await map[currentAlgo]();
+
+  isRunning=false; stopFlag=false;
+  document.getElementById('btn-run').textContent='▶ Run';
+  document.getElementById('btn-run').className='ctrl-btn run';
+}
+
+function selectAlgo(cat, algo) {
+  currentCat=cat; currentAlgo=algo;
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`[data-algo="${algo}"]`)?.classList.add('active');
+  updateInfoPanel(algo);
+  renderCode(algo);
+  stopFlag=true; isRunning=false;
+  document.getElementById('btn-run').textContent='▶ Run';
+  document.getElementById('btn-run').className='ctrl-btn run';
+  document.getElementById('target-wrap').style.display = cat==='search' ? 'flex' : 'none';
+  cmp=0; swp=0; tStart=Date.now(); updateStats();
+  setTimeout(()=>{ stopFlag=false; initViz(cat,algo); }, 60);
+}
+
+// Timeline logic
+function renderTimeline() {
+  const wrap = document.getElementById('tl-svg-wrap');
+  wrap.innerHTML = '';
+  const entries = Object.entries(INFO).filter(([k]) => IMPLEMENTED.has(k)).sort((a,b) => a[1].year - b[1].year);
+  if(!entries.length) return;
+  
+  const svgW = Math.max(1000, entries.length * 120);
+  const svgH = 400;
+  
+  let html = `<svg viewBox="0 0 ${svgW} ${svgH}" style="width:${svgW}px; height:100%; min-height:400px; display:block;">
+    <defs>
+      <linearGradient id="tl-line" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#2a2a50" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#4c4c7a" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#2a2a50" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <line x1="0" y1="200" x2="${svgW}" y2="200" stroke="url(#tl-line)" stroke-width="2"/>
+  `;
+  
+  entries.forEach(([k, d], i) => {
+    const cx = 80 + (i * (svgW - 160) / Math.max(1, entries.length - 1));
+    const cy = 200;
+    const isUp = i % 2 === 0;
+    const ty = isUp ? cy - 60 : cy + 70;
+    const ly = isUp ? cy - 30 : cy + 30;
+    
+    html += `
+      <g class="tl-node" onclick="loadAlgo('${k}'); document.getElementById('vt-chrono').click();">
+        <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${ly}" stroke="#4c4c7a" stroke-width="1.5" stroke-dasharray="2 3"/>
+        <circle cx="${cx}" cy="${cy}" r="6" fill="#18183a" stroke="#a5b4fc" stroke-width="2"/>
+        <text x="${cx}" y="${ty}" text-anchor="middle" font-family="'Space Grotesk', sans-serif" font-size="14" fill="#fbbf24" font-weight="700">${d.year}</text>
+        <text x="${cx}" y="${isUp ? ty - 20 : ty + 20}" text-anchor="middle" font-family="'Inter', sans-serif" font-size="12" fill="#c0c0e0">${d.name || k}</text>
+        <text x="${cx}" y="${isUp ? ty - 38 : ty + 38}" text-anchor="middle" font-family="'Inter', sans-serif" font-size="10" fill="#6c7299" font-style="italic">${d.creator ? d.creator.split(',')[0] : ''}</text>
+      </g>
+    `;
+  });
+  
+  html += `</svg>`;
+  wrap.innerHTML = html;
+}
+
+// View toggle
+document.querySelectorAll('.vt-btn').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.vt-btn').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  currentView = b.dataset.view;
+  if (currentView === 'time') {
+    document.getElementById('timeline-overlay').classList.add('show');
+    renderTimeline();
+  } else {
+    document.getElementById('timeline-overlay').classList.remove('show');
+    renderSidebar();
+  }
+}));
+
+document.getElementById('btn-run').addEventListener('click',runAlgo);
+document.getElementById('btn-reset').addEventListener('click',()=>{
+  stopFlag=true; isRunning=false;
+  document.getElementById('btn-run').textContent='▶ Run';
+  document.getElementById('btn-run').className='ctrl-btn run';
+  cmp=0; swp=0; tStart=Date.now(); updateStats();
+  setTimeout(()=>{ stopFlag=false; initViz(currentCat,currentAlgo); }, 60);
+});
+document.getElementById('speed-slider').addEventListener('input',e=>{
+  speed=parseInt(e.target.value);
+  // Leaving step mode if user moves slider while running
+  if (stepMode && stepResolver) { stepMode = false; const r = stepResolver; stepResolver = null; r(); }
+});
+document.getElementById('target-input').addEventListener('change',e=>{ target=Math.max(1,Math.min(SN,parseInt(e.target.value)||12)); });
+
+// ── SEARCH ────────────────────────────────────────────────────────────────
+const sbSearch = document.getElementById('sb-search');
+const sbSearchClear = document.getElementById('sb-search-clear');
+const sbSearchWrap = document.getElementById('sb-search-wrap');
+sbSearch.addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  sbSearchWrap.classList.toggle('has-value', !!searchQuery);
+  renderSidebar();
+});
+sbSearchClear.addEventListener('click', () => {
+  sbSearch.value = ''; searchQuery = '';
+  sbSearchWrap.classList.remove('has-value');
+  renderSidebar(); sbSearch.focus();
+});
+
+// ── STEP BUTTON ───────────────────────────────────────────────────────────
+const btnStep = document.getElementById('btn-step');
+btnStep.addEventListener('click', () => {
+  if (!isRunning) {
+    // First click while idle: start the algorithm in step mode
+    stepMode = true;
+    runAlgo();
+  } else {
+    doStep();
+  }
+});
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────
+function showKbd() { document.getElementById('kbd-overlay').classList.add('show'); }
+function closeKbd() { document.getElementById('kbd-overlay').classList.remove('show'); }
+
+function siblingAlgoKey(direction) {
+  const btns = [...document.querySelectorAll('.sb-btn')];
+  if (!btns.length) return null;
+  const idx = btns.findIndex(b => b.dataset.algo === currentAlgo);
+  let nextIdx = idx + direction;
+  if (nextIdx < 0) nextIdx = btns.length - 1;
+  if (nextIdx >= btns.length) nextIdx = 0;
+  const btn = btns[nextIdx];
+  return { cat: btn.dataset.cat, algo: btn.dataset.algo, btn };
+}
+
+document.addEventListener('keydown', e => {
+  // Search focus shortcut
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault(); sbSearch.focus(); sbSearch.select(); return;
+  }
+  // Skip other shortcuts when typing in inputs
+  const t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) {
+    if (e.key === 'Escape') t.blur();
+    return;
+  }
+  if (e.key === 'Escape') { closeKbd(); return; }
+  if (e.key === '?') { showKbd(); e.preventDefault(); return; }
+  if (e.key === ' ') { e.preventDefault(); document.getElementById('btn-run').click(); return; }
+  if (e.key.toLowerCase() === 'r') { e.preventDefault(); document.getElementById('btn-reset').click(); return; }
+  if (e.key.toLowerCase() === 'c') { e.preventDefault(); toggleCode(); return; }
+  if (e.key === 'ArrowRight') { e.preventDefault(); doStep(); return; }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    const nx = siblingAlgoKey(e.key === 'ArrowDown' ? 1 : -1);
+    if (nx) { selectAlgo(nx.cat, nx.algo); nx.btn.scrollIntoView({block:'nearest'}); }
+    return;
+  }
+  if (e.key === '+' || e.key === '=') {
+    e.preventDefault();
+    const sl = document.getElementById('speed-slider');
+    sl.value = Math.min(10, parseInt(sl.value) + 1); sl.dispatchEvent(new Event('input'));
+    return;
+  }
+  if (e.key === '-' || e.key === '_') {
+    e.preventDefault();
+    const sl = document.getElementById('speed-slider');
+    sl.value = Math.max(1, parseInt(sl.value) - 1); sl.dispatchEvent(new Event('input'));
+    return;
+  }
+});
+
+// Selecting a new algo should leave step mode
+const _origSelectAlgo = selectAlgo;
+window.selectAlgo = function(cat, algo) {
+  stepMode = false;
+  if (stepResolver) { const r = stepResolver; stepResolver = null; r(); }
+  return _origSelectAlgo(cat, algo);
+};
+// runAlgo cleanup: when algorithm finishes, clear step mode for next run
+const _origRunAlgo = runAlgo;
+window.runAlgo = async function() {
+  const wasStep = stepMode;
+  await _origRunAlgo();
+  if (wasStep) stepMode = false;
+};
+
+// ── COPY CODE ─────────────────────────────────────────────────────────────
+function copyCode() {
+  const code = CODE[currentAlgo];
+  if (!code) return;
+  const text = code.map((l, i) => `${i+1}. ${l}`).join('\n');
+  const header = `${INFO[currentAlgo]?.name || ''} · ${fmtYear(INFO[currentAlgo]?.year || 0)} · ${INFO[currentAlgo]?.creator || ''}\n\n`;
+  navigator.clipboard.writeText(header + text).then(() => {
+    const btn = document.getElementById('code-copy');
+    btn.textContent = '✓';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = '⎘'; btn.classList.remove('ok'); }, 1400);
+  }).catch(() => {});
+}
+
+// ── PERSISTENCE (localStorage) ────────────────────────────────────────────
+const LS_KEY = 'lx8-algo-prefs';
+function savePrefs() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      view: currentView, algo: currentAlgo, speed, target,
+      panelCollapsed: document.getElementById('code-panel')?.classList.contains('collapsed'),
+    }));
+  } catch (_) {}
+}
+function loadPrefs() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch (_) { return {}; }
+}
+// Save on every meaningful change
+['btn-run','btn-step','btn-reset','speed-slider','target-input'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', savePrefs);
+  document.getElementById(id)?.addEventListener('input', savePrefs);
+});
+
+// ── FIRST-TIME ONBOARDING HINT ────────────────────────────────────────────
+function maybeShowOnboarding() {
+  if (localStorage.getItem('lx8-algo-onboarded')) return;
+  const el = document.createElement('div');
+  el.id = 'onboard-hint';
+  el.innerHTML = `
+    <div class="ob-card">
+      <div class="ob-h">⚗ Welcome to Algorithm Lab</div>
+      <div class="ob-row"><kbd>Space</kbd> Run / Stop</div>
+      <div class="ob-row"><kbd>→</kbd> Step forward (during paused run)</div>
+      <div class="ob-row"><kbd>↑</kbd> <kbd>↓</kbd> Switch algorithm</div>
+      <div class="ob-row"><kbd>?</kbd> All shortcuts</div>
+      <div class="ob-row" style="margin-top:0.6rem;color:#a5b4fc;font-size:0.78rem;">Drag the 3D scene to rotate · scroll to zoom</div>
+      <button type="button" class="ob-close" onclick="dismissOnboarding()">Got it</button>
+    </div>`;
+  document.body.appendChild(el);
+}
+function dismissOnboarding() {
+  localStorage.setItem('lx8-algo-onboarded', '1');
+  document.getElementById('onboard-hint')?.remove();
+}
+
+// Boot
+const prefs = loadPrefs();
+if (prefs.view === 'cat') {
+  currentView = 'cat';
+  document.querySelector('.vt-btn[data-view="cat"]')?.classList.add('active');
+  document.querySelector('.vt-btn[data-view="chrono"]')?.classList.remove('active');
+}
+if (prefs.speed && prefs.speed >= 1 && prefs.speed <= 10) {
+  speed = prefs.speed;
+  document.getElementById('speed-slider').value = speed;
+}
+const bootAlgo = (prefs.algo && IMPLEMENTED.has(prefs.algo)) ? prefs.algo : 'bubble';
+const bootCat = INFO[bootAlgo]?.cat || 'sort';
+
+renderSidebar();
+updateInfoPanel(bootAlgo);
+renderCode(bootAlgo);
+currentCat = bootCat; currentAlgo = bootAlgo;
+document.querySelector(`.sb-btn[data-algo="${bootAlgo}"]`)?.classList.add('active');
+initViz(bootCat, bootAlgo);
+setTimeout(maybeShowOnboarding, 800);
+</script>
+
+<!-- Keyboard shortcuts overlay -->
+<div id="kbd-overlay" onclick="if(event.target===this)closeKbd()">
+  <div class="kbd-card">
+    <h3>⌨ Keyboard Shortcuts</h3>
+    <div class="kbd-list">
+      <div class="kbd-row"><span class="kbd-desc">Run / Stop</span><div class="kbd-keys"><kbd>Space</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Reset / Shuffle</span><div class="kbd-keys"><kbd>R</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Step forward (during paused run)</span><div class="kbd-keys"><kbd>→</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Previous / Next algorithm</span><div class="kbd-keys"><kbd>↑</kbd><kbd>↓</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Toggle code panel</span><div class="kbd-keys"><kbd>C</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Focus search</span><div class="kbd-keys"><kbd>⌘</kbd><kbd>K</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Slower / Faster</span><div class="kbd-keys"><kbd>−</kbd><kbd>+</kbd></div></div>
+      <div class="kbd-row"><span class="kbd-desc">Show this help</span><div class="kbd-keys"><kbd>?</kbd></div></div>
+    </div>
+    <button type="button" class="kbd-close" onclick="closeKbd()">Close (Esc)</button>
+  </div>
+</div>
+<div class="kbd-hint" id="kbd-hint">Press <kbd style="font-size:0.66rem;padding:1px 5px;">?</kbd> for keyboard shortcuts</div>
+
+</body>
+</html>
