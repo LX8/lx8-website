@@ -178,15 +178,17 @@
     .stack-pill { font-family: 'Space Grotesk', sans-serif; font-size: 0.78rem; font-weight: 600; padding: 6px 14px; border-radius: 999px; background: var(--bg1); border: 1px solid var(--border); color: var(--text2); }
     .stack-pill strong { color: var(--ind3); font-weight: 700; }
 
-    /* Roadmap */
-    .roadmap { display: flex; flex-direction: column; gap: 10px; }
-    .road-item { display: flex; gap: 1rem; padding: 1.1rem 1.25rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); }
-    .road-status { font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; flex-shrink: 0; height: fit-content; min-width: 80px; text-align: center; }
+    /* Roadmap - Horizontal Scroll Snap */
+    .roadmap { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 1.5rem; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .roadmap::-webkit-scrollbar { display: none; }
+    .road-item { scroll-snap-align: center; display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem 1.4rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); min-width: 280px; max-width: 320px; flex: 0 0 auto; transition: transform 0.3s; }
+    .road-item:hover { border-color: rgba(129,140,248,0.3); transform: translateY(-3px); }
+    .road-status { font-family: 'Space Grotesk', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; width: fit-content; }
     .rs-done { background: rgba(74,222,128,0.12); color: var(--green4); border: 1px solid rgba(74,222,128,0.25); }
     .rs-now { background: rgba(99,102,241,0.18); color: var(--ind4); border: 1px solid var(--border-hi); }
     .rs-next { background: rgba(251,191,36,0.1); color: var(--amber4); border: 1px solid rgba(251,191,36,0.25); }
     .rs-soon { background: var(--bg2); color: var(--text3); border: 1px dashed var(--border); }
-    .road-body h4 { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .road-body h4 { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
     .road-body p { font-size: 0.84rem; color: var(--text2); line-height: 1.6; }
 
     /* Waitlist */
@@ -236,6 +238,7 @@
       footer { flex-direction: column; }
     }
   </style>
+  <link rel="stylesheet" href="/global.css" />
 </head>
 <body>
 
@@ -247,7 +250,7 @@
 
 <nav id="nav">
   <a href="/" class="logo-a">
-    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" /></div>
+    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager"/></div>
     <span class="logo-txt">Lx8 <span>Labs</span></span>
   </a>
   <a href="/index.html#projects" class="back-link">← Projects</a>
@@ -330,28 +333,28 @@
       </div>
       <div class="feat r d1">
         <div class="feat-ico">⌘</div>
-        <h3>Multi-language</h3>
-        <p>First-class Rust, Swift, Python, Go, TypeScript, Zig. LSP everywhere. Tree-sitter highlighting that actually works in mixed-language files.</p>
+        <h3>Command Palette & Settings</h3>
+        <p>A lightning-fast ⌘P palette for rapid navigation. A full-page, searchable settings view configured entirely via JSON.</p>
       </div>
       <div class="feat r d1">
         <div class="feat-ico">AI</div>
         <h3>AI as a peer, not a popup</h3>
-        <p>Sidebar chat that knows your repo. Inline refactors. Code review on commit. Bring your own LLM key — Claude, GPT, local Llama.</p>
+        <p>A real AI Agent panel that streams transcripts. Deep integration with local LLMs (Ollama, LM Studio) or cloud endpoints.</p>
       </div>
       <div class="feat r d2">
-        <div class="feat-ico">⌚</div>
-        <h3>Wearables-aware</h3>
-        <p>Apple Watch / Vision Pro for build status, breakpoint nudges, and pomodoro nags. The IDE follows you to the kitchen.</p>
+        <div class="feat-ico">🔍</div>
+        <h3>Workspace Diagnostics</h3>
+        <p>LSP diagnostics mapped natively to the UI. Live problem counts in the status bar and inline error overlays.</p>
       </div>
       <div class="feat r d2">
         <div class="feat-ico">📐</div>
         <h3>Designed by a developer</h3>
-        <p>Vim mode, modal commands, no-mouse-required workflows. Configurable to your bone, sane defaults out of the box.</p>
+        <p>Vim mode, Outline panel, and an intuitive breadcrumb navigation. Configurable to your bone with sane defaults.</p>
       </div>
       <div class="feat r d2">
         <div class="feat-ico">🔒</div>
         <h3>Local-first, private</h3>
-        <p>No telemetry. Code never leaves your machine unless you point AI at a remote model. Settings sync via your own iCloud, end-to-end encrypted.</p>
+        <p>No telemetry. Code never leaves your machine unless you explicitly invoke cloud AI. Sync config securely via iCloud.</p>
       </div>
     </div>
   </div>
@@ -372,7 +375,7 @@
       <span class="stack-pill"><strong>Tree-sitter</strong> · parsing</span>
       <span class="stack-pill"><strong>LSP</strong> · language servers</span>
       <span class="stack-pill"><strong>WatchKit</strong> · wearables</span>
-      <span class="stack-pill"><strong>Anthropic / OpenAI</strong> · AI link</span>
+      <span class="stack-pill"><strong>Local LLMs</strong> · AI link</span>
       <span class="stack-pill"><strong>SQLite</strong> · settings & search</span>
     </div>
   </div>
@@ -385,56 +388,49 @@
   <div class="inner">
     <div class="lbl r">Roadmap</div>
     <h2 class="sh r d1">Where we are, where we're going.</h2>
-    <p class="sdesc r d2">Tupã is in active private development. Public beta when the editor is faster than what we use today.</p>
+    <p class="sdesc r d2">Tupã is in active Phase 1.2 development. Scroll right to see the feature pipeline.</p>
 
     <div class="roadmap">
       <div class="road-item r d1">
         <span class="road-status rs-done">Shipped</span>
         <div class="road-body">
-          <h4>Editor core (Q1 2026)</h4>
-          <p>Buffer, undo tree, multi-cursor, Tree-sitter highlight for 12 languages, Vim emulation.</p>
+          <h4>Editor core & LSP</h4>
+          <p>Buffer, undo tree, multi-cursor, Tree-sitter, generic LSP host. Goto-definition, diagnostics.</p>
         </div>
       </div>
       <div class="road-item r d1">
         <span class="road-status rs-done">Shipped</span>
         <div class="road-body">
-          <h4>LSP integration</h4>
-          <p>Generic LSP host. Goto-definition, hover, diagnostics, format-on-save for Rust, Swift, Python, Go, TS.</p>
+          <h4>Command & Outline</h4>
+          <p>Global Command Palette (⌘P), Settings full page, and synchronized Outline Panel for large files.</p>
+        </div>
+      </div>
+      <div class="road-item r d1">
+        <span class="road-status rs-done">Shipped</span>
+        <div class="road-body">
+          <h4>AI Agent Panel</h4>
+          <p>Real-time sending and streaming transcript with agent endpoints (vLLM, Ollama, LM Studio, MLX).</p>
         </div>
       </div>
       <div class="road-item r d2">
         <span class="road-status rs-now">In progress</span>
         <div class="road-body">
-          <h4>AI sidebar</h4>
-          <p>Repo-aware chat, inline refactor proposals, commit message generation. Plug-in providers for Claude, GPT, and local llama.cpp.</p>
-        </div>
-      </div>
-      <div class="road-item r d2">
-        <span class="road-status rs-now">In progress</span>
-        <div class="road-body">
-          <h4>Settings sync</h4>
-          <p>End-to-end encrypted config sync via iCloud. Restore your exact setup on any Mac in seconds.</p>
+          <h4>Phase 1.2 Close</h4>
+          <p>Sidebar tree views, deeper LSP diagnostics integration (Problems Tab), and Window-cluster actions.</p>
         </div>
       </div>
       <div class="road-item r d3">
         <span class="road-status rs-next">Next</span>
         <div class="road-body">
-          <h4>Wearables companion</h4>
-          <p>Apple Watch app for build status, test pass/fail, breakpoint nudges. Vision Pro multi-window editor surface.</p>
-        </div>
-      </div>
-      <div class="road-item r d3">
-        <span class="road-status rs-next">Next</span>
-        <div class="road-body">
-          <h4>Public beta</h4>
-          <p>TestFlight access for waitlist members. Free during beta. Pricing model: pay-once, free updates for the first major version.</p>
+          <h4>Phase 2 Editor Canvas</h4>
+          <p>Native text rendering using cosmic-text, tiny-skia, and ropey for an ultra-low latency typing experience.</p>
         </div>
       </div>
       <div class="road-item r d3">
         <span class="road-status rs-soon">Future</span>
         <div class="road-body">
-          <h4>Plug-in marketplace</h4>
-          <p>Tupã 2.0. Community-built extensions in Rust + Wasm. Sandboxed by default. No telemetry, ever.</p>
+          <h4>Wearables companion</h4>
+          <p>Apple Watch app for build status and breakpoint nudges. Vision Pro multi-window editor surface.</p>
         </div>
       </div>
     </div>

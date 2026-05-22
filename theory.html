@@ -5,9 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Light, Gravity & Time: The 3-Channel Taxonomy</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <style>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Bipartite Universe: Interactive Course",
+    "description": "A 3-Phase Interactive Course & eBook covering Ancient Foundations, Relativity, and Quantum Mechanics.",
+    "brand": { "@type": "Organization", "name": "Lx8 Labs" },
+    "offers": {
+      "@type": "Offer",
+      "price": "19.00",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "url": "https://lx8labs.com/shop.html"
+    }
+  }
+  </script>
+
+  <style>
         body { margin: 0; overflow: hidden; background-color: #030308; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #e2e8f0; }
         #canvas-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
 
@@ -128,13 +145,17 @@
             </header>
 
             <div id="controls" class="spatial-panel" style="border-radius: 0 0 12px 12px; border-top: none; margin-top: -5px;">
-                <button class="nav-btn history-btn active" onclick="switchScene(0)">Prologue: History</button>
-                <button class="nav-btn" onclick="switchScene(1)">1. Gravitoelectric</button>
-                <button class="nav-btn" onclick="switchScene(2)">2. Gravitomagnetic</button>
-                <button class="nav-btn" onclick="switchScene(3)">3. Λ-Cosmological</button>
-                <button class="nav-btn" onclick="switchScene(4)">4. Time Dimension</button>
+                <button type="button" class="nav-btn history-btn active" onclick="switchScene(0)">Prologue: History</button>
+                <button type="button" class="nav-btn" onclick="switchScene(1)">1. Gravitoelectric</button>
+                <button type="button" class="nav-btn" onclick="switchScene(2)">2. Gravitomagnetic</button>
+                <button type="button" class="nav-btn" onclick="switchScene(3)">3. Λ-Cosmological</button>
+                <button type="button" class="nav-btn" onclick="switchScene(4)">4. Time Dimension</button>
 
-                <button id="toggle-info-btn" class="nav-btn action-btn" onclick="toggleInfoPanel()">
+                <a href="https://buy.stripe.com/test_123" target="_blank" class="nav-btn action-btn" style="border-color: #f472b6; color: #fbcfe8; text-decoration: none;">
+                    Unlock Full Course & eBook ↗
+                </a>
+
+                <button type="button" id="toggle-info-btn" class="nav-btn action-btn" onclick="toggleInfoPanel()">
                     <span id="toggle-icon">▼</span> Hide HUD
                 </button>
             </div>

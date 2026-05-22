@@ -300,13 +300,13 @@
     <div class="sb-search" id="sb-search-wrap">
       <span class="sb-search-icon">⌕</span>
       <input id="sb-search" type="text" placeholder="Filter algorithms (⌘ K)…" autocomplete="off" spellcheck="false"/>
-      <button class="sb-search-clear" id="sb-search-clear" aria-label="Clear">✕</button>
+      <button type="button" class="sb-search-clear" id="sb-search-clear" aria-label="Clear">✕</button>
     </div>
 
     <!-- View toggle -->
     <div class="view-toggle">
-      <button class="vt-btn active" id="vt-chrono" data-view="chrono">Chronological</button>
-      <button class="vt-btn" id="vt-cat" data-view="cat">By Category</button>
+      <button type="button" class="vt-btn active" id="vt-chrono" data-view="chrono">Chronological</button>
+      <button type="button" class="vt-btn" id="vt-cat" data-view="cat">By Category</button>
     </div>
 
     <div id="sb-list"><!-- populated by JS --></div>
@@ -331,13 +331,13 @@
       <canvas id="three-canvas"></canvas>
       <div id="algo-label">Bubble Sort</div>
       <div id="legend"></div>
-      <button id="code-toggle" onclick="toggleCode()"><span>{ }</span><span class="ct-lbl"> Code</span></button>
+      <button type="button" id="code-toggle" onclick="toggleCode()"><span>{ }</span><span class="ct-lbl"> Code</span></button>
     </div>
 
     <div id="ctrl-bar">
-      <button class="ctrl-btn run" id="btn-run" title="Run / Stop (Space)">▶ Run</button>
-      <button class="ctrl-btn step" id="btn-step" title="Step forward one operation (→)">⏭ Step</button>
-      <button class="ctrl-btn" id="btn-reset" title="Reset (R)">⟳ Reset</button>
+      <button type="button" class="ctrl-btn run" id="btn-run" title="Run / Stop (Space)">▶ Run</button>
+      <button type="button" class="ctrl-btn step" id="btn-step" title="Step forward one operation (→)">⏭ Step</button>
+      <button type="button" class="ctrl-btn" id="btn-reset" title="Reset (R)">⟳ Reset</button>
       <div id="target-wrap">
         <span>Target:</span>
         <input type="number" id="target-input" value="12" min="1" max="30"/>
@@ -362,8 +362,8 @@
         <span class="ch-tag" id="code-year">1956</span>
       </div>
       <div class="ch-actions">
-        <button id="code-copy" onclick="copyCode()" aria-label="Copy pseudocode" title="Copy pseudocode">⎘</button>
-        <button id="code-close" onclick="toggleCode()" aria-label="Hide code">→</button>
+        <button type="button" id="code-copy" onclick="copyCode()" aria-label="Copy pseudocode" title="Copy pseudocode">⎘</button>
+        <button type="button" id="code-close" onclick="toggleCode()" aria-label="Hide code">→</button>
       </div>
     </div>
     <div id="code-body"></div>
@@ -376,8 +376,8 @@
   </aside>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 // ── THREE.JS CORE ─────────────────────────────────────────────────────────────
 const canvas = document.getElementById('three-canvas');
@@ -2355,7 +2355,7 @@ function maybeShowOnboarding() {
       <div class="ob-row"><kbd>↑</kbd> <kbd>↓</kbd> Switch algorithm</div>
       <div class="ob-row"><kbd>?</kbd> All shortcuts</div>
       <div class="ob-row" style="margin-top:0.6rem;color:#a5b4fc;font-size:0.78rem;">Drag the 3D scene to rotate · scroll to zoom</div>
-      <button class="ob-close" onclick="dismissOnboarding()">Got it</button>
+      <button type="button" class="ob-close" onclick="dismissOnboarding()">Got it</button>
     </div>`;
   document.body.appendChild(el);
 }
@@ -2401,7 +2401,7 @@ setTimeout(maybeShowOnboarding, 800);
       <div class="kbd-row"><span class="kbd-desc">Slower / Faster</span><div class="kbd-keys"><kbd>−</kbd><kbd>+</kbd></div></div>
       <div class="kbd-row"><span class="kbd-desc">Show this help</span><div class="kbd-keys"><kbd>?</kbd></div></div>
     </div>
-    <button class="kbd-close" onclick="closeKbd()">Close (Esc)</button>
+    <button type="button" class="kbd-close" onclick="closeKbd()">Close (Esc)</button>
   </div>
 </div>
 <div class="kbd-hint" id="kbd-hint">Press <kbd style="font-size:0.66rem;padding:1px 5px;">?</kbd> for keyboard shortcuts</div>
