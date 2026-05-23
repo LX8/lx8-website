@@ -61,6 +61,44 @@ def check_dashboard_dirty(cache):
     prev_hash = cache.get("dashboard", "")
     return current_hash != prev_hash, current_hash
 
+def check_main_dirty(cache):
+    root_files = ["index.html", "global.css", "robots.txt", "sitemap.xml", "manifest.json", "404.html", "og-image.png"]
+    sha = hashlib.sha256()
+    for f in root_files:
+        if os.path.exists(f):
+            try:
+                with open(f, "rb") as fd:
+                    sha.update(fd.read())
+            except Exception:
+                pass
+    current_hash = sha.hexdigest()
+    prev_hash = cache.get("main_site", "")
+    return current_hash != prev_hash, current_hash
+
+def check_book_dirty(cache):
+    book_dir = "/Users/alexeiferreira/Lx8Labs/products/bipartite-universe-book"
+    if not os.path.exists(book_dir):
+        return False, ""
+    
+    sha = hashlib.sha256()
+    for root, _, files in os.walk(book_dir):
+        if "node_modules" in root or ".next" in root or "out" in root or ".firebase" in root:
+            continue
+        for file in sorted(files):
+            if file.startswith('.'):
+                continue
+            path = os.path.join(root, file)
+            try:
+                with open(path, "rb") as f:
+                    while chunk := f.read(8192):
+                        sha.update(chunk)
+            except Exception:
+                pass
+    current_hash = sha.hexdigest()
+    prev_hash = cache.get("book_site", "")
+    return current_hash != prev_hash, current_hash
+
+
 # Increment patch version (e.g. 1.0.2 -> 1.0.3)
 def increment_version(version_str):
     try:
@@ -115,6 +153,22 @@ def main():
     # Calculate hashes for subdomains
     dirty_targets = []
     subdomain_hashes = {}
+
+    # Check if root main website has changed
+    main_dirty, main_hash = check_main_dirty(cache)
+    if main_dirty or args.force:
+        dirty_targets.append("main")
+        print_warn("Root main website files have changed. Deploying target 'main'!")
+    else:
+        print_success("Root main website is clean.")
+    
+    # Check if Bipartite Book codebase has changed
+    book_dirty, book_hash = check_book_dirty(cache)
+    if book_dirty or args.force:
+        print_warn("Bipartite Book Next.js codebase has changed!")
+    else:
+        print_success("Bipartite Book Next.js codebase is clean.")
+
     
     import yaml
     with open(REGISTRY_FILE, "r") as f:
@@ -131,6 +185,8 @@ def main():
         
         prev_sub_hash = cache.get(f"sub_{sub}", "")
         is_dirty = sub_hash != prev_sub_hash or dash_dirty or args.force
+        if sub == "bipartitebook" and book_dirty:
+            is_dirty = True
         
         if is_dirty:
             dirty_targets.append(sub)
@@ -191,6 +247,56 @@ def main():
                 print_fail(f"Vite compilation failed! Error code: {e.returncode}")
                 sys.exit(1)
 
+    # 3.1 Compile Bipartite Universe Next.js Book
+    if ("bipartitebook" in dirty_targets and book_dirty) or args.force:
+        print_header("2.1 COMPILING BIPARTITE UNIVERSE NEXT.JS BOOK")
+        if args.dry_run:
+            print_info("[DRY-RUN] Would execute Next.js export build in products/bipartite-universe-book")
+        else:
+            book_path = "/Users/alexeiferreira/Lx8Labs/products/bipartite-universe-book"
+            print_info(f"Running Next.js export build in {book_path}...")
+            try:
+                # Ensure node_modules exists
+                if not os.path.exists(os.path.join(book_path, "node_modules")):
+                    print_warn("Book node_modules is missing! Performing npm install...")
+                    subprocess.run(["npm", "install"], cwd=book_path, check=True)
+                
+                # Build Next.js book
+                subprocess.run(["npm", "run", "build"], cwd=book_path, check=True)
+                
+                # Copy export folder
+                export_out = os.path.join(book_path, "out")
+                target_dest = "bipartitebook"
+                if os.path.exists(export_out):
+                    print_info(f"Syncing Next.js export out/ folder to {target_dest}...")
+                    # Clean existing files except dashboard/ and version.json
+                    for item in os.listdir(target_dest):
+                        item_path = os.path.join(target_dest, item)
+                        if item == "dashboard" or item == "version.json":
+                            continue
+                        if os.path.isdir(item_path):
+                            import shutil
+                            shutil.rmtree(item_path)
+                        else:
+                            os.remove(item_path)
+                            
+                    # Copy static assets
+                    for item in os.listdir(export_out):
+                        src_item = os.path.join(export_out, item)
+                        dst_item = os.path.join(target_dest, item)
+                        if os.path.isdir(src_item):
+                            import shutil
+                            shutil.copytree(src_item, dst_item)
+                        else:
+                            import shutil
+                            shutil.copy2(src_item, dst_item)
+                            
+                print_success("Next.js Book compilation and static export sync completed successfully!")
+            except Exception as e:
+                print_fail(f"Next.js Book build/sync failed: {str(e)}")
+                sys.exit(1)
+
+
     # 4. Synchronize Subdomains & Infrastructure Targets
     print_header("3. INFRASTRUCTURE & TARGETS SYNCHRONIZATION")
     if args.dry_run:
@@ -205,6 +311,8 @@ def main():
             
             # Also copy subdomain version.json to subdomain/dashboard/version.json
             for sub in dirty_targets:
+                if sub == "main":
+                    continue
                 src_v = os.path.join(sub, "version.json")
                 dst_v = os.path.join(sub, "dashboard", "version.json")
                 if os.path.exists(src_v) and os.path.exists(os.path.dirname(dst_v)):
@@ -220,6 +328,11 @@ def main():
     print_header("4. PRE-FLIGHT VALIDATIONS")
     validation_passed = True
     for sub in dirty_targets:
+        if sub == "main":
+            if not os.path.exists("index.html"):
+                print_fail("Validation failed: Missing root main website 'index.html'!")
+                validation_passed = False
+            continue
         index_path = os.path.join(sub, "index.html")
         dash_path = os.path.join(sub, "dashboard", "index.html")
         v_path = os.path.join(sub, "version.json")
@@ -257,11 +370,14 @@ def main():
             
             # Update Deploy Cache
             cache["dashboard"] = dash_hash
+            cache["main_site"] = main_hash
+            cache["book_site"] = book_hash
             for sub in subdomain_hashes:
                 cache[f"sub_{sub}"] = subdomain_hashes[sub]
             
             with open(CACHE_FILE, "w") as f:
                 json.dump(cache, f, indent=2)
+
             
             print_success("Deployment state cached successfully.")
         except subprocess.CalledProcessError as e:

@@ -92,39 +92,41 @@ export default function Dashboard() {
     const updated = await Promise.all(
       sreTargets.map(async (target) => {
         try {
-          // Attempt to fetch live version.json from custom subdomain
+          // As Option 2 uses default Firebase domains, query *.web.app directly
           const controller = new AbortController();
-          const id = setTimeout(() => controller.abort(), 2000); // 2s timeout
+          const timeoutId = setTimeout(() => controller.abort(), 3000);
           
-          const res = await fetch(`https://${target.subdomain}.lx8labs.com/version.json`, { signal: controller.signal });
-          clearTimeout(id);
+          const fbRes = await fetch(`https://${target.id}.web.app/version.json`, { signal: controller.signal });
+          clearTimeout(timeoutId);
           
-          if (res.ok) {
-            const data = await res.json();
-            return {
-              ...target,
-              version: data.version || target.version,
-              commit: data.commit || target.commit,
-              buildTime: data.buildTime || '',
-              status: 'ONLINE' as const
-            };
-          }
-        } catch (e) {
-          // Fallback check to standard firebase app endpoints if custom DNS not ready
-          try {
-            const fbRes = await fetch(`https://${target.id}.web.app/version.json`);
-            if (fbRes.ok) {
-              const fbData = await fbRes.json();
+          if (fbRes.ok) {
+            const fbData = await fbRes.ok ? await fbRes.json() : null;
+            if (fbData) {
               return {
                 ...target,
                 version: fbData.version || target.version,
                 commit: fbData.commit || target.commit,
                 buildTime: fbData.buildTime || '',
-                status: 'PROPAGATING' as const  // Resolved in Firebase but DNS NXDOMAIN
+                status: 'ONLINE' as const
+              };
+            }
+          }
+        } catch (e) {
+          // Fallback to custom domain mapping check
+          try {
+            const res = await fetch(`https://${target.subdomain}.lx8labs.com/version.json`);
+            if (res.ok) {
+              const data = await res.json();
+              return {
+                ...target,
+                version: data.version || target.version,
+                commit: data.commit || target.commit,
+                buildTime: data.buildTime || '',
+                status: 'ONLINE' as const
               };
             }
           } catch (err) {
-            // Leave as offline/propagating
+            // Offline/propagating custom DNS
           }
         }
         return { ...target, status: 'PROPAGATING' as const };

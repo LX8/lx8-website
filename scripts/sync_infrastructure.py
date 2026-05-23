@@ -61,6 +61,43 @@ def update_firebase_config(registry_data):
     # Keep non-hosting configs, overwrite hosting
     new_hosting = []
     
+    # Add root main website target (lx8labs.com primary site)
+    new_hosting.append({
+        "target": "main",
+        "public": ".",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**",
+            "aimem/**",
+            "tupa/**",
+            "tupaide/**",
+            "suit/**",
+            "bipartitebook/**",
+            "installations/**",
+            "mattermem/**",
+            "dashboard/**",
+            ".deploy_cache.json"
+        ],
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ],
+        "headers": [
+            {
+                "source": "**/*.@(js|css|html|png|jpg|jpeg|gif|svg|woff|woff2)",
+                "headers": [
+                    {
+                        "key": "Cache-Control",
+                        "value": "max-age=31536000"
+                    }
+                ]
+            }
+        ]
+    })
+    
     # 2. Update .firebaserc
     if os.path.exists(FIREBASERC_FILE):
         with open(FIREBASERC_FILE, "r") as f:
@@ -74,7 +111,8 @@ def update_firebase_config(registry_data):
         fb_rc["targets"][PROJECT_ID] = {"hosting": {}}
         
     targets = fb_rc["targets"][PROJECT_ID]["hosting"]
-
+    targets["main"] = [PROJECT_ID]
+ 
     print("Syncing infrastructure from registry...")
     for product in registry_data.get("products", []):
         site_id = product["id"]
