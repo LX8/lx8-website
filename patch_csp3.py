@@ -1,6 +1,6 @@
 import os
 
-directory = "/Users/alexeiferreira/Website"
+directory = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 # We'll just search for the end of the CSP and inject frame-src
 insertion = " frame-src 'self' https://lx8-labs-website.firebaseapp.com;"
 

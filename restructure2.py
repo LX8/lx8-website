@@ -1,7 +1,7 @@
 import os
 import shutil
 
-base_dir = "/Users/alexeiferreira/Website"
+base_dir = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 pages = ["theory", "algorithms"]
 
 for page in pages:

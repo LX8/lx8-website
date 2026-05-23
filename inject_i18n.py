@@ -1,7 +1,7 @@
 import os
 import glob
 
-html_files = glob.glob('/Users/alexeiferreira/Website/**/*.html', recursive=True)
+html_files = glob.glob('/Users/alexeiferreira/Lx8Labs/internal/Website/**/*.html', recursive=True)
 
 scripts = '<script src="/i18n/translations.js"></script>\n<script src="/i18n/engine.js"></script>\n'
 

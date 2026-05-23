@@ -4,7 +4,7 @@ import urllib.request
 import uuid
 
 # 1. Read courses/index.html and extract the Schema.org JSON
-with open('/Users/alexeiferreira/Website/courses/index.html', 'r', encoding='utf-8') as f:
+with open('/Users/alexeiferreira/Lx8Labs/internal/Website/courses/index.html', 'r', encoding='utf-8') as f:
     content = f.read()
 
 match = re.search(r'<script type="application/ld\+json">\s*({.*?})\s*</script>', content, re.DOTALL)

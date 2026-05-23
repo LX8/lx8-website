@@ -1,6 +1,6 @@
 import os
 
-directory = "/Users/alexeiferreira/Website"
+directory = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 strings_to_remove = [
     '<a href="/products/" class="text-link">Products</a>',
     '<a href="/products/">Products</a>',

@@ -1,7 +1,7 @@
 import os
 import glob
 
-html_files = glob.glob('/Users/alexeiferreira/Website/**/*.html', recursive=True)
+html_files = glob.glob('/Users/alexeiferreira/Lx8Labs/internal/Website/**/*.html', recursive=True)
 
 for file in html_files:
     with open(file, 'r', encoding='utf-8') as f:

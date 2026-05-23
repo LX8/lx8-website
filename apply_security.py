@@ -1,6 +1,6 @@
 import os
 
-directory = "/Users/alexeiferreira/Website"
+directory = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 
 security_headers = """  <!-- Zero-Cost Security Hardening -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self'; base-uri 'self';">

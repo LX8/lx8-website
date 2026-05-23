@@ -1,6 +1,6 @@
 import os
 
-directory = "/Users/alexeiferreira/Website"
+directory = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 old_csp = "connect-src 'self';"
 new_csp = "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com;"
 

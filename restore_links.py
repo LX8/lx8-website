@@ -1,6 +1,6 @@
 import os
 
-directory = "/Users/alexeiferreira/Website"
+directory = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 
 count = 0
 for root, dirs, files in os.walk(directory):

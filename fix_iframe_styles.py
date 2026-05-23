@@ -1,6 +1,6 @@
 import re
 
-with open('/Users/alexeiferreira/Website/algorithms/index.html', 'r', encoding='utf-8') as f:
+with open('/Users/alexeiferreira/Lx8Labs/internal/Website/algorithms/index.html', 'r', encoding='utf-8') as f:
     content = f.read()
 
 injection = """
@@ -26,7 +26,7 @@ if (window.self !== window.top) {
 
 if "window.self !== window.top" not in content:
     content = content.replace("</head>", injection + "</head>")
-    with open('/Users/alexeiferreira/Website/algorithms/index.html', 'w', encoding='utf-8') as f:
+    with open('/Users/alexeiferreira/Lx8Labs/internal/Website/algorithms/index.html', 'w', encoding='utf-8') as f:
         f.write(content)
     print("Injected iframe style overrides into algorithms/index.html.")
 else:

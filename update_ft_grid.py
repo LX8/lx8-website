@@ -1,7 +1,7 @@
 import os
 import re
 
-dir_path = "/Users/alexeiferreira/Website"
+dir_path = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 
 new_ft_grid = """  <div class="ft-grid">
     <div class="ft-col">

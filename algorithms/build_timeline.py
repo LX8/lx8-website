@@ -1,6 +1,6 @@
 import re
 
-with open('/Users/alexeiferreira/Website/algorithms/index.html', 'r', encoding='utf-8') as f:
+with open('/Users/alexeiferreira/Lx8Labs/internal/Website/algorithms/index.html', 'r', encoding='utf-8') as f:
     content = f.read()
 
 # 1. Update #app-container back to full width layout
@@ -285,7 +285,7 @@ if "function renderSidebar()" in content:
 toggle_re = r'function setViewMode\(m\)\s*{.*?renderSidebar\(\);\s*}'
 content = re.sub(toggle_re, 'function setViewMode(m) { viewMode = m; renderSidebar(); }', content, flags=re.DOTALL)
 
-with open('/Users/alexeiferreira/Website/algorithms/index.html', 'w', encoding='utf-8') as f:
+with open('/Users/alexeiferreira/Lx8Labs/internal/Website/algorithms/index.html', 'w', encoding='utf-8') as f:
     f.write(content)
 
 print("Rewrote layout and timeline rendering.")

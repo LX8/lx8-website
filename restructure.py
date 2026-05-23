@@ -3,7 +3,7 @@ import shutil
 import re
 
 # Base directory
-base_dir = "/Users/alexeiferreira/Website"
+base_dir = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 
 # Files to convert
 pages = [

@@ -1,7 +1,7 @@
 import os
 import re
 
-dir_path = "/Users/alexeiferreira/Website"
+dir_path = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 
 new_nav_links = """  <div class="nav-links">
     <a href="/products.html" class="nl">Products</a>

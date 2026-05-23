@@ -1,6 +1,6 @@
 import re
 
-with open('/Users/alexeiferreira/Website/algorithms/index.html', 'r', encoding='utf-8') as f:
+with open('/Users/alexeiferreira/Lx8Labs/internal/Website/algorithms/index.html', 'r', encoding='utf-8') as f:
     content = f.read()
 
 # 1. Add aria-live announcer div inside #app-container if not exists
@@ -99,7 +99,7 @@ function makeMat(hex) {
 }"""
 content = content.replace(old_makemat, new_makemat)
 
-with open('/Users/alexeiferreira/Website/algorithms/index.html', 'w', encoding='utf-8') as f:
+with open('/Users/alexeiferreira/Lx8Labs/internal/Website/algorithms/index.html', 'w', encoding='utf-8') as f:
     f.write(content)
 
 print("Patched algorithms/index.html with A11y enhancements.")

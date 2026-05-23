@@ -1,6 +1,6 @@
 import re
 
-path = "/Users/alexeiferreira/Website/products/index.html"
+path = "/Users/alexeiferreira/Lx8Labs/internal/Website/products/index.html"
 with open(path, "r", encoding="utf-8") as f:
     content = f.read()
 

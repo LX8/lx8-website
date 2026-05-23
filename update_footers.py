@@ -1,7 +1,7 @@
 import os
 import re
 
-base_dir = "/Users/alexeiferreira/Website"
+base_dir = "/Users/alexeiferreira/Lx8Labs/internal/Website"
 
 svg_social_html = """    <div class="ft-col">
       <div class="ft-col-h">Connect</div>

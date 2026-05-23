@@ -2,7 +2,7 @@ import os
 import glob
 import re
 
-website_dir = '/Users/alexeiferreira/Website'
+website_dir = '/Users/alexeiferreira/Lx8Labs/internal/Website'
 html_files = glob.glob(os.path.join(website_dir, '*.html'))
 
 # Create global.css
