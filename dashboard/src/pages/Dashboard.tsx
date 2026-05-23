@@ -32,6 +32,17 @@ function BionicText({ text, active }: { text: string; active: boolean }) {
   );
 }
 
+interface SreTarget {
+  id: string;
+  subdomain: string;
+  category: string;
+  description: string;
+  version: string;
+  commit: string;
+  buildTime: string;
+  status: 'ONLINE' | 'OFFLINE' | 'PROPAGATING';
+}
+
 export default function Dashboard() {
   const { currentUser } = useAuth();
   const [purchases, setPurchases] = useState<Purchase[]>([]);
@@ -50,6 +61,17 @@ export default function Dashboard() {
   const [spinA, setSpinA] = useState<'UP' | 'DOWN'>('UP');
   const [spinB, setSpinB] = useState<'UP' | 'DOWN'>('DOWN');
 
+  // SRE Audit Board States
+  const [sreTargets, setSreTargets] = useState<SreTarget[]>([
+    { id: 'lx8-aimem', subdomain: 'aimem', category: 'Developer Tools', description: 'AI Memory System', version: '1.0.0', commit: 'da0dfb2', buildTime: '', status: 'PROPAGATING' },
+    { id: 'lx8-tupa', subdomain: 'tupa', category: 'Developer Tools', description: 'Tupã IDE Landing', version: '1.0.0', commit: 'da0dfb2', buildTime: '', status: 'PROPAGATING' },
+    { id: 'lx8-tupa-ide', subdomain: 'tupaide', category: 'Developer Tools', description: 'Tupã IDE Web App', version: '1.0.0', commit: 'da0dfb2', buildTime: '', status: 'PROPAGATING' },
+    { id: 'lx8-bmss', subdomain: 'suit', category: 'Autonomous Systems', description: 'Aegis Swarm Suit', version: '1.0.0', commit: 'da0dfb2', buildTime: '', status: 'PROPAGATING' },
+    { id: 'bipartitebook', subdomain: 'bipartitebook', category: 'Publications', description: 'Bipartite Book', version: '1.0.0', commit: 'da0dfb2', buildTime: '', status: 'PROPAGATING' },
+    { id: 'lx8-installations', subdomain: 'installations', category: 'Infrastructure', description: 'Labs Management', version: '1.0.0', commit: 'da0dfb2', buildTime: '', status: 'PROPAGATING' },
+    { id: 'lx8-mattermem', subdomain: 'mattermem', category: 'Infrastructure', description: 'Hardware Memory', version: '1.0.0', commit: 'da0dfb2', buildTime: '', status: 'PROPAGATING' },
+  ]);
+
   // Load user licenses & purchases
   const loadUserData = async () => {
     if (!currentUser) return;
@@ -65,8 +87,55 @@ export default function Dashboard() {
     }
   };
 
+  // Ping subdomain version.json payloads asynchronously
+  const auditSreInfrastructure = async () => {
+    const updated = await Promise.all(
+      sreTargets.map(async (target) => {
+        try {
+          // Attempt to fetch live version.json from custom subdomain
+          const controller = new AbortController();
+          const id = setTimeout(() => controller.abort(), 2000); // 2s timeout
+          
+          const res = await fetch(`https://${target.subdomain}.lx8labs.com/version.json`, { signal: controller.signal });
+          clearTimeout(id);
+          
+          if (res.ok) {
+            const data = await res.json();
+            return {
+              ...target,
+              version: data.version || target.version,
+              commit: data.commit || target.commit,
+              buildTime: data.buildTime || '',
+              status: 'ONLINE' as const
+            };
+          }
+        } catch (e) {
+          // Fallback check to standard firebase app endpoints if custom DNS not ready
+          try {
+            const fbRes = await fetch(`https://${target.id}.web.app/version.json`);
+            if (fbRes.ok) {
+              const fbData = await fbRes.json();
+              return {
+                ...target,
+                version: fbData.version || target.version,
+                commit: fbData.commit || target.commit,
+                buildTime: fbData.buildTime || '',
+                status: 'PROPAGATING' as const  // Resolved in Firebase but DNS NXDOMAIN
+              };
+            }
+          } catch (err) {
+            // Leave as offline/propagating
+          }
+        }
+        return { ...target, status: 'PROPAGATING' as const };
+      })
+    );
+    setSreTargets(updated);
+  };
+
   useEffect(() => {
     loadUserData();
+    auditSreInfrastructure();
   }, [currentUser]);
 
   // Synchronize dynamic body classes with a11y states
@@ -138,7 +207,7 @@ export default function Dashboard() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h1>
-            <BionicText text="Lx8 Labs Control Plane" active={bionicMode} />
+            <BionicText text="Lx8 Labs Central OS" active={bionicMode} />
           </h1>
           <p>
             <BionicText text="Unified corporate business management, software licensing, and user configuration." active={bionicMode} />
@@ -165,6 +234,60 @@ export default function Dashboard() {
             <p style={{ marginTop: '0.5rem' }}>
               <BionicText text="Manage your secure applications, view analytical books, and configure offline-first CLI credentials. High-contrast, neurodivergent accessibility is natively active." active={bionicMode} />
             </p>
+          </div>
+
+          {/* SRE Infrastructure Version Control & Audit Board */}
+          <div className="glass" style={{ padding: '2rem' }}>
+            <h3 style={{ borderBottom: '1px solid var(--surface-border)', paddingBottom: '0.75rem', marginBottom: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>🚀 Sovereign SRE Infrastructure Audit Board</span>
+              <button 
+                onClick={auditSreInfrastructure}
+                style={{ width: 'auto', padding: '4px 10px', fontSize: '0.72rem', background: 'rgba(102, 252, 241, 0.1)', color: 'var(--primary)', border: '1px solid var(--primary)' }}
+              >
+                Scan Live Deployments
+              </button>
+            </h3>
+            
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+              Pings all deployed subdomains in real-time. Verifies live running build versions, active Git commits, and DNS propagation targets.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              {sreTargets.map(target => (
+                <div key={target.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.85rem 1.25rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--surface-border)', borderRadius: '8px' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <strong style={{ color: '#fff', fontSize: '0.9rem' }}>{target.subdomain}.lx8labs.com</strong>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>({target.description})</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', gap: '1rem' }}>
+                      <span>Version: <strong style={{ color: 'var(--primary)' }}>v{target.version}</strong></span>
+                      <span>Commit: <a href={`https://github.com/LX8/lx8-website/commit/${target.commit}`} target="_blank" rel="noopener" style={{ color: 'var(--primary)', fontFamily: 'monospace', textDecoration: 'underline' }}>{target.commit}</a></span>
+                      {target.buildTime && <span>Deployed: {new Date(target.buildTime).toLocaleDateString()}</span>}
+                    </div>
+                  </div>
+
+                  <div>
+                    {target.status === 'ONLINE' ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', background: 'rgba(74,222,128,0.12)', color: '#4ade80', padding: '4px 10px', borderRadius: '4px', border: '1px solid rgba(74,222,128,0.25)' }}>
+                        <span style={{ width: '6px', height: '6px', background: '#4ade80', borderRadius: '50%', boxShadow: '0 0 6px #4ade80' }}></span>
+                        ONLINE
+                      </span>
+                    ) : target.status === 'PROPAGATING' ? (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', padding: '4px 10px', borderRadius: '4px', border: '1px solid rgba(251,191,36,0.25)' }}>
+                        <span style={{ width: '6px', height: '6px', background: '#fbbf24', borderRadius: '50%', boxShadow: '0 0 6px #fbbf24' }}></span>
+                        PROPAGATING (DNS NXDOMAIN)
+                      </span>
+                    ) : (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', background: 'rgba(239,68,68,0.12)', color: '#ef4444', padding: '4px 10px', borderRadius: '4px', border: '1px solid rgba(239,68,68,0.25)' }}>
+                        <span style={{ width: '6px', height: '6px', background: '#ef4444', borderRadius: '50%' }}></span>
+                        OFFLINE
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Software Licensing Section */}

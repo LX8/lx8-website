@@ -5,6 +5,7 @@ import json
 import hashlib
 import subprocess
 import argparse
+from datetime import datetime
 
 # Visual styling tokens for visual accessibility (ADHD/Dyslexia clear parsing)
 C_RESET = "\033[0m"
@@ -41,7 +42,7 @@ def get_dir_hash(directory):
     sha = hashlib.sha256()
     for root, _, files in os.walk(directory):
         # Exclude build output or dependency folders to avoid false dirty hits
-        if "node_modules" in root or "dist" in root or ".firebase" in root:
+        if "node_modules" in root or "dist" in root or ".firebase" in root or "dashboard" in root or "version.json" in root:
             continue
         for file in sorted(files):
             if file.startswith('.'):
@@ -59,6 +60,24 @@ def check_dashboard_dirty(cache):
     current_hash = get_dir_hash("dashboard")
     prev_hash = cache.get("dashboard", "")
     return current_hash != prev_hash, current_hash
+
+# Increment patch version (e.g. 1.0.2 -> 1.0.3)
+def increment_version(version_str):
+    try:
+        parts = version_str.split('.')
+        if len(parts) == 3:
+            patch = int(parts[2]) + 1
+            return f"{parts[0]}.{parts[1]}.{patch}"
+    except Exception:
+        pass
+    return "1.0.1"
+
+def get_git_commit():
+    try:
+        res = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True)
+        return res.stdout.strip()
+    except Exception:
+        return "local"
 
 def main():
     parser = argparse.ArgumentParser(description="Lx8 Labs Smart SRE Deploy Engine")
@@ -97,27 +116,60 @@ def main():
     dirty_targets = []
     subdomain_hashes = {}
     
-    # We must scan registry subdomains
     import yaml
     with open(REGISTRY_FILE, "r") as f:
         registry = yaml.safe_load(f)
 
-    for prod in registry.get("products", []):
+    git_commit = get_git_commit()
+    timestamp = datetime.utcnow().isoformat() + "Z"
+
+    # Bump versions and write version.json files locally
+    for prod in registry["products"]:
         sub = prod["subdomain"]
         sub_hash = get_dir_hash(sub)
         subdomain_hashes[sub] = sub_hash
         
         prev_sub_hash = cache.get(f"sub_{sub}", "")
-        # If the dashboard changed, all subdomains are dirty since we sync dashboard to each subdomain
-        if sub_hash != prev_sub_hash or dash_dirty or args.force:
+        is_dirty = sub_hash != prev_sub_hash or dash_dirty or args.force
+        
+        if is_dirty:
             dirty_targets.append(sub)
-            print_info(f"Target '{sub}' is DIRTY (needs sync/deploy)")
+            
+            # Increment version in memory
+            old_ver = prod.get("version", "1.0.0")
+            new_ver = increment_version(old_ver)
+            prod["version"] = new_ver
+            
+            print_info(f"Target '{sub}' is DIRTY: Bumping version {old_ver} -> {new_ver}")
+            
+            # Generate version.json payload
+            version_payload = {
+                "version": new_ver,
+                "commit": git_commit,
+                "buildTime": timestamp,
+                "subdomain": sub
+            }
+            
+            # Write to subdomain directory
+            if not args.dry_run:
+                # Ensure directory exists
+                if not os.path.exists(sub):
+                    os.makedirs(sub)
+                version_path = os.path.join(sub, "version.json")
+                with open(version_path, "w") as vf:
+                    json.dump(version_payload, vf, indent=2)
         else:
-            print_success(f"Target '{sub}' is CLEAN")
+            print_success(f"Target '{sub}' is CLEAN (running version {prod.get('version', '1.0.0')})")
 
     if not dirty_targets:
         print_success("Absolute clean state! All subdomains perfectly match cloud. Nothing to do.")
         sys.exit(0)
+
+    # Rewrite registry file with updated versions
+    if not args.dry_run:
+        with open(REGISTRY_FILE, "w") as f:
+            yaml.safe_dump(registry, f, default_flow_style=False, sort_keys=False)
+        print_success("Registry file updated with new semantic version numbers.")
 
     # 3. Compile React Dashboard
     if dash_dirty or args.force:
@@ -150,7 +202,16 @@ def main():
             sys.path.append(os.path.abspath("scripts"))
             import sync_infrastructure
             sync_infrastructure.update_firebase_config(registry)
-            print_success("Targets synced! Dashboard builds replicated to dirty subdomain endpoints.")
+            
+            # Also copy subdomain version.json to subdomain/dashboard/version.json
+            for sub in dirty_targets:
+                src_v = os.path.join(sub, "version.json")
+                dst_v = os.path.join(sub, "dashboard", "version.json")
+                if os.path.exists(src_v) and os.path.exists(os.path.dirname(dst_v)):
+                    import shutil
+                    shutil.copy2(src_v, dst_v)
+                    
+            print_success("Targets synced! Dashboard builds and version tags replicated cleanly.")
         except Exception as e:
             print_fail(f"Infrastructure sync failed: {str(e)}")
             sys.exit(1)
@@ -161,12 +222,16 @@ def main():
     for sub in dirty_targets:
         index_path = os.path.join(sub, "index.html")
         dash_path = os.path.join(sub, "dashboard", "index.html")
+        v_path = os.path.join(sub, "version.json")
         
         if not os.path.exists(index_path):
             print_fail(f"Validation failed: Missing primary '{index_path}' landing page!")
             validation_passed = False
         if not os.path.exists(dash_path):
             print_fail(f"Validation failed: Missing copied dashboard '{dash_path}' assets!")
+            validation_passed = False
+        if not os.path.exists(v_path):
+            print_fail(f"Validation failed: Missing version payload '{v_path}'!")
             validation_passed = False
             
     if not validation_passed:
