@@ -20,6 +20,12 @@ def sync_assets(target_dir):
     if os.path.exists(src_a11y):
         shutil.copy2(src_a11y, dst_a11y)
         
+    # Copy firebase-init.js
+    src_fb = "firebase-init.js"
+    dst_fb = os.path.join(target_dir, "firebase-init.js")
+    if os.path.exists(src_fb):
+        shutil.copy2(src_fb, dst_fb)
+        
     # Copy i18n/
     src_i18n = "i18n"
     dst_i18n = os.path.join(target_dir, "i18n")
