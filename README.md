@@ -17,18 +17,39 @@ The platform is designed with a strict zero-build-step philosophy, prioritizing 
 * **Machine Experience (MX):** Extensive `application/ld+json` schema implementations for seamless product ingestion by LLMs and search engines.
 * **Authentication & Backend:** (In Progress) Firebase Authentication and Cloud Firestore for subscription management and course gating.
 
-## Project Structure
+## Project Structure & Architecture
+
+The website codebase operates as the central control plane inside the larger `~/Lx8Labs/` workspace. For a comprehensive overview of systems design, SRE sync pipelines, and the multi-language (i18n) framework, see [ARCHITECTURE.md](file:///Users/alexeiferreira/Lx8Labs/internal/Website/ARCHITECTURE.md).
 
 ```text
-├── index.html            # Landing & Core Navigation
-├── tupa.html             # Tupã IDE Product Overview
-├── shop.html             # Storefront (Subscriptions & Merchandise)
-├── theory.html           # Interactive 3D Physics Engine (WebGL)
-├── aimem.html            # AI-Memory Protocol Documentation
-├── global.css            # Centralized Design Tokens
-├── og-image.png          # Rasterized OpenGraph Preview
-└── .gitignore            # Excluded artifacts (certificates, logs)
+├── index.html            # Main Landing & Core Navigation
+├── aimem/                # Subdomain public folder: aimem.lx8labs.com
+├── tupa/                 # Subdomain public folder: tupa.lx8labs.com
+├── bsms/                 # Subdomain public folder: bsms.lx8labs.com
+├── bipartitebook/        # Subdomain public folder: bipartitebook.lx8labs.com
+├── installations/        # Subdomain public folder: installations.lx8labs.com
+├── mattermem/            # Subdomain public folder: mattermem.lx8labs.com
+├── i18n/                 # Centralized multi-language translations and engine
+├── scripts/              # SRE infrastructure & automated sync scripts
+├── global.css            # Centralized Design Tokens & CSS Engine
+├── firebase-init.js      # Consolidated Firebase Auth, DB, & Telemetry
+├── firebase.json         # Orchestrated Firebase Hosting config
+└── ARCHITECTURE.md       # Master system design specifications
 ```
+
+## SRE & Infrastructure Synchronization
+
+We use an automated pipeline to sync subdomains, configure CDN caching headers, and replicate translation/telemetry assets recursively across all site targets:
+
+1. Maintain the product registry in `lx8_registry.yaml`.
+2. Sync the configurations and folders locally:
+   ```bash
+   python3 scripts/sync_infrastructure.py
+   ```
+3. Deploy to production:
+   ```bash
+   firebase deploy
+   ```
 
 ## Local Development
 
@@ -41,17 +62,9 @@ The platform requires no local build steps (e.g., no Node.js/NPM builds required
    ```
 3. Access the site via `http://localhost:8000`.
 
-### Secure Tunneling (Auth Workflows)
-Modern browsers (like Firefox) strictly enforce HTTPS for WebCrypto and Authentication callbacks. If you are developing Firebase Auth flows locally, establish an encrypted reverse tunnel:
-```bash
-ssh -R 80:localhost:8000 nokey@localhost.run
-```
+## Intellectual Property & Licensing
 
-## Production Guidelines
-
-* **Asset Optimization:** All OpenGraph and social preview images must be rasterized (`.png`, `.jpg`, `.webp`); SVG previews are strictly unsupported by the OpenGraph standard.
-* **Performance Budget:** Ensure all external scripts (e.g., `three.min.js`) utilize the `defer` attribute to prevent blocking the HTML parser.
-* **Accessibility (a11y):** All structural elements must maintain strict WCAG compliance (e.g., explicit `type="button"`, unique ARIA landmarks).
+The core repositories, native source files (Rust, Swift, Metal), and raw manuscripts within the `~/Lx8Labs/` taxonomy are **strictly proprietary and confidential intellectual property of Lx8 Labs**. The public website and SRE deployment scripts are licensed strictly under their respective headers; no proprietary algorithms or product core models are exposed.
 
 ---
 *© 2026 Lx8 Labs. All rights reserved.*

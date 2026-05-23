@@ -4,7 +4,14 @@
 
 The site is the studio's public surface. Four products (Tupã IDE, aimem, Algorithm Lab, Light/Gravity/Time), open research, hands-on engineering courses, and fixed-scope consulting for teams that take operability seriously.
 
-Stack is intentionally simple: vanilla HTML + CSS + JavaScript, Three.js r128 from CDN, no build step. Deployed via GitHub Pages from the public `LX8/lx8-website` repository. GDPR-compliant fonts via Bunny.
+Stack is intentionally simple: vanilla HTML + CSS + JavaScript, Three.js r128 from CDN, no build step. Deployed via Firebase Hosting from the public `LX8/lx8-website` repository, serving multiple standalone site targets on subdomains with zero bandwidth origin costs via Edge CDN caching.
+
+## Corporate Control Plane Architecture
+All repositories operate within the `~/Lx8Labs/` Enterprise Workspace (I-P-P-P Taxonomy: docs, incubator, products, services, internal).
+`lx8labs.com` serves as the centralized OS/Control Plane:
+- **SSO**: Persistent, unified authentication state mapped across all subdomains via domain cookies (`domain=.lx8labs.com`).
+- **SRE Sync**: Automated asset replication of `i18n` translations, `a11y.js`, and `firebase-init.js` to all subdomain directories via `scripts/sync_infrastructure.py`.
+- **Telemetry**: Cost-free, real-time APM telemetry mapped asynchronously via Firebase Performance Monitoring.
 
 ## Pages
 
