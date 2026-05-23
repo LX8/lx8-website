@@ -14,7 +14,7 @@
       "rewrites": [
         {
           "source": "/dashboard/**",
-          "destination": "/dashboard/dist/index.html"
+          "destination": "/dashboard/index.html"
         },
         {
           "source": "**",
@@ -44,7 +44,7 @@
       "rewrites": [
         {
           "source": "/dashboard/**",
-          "destination": "/dashboard/dist/index.html"
+          "destination": "/dashboard/index.html"
         },
         {
           "source": "**",
@@ -74,7 +74,7 @@
       "rewrites": [
         {
           "source": "/dashboard/**",
-          "destination": "/dashboard/dist/index.html"
+          "destination": "/dashboard/index.html"
         },
         {
           "source": "**",
@@ -94,8 +94,8 @@
       ]
     },
     {
-      "target": "bsms",
-      "public": "bsms",
+      "target": "suit",
+      "public": "suit",
       "ignore": [
         "firebase.json",
         "**/.*",
@@ -104,7 +104,7 @@
       "rewrites": [
         {
           "source": "/dashboard/**",
-          "destination": "/dashboard/dist/index.html"
+          "destination": "/dashboard/index.html"
         },
         {
           "source": "**",
@@ -134,7 +134,7 @@
       "rewrites": [
         {
           "source": "/dashboard/**",
-          "destination": "/dashboard/dist/index.html"
+          "destination": "/dashboard/index.html"
         },
         {
           "source": "**",
@@ -164,7 +164,7 @@
       "rewrites": [
         {
           "source": "/dashboard/**",
-          "destination": "/dashboard/dist/index.html"
+          "destination": "/dashboard/index.html"
         },
         {
           "source": "**",
@@ -194,7 +194,7 @@
       "rewrites": [
         {
           "source": "/dashboard/**",
-          "destination": "/dashboard/dist/index.html"
+          "destination": "/dashboard/index.html"
         },
         {
           "source": "**",

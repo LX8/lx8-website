@@ -34,6 +34,15 @@ def sync_assets(target_dir):
             shutil.rmtree(dst_i18n)
         shutil.copytree(src_i18n, dst_i18n)
 
+    # Copy built dashboard dist to subdomain/dashboard/
+    src_dash = os.path.join("dashboard", "dist")
+    dst_dash = os.path.join(target_dir, "dashboard")
+    if os.path.exists(src_dash):
+        if os.path.exists(dst_dash):
+            shutil.rmtree(dst_dash)
+        shutil.copytree(src_dash, dst_dash)
+        print(f"  -> Synced Dashboard dist to {dst_dash}")
+
 def load_registry():
     if not os.path.exists(REGISTRY_FILE):
         print(f"Error: {REGISTRY_FILE} not found.")
@@ -79,7 +88,7 @@ def update_firebase_config(registry_data):
             "rewrites": [
                 {
                     "source": "/dashboard/**",
-                    "destination": "/dashboard/dist/index.html"
+                    "destination": "/dashboard/index.html"
                 },
                 {
                     "source": "**",

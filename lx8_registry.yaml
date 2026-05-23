@@ -24,7 +24,7 @@ products:
 
   # --- Autonomous Systems ---
   - id: lx8-bmss
-    subdomain: bsms
+    subdomain: suit
     category: Autonomous Systems
     description: Aegis Morphic Swarm Suit
     status: Active

@@ -87,3 +87,24 @@ Lx8 Labs maintains a strict separation between open-source configurations/APIs a
 1. **Repository Isolation**: Git repositories in `products/` (such as `tupan-ide`) utilize independent origin URLs and are hosted within private corporate sub-organizations.
 2. **Global Git Commit Rules**: All SRE agent commits to the public website repository must utilize the user-authorized privacy email (`7157078+LeKCei@users.noreply.github.com`) to prevent leakage of internal engineering email topologies.
 3. **Environment Separation**: Local API endpoints, database encryption keys, and payment credentials are kept strictly in localized `.env.local` files which are globally gitignored.
+
+---
+
+## 6. Cognitive Accessibility & Neurodivergent-Optimized (CANO) Framework
+
+To support developers and readers with ADHD, dyslexia, and visual/cognitive fatigue, the platform integrates a native, zero-dependency accessibility suite directly inside `a11y.js`:
+
+### 6.1 Bionic Focus Guide (ADHD Eye Fixation)
+- **Problem**: Readers with ADHD or cognitive fatigue often struggle to stay focused on long paragraphs of text, experiencing saccadic wandering and parsing lag.
+- **Solution**: A custom non-blocking text-node parser splits paragraphs into words and wraps the first **45%** of each word in a bold span (e.g., `<b>Bio</b>nic`). 
+- **Implementation**: The parser uses `document.createTreeWalker` to safely modify only pure text nodes, leaving HTML structures, scripts, canvas, and code blocks completely untouched. Toggling is handled instantaneously via the `bionic-mode` body class.
+
+### 6.2 Line Reading Ruler (Saccadic Anchor)
+- **Problem**: Dyslexia and visual fatigue can cause lines of text to blend or drift visually, making Y-axis tracking difficult.
+- **Solution**: A horizontal focus ruler overlay is dynamically injected.
+- **Implementation**: An element with sub-pixel translation (`translateY`) follows the user's cursor Y-coordinate, creating a subtle, transparent focus channel (`background: rgba(99,102,241,0.06)`) flanked by dashed guidelines to anchor the eye to a single line.
+
+### 6.3 Atkinson Legibility Engine (Dyslexia Base)
+- **Problem**: Traditional fonts contain highly symmetrical character glyphs (e.g., `p`, `q`, `b`, `d`) which can easily flip or rotate in dyslexic readers.
+- **Solution**: We integrate the **Atkinson Hyperlegible** font family (designed by the Braille Institute) which prioritizes radical character differentiation.
+- **Implementation**: The engine loads the font asynchronously via Bunny Fonts, increasing letter-spacing (`0.04em`), word-spacing (`0.18em`), and line-height (`1.85`) instantly when the `dyslexic-mode` class is active.

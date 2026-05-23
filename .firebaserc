@@ -28,6 +28,9 @@
         ],
         "mattermem": [
           "lx8-mattermem"
+        ],
+        "suit": [
+          "lx8-bmss"
         ]
       }
     }
