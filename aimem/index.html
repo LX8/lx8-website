@@ -207,19 +207,19 @@
     <div class="aimem-mark">⌘</div>
     <div class="aimem-word">aimem</div>
   </div>
-  <h1><em>Memory,</em><br/>made canonical.</h1>
-  <p class="hero-sub">One markdown source. Every AI tool reads from here. <strong>Edit once</strong>, the per-tool adapters keep the rest in sync — <em>no more N copies that drift</em>.</p>
+  <h1 data-i18n="aimem.hero_title"><em>Memory,</em><br/>made canonical.</h1>
+  <p class="hero-sub" data-i18n="aimem.hero_subtitle">One markdown source. Every AI tool reads from here. <strong>Edit once</strong>, the per-tool adapters keep the rest in sync — <em>no more N copies that drift</em>.</p>
 
   <div class="chips-row">
-    <span class="chip"><span class="chip-dot cd-green"></span>Open source</span>
-    <span class="chip"><span class="chip-dot cd-cyan"></span>Used in production</span>
-    <span class="chip"><span class="chip-dot cd-ind"></span>MCP-ready</span>
+    <span class="chip"><span class="chip-dot cd-green"></span><span data-i18n="aimem.chip_os">Open source</span></span>
+    <span class="chip"><span class="chip-dot cd-cyan"></span><span data-i18n="aimem.chip_prod">Used in production</span></span>
+    <span class="chip"><span class="chip-dot cd-ind"></span><span data-i18n="aimem.chip_mcp">MCP-ready</span></span>
   </div>
 
   <div class="cta-row">
-    <a class="btn btn-p" href="https://github.com/LeKCei/ai-memory" target="_blank" rel="noopener">View on GitHub ↗</a>
-    <a class="btn btn-g" href="#install">Install</a>
-    <a class="btn btn-g" href="#why">Why aimem</a>
+    <a class="btn btn-p" href="https://github.com/LeKCei/ai-memory" target="_blank" rel="noopener" data-i18n="aimem.btn_github">View on GitHub ↗</a>
+    <a class="btn btn-g" href="#install" data-i18n="aimem.btn_install">Install</a>
+    <a class="btn btn-g" href="#why" data-i18n="aimem.btn_why">Why aimem</a>
   </div>
 </section>
 
@@ -297,59 +297,59 @@
 
 <!-- Why -->
 <section class="content" id="why">
-  <div class="lbl">The problem</div>
-  <h2>Every AI tool ships <em>its own memory format</em>.</h2>
+  <div class="lbl" data-i18n="aimem.section_problem_lbl">The problem</div>
+  <h2 data-i18n="aimem.section_problem_h">Every AI tool ships <em>its own memory format</em>.</h2>
   <div class="problem">
-    <p class="problem-q">CLAUDE.md, GEMINI.md, .aider.conf.yml, .cursorrules, AGENTS.md… seven files, all your context.</p>
-    <p class="problem-a">Maintaining N copies of "who I am, how I work, what we decided" across every assistant is a daily tax. They drift. They disagree. They're impossible to keep current. <strong>aimem fixes this by inverting the relationship</strong>: there is one canonical store, and the tools read derivative views of it.</p>
+    <p class="problem-q" data-i18n="aimem.section_problem_q">CLAUDE.md, GEMINI.md, .aider.conf.yml, .cursorrules, AGENTS.md… seven files, all your context.</p>
+    <p class="problem-a" data-i18n="aimem.section_problem_a">Maintaining N copies of "who I am, how I work, what we decided" across every assistant is a daily tax. They drift. They disagree. They're impossible to keep current. <strong>aimem fixes this by inverting the relationship</strong>: there is one canonical store, and the tools read derivative views of it.</p>
   </div>
 </section>
 
 <!-- Features -->
 <section class="content">
-  <div class="lbl">Capabilities</div>
-  <h2>Six things <em>aimem</em> does well.</h2>
-  <p class="sdesc">Plain markdown at the bottom. Research-grounded structure on top. A build step in between that handles every tool's quirks.</p>
+  <div class="lbl" data-i18n="aimem.section_capabilities_lbl">Capabilities</div>
+  <h2 data-i18n="aimem.section_capabilities_h">Six things <em>aimem</em> does well.</h2>
+  <p class="sdesc" data-i18n="aimem.section_capabilities_sub">Plain markdown at the bottom. Research-grounded structure on top. A build step in between that handles every tool's quirks.</p>
 
   <div class="features">
     <div class="feat" style="--c: #67e8f9;">
       <div class="feat-num">01</div>
-      <div class="feat-h">Canonical markdown</div>
-      <p>Edit one file under <code>docs/</code>, <code>config/</code>, <code>notes/</code>… Everything else stays in sync because everything is generated.</p>
+      <div class="feat-h" data-i18n="aimem.feat_1_h">Canonical markdown</div>
+      <p data-i18n="aimem.feat_1_p">Edit one file under <code>docs/</code>, <code>config/</code>, <code>notes/</code>… Everything else stays in sync because everything is generated.</p>
     </div>
     <div class="feat" style="--c: #a78bfa;">
       <div class="feat-num">02</div>
-      <div class="feat-h">Per-tool adapters</div>
-      <p>One build script emits <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>GEMINI.md</code>, Aider config — exactly what each tool reads.</p>
+      <div class="feat-h" data-i18n="aimem.feat_2_h">Per-tool adapters</div>
+      <p data-i18n="aimem.feat_2_p">One build script emits <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>GEMINI.md</code>, Aider config — exactly what each tool reads.</p>
     </div>
     <div class="feat" style="--c: #818cf8;">
       <div class="feat-num">03</div>
-      <div class="feat-h">Structured taxonomy</div>
-      <p>Six unified memory kinds — documentation, semantic rules, workflows, event logs, reflections, references.</p>
+      <div class="feat-h" data-i18n="aimem.feat_3_h">Structured taxonomy</div>
+      <p data-i18n="aimem.feat_3_p">Six unified memory kinds — documentation, semantic rules, workflows, event logs, reflections, references.</p>
     </div>
     <div class="feat" style="--c: #fbbf24;">
       <div class="feat-num">04</div>
-      <div class="feat-h">MCP-native</div>
-      <p>Runtime <code>briefing</code>, <code>search</code>, <code>log-turn</code>, <code>write-proposal</code> via Model Context Protocol. Live memory, not just static files.</p>
+      <div class="feat-h" data-i18n="aimem.feat_4_h">MCP-native</div>
+      <p data-i18n="aimem.feat_4_p">Runtime <code>briefing</code>, <code>search</code>, <code>log-turn</code>, <code>write-proposal</code> via Model Context Protocol. Live memory, not just static files.</p>
     </div>
     <div class="feat" style="--c: #34d399;">
       <div class="feat-num">05</div>
-      <div class="feat-h">42% token reduction</div>
-      <p>Compact-mode adapters strip <em>Why</em> and <em>How</em> rationale at build. Sources stay verbose for humans, adapters stay terse for context windows.</p>
+      <div class="feat-h" data-i18n="aimem.feat_5_h">42% token reduction</div>
+      <p data-i18n="aimem.feat_5_p">Compact-mode adapters strip <em>Why</em> and <em>How</em> rationale at build. Sources stay verbose for humans, adapters stay terse for context windows.</p>
     </div>
     <div class="feat" style="--c: #67e8f9;">
       <div class="feat-num">06</div>
-      <div class="feat-h">Open source, MIT</div>
-      <p>Hand-curated, single-author, public so others can fork. Used in production by Lx8 Labs across every project.</p>
+      <div class="feat-h" data-i18n="aimem.feat_6_h">Open source, MIT</div>
+      <p data-i18n="aimem.feat_6_p">Hand-curated, single-author, public so others can fork. Used in production by Lx8 Labs across every project.</p>
     </div>
   </div>
 </section>
 
 <!-- Research grounding -->
 <section class="content">
-  <div class="lbl">Backed by research</div>
-  <h2>Built on <em>peer-reviewed memory architectures</em>.</h2>
-  <p class="sdesc">aimem isn't an opinion. It's a working implementation of seven papers, in markdown.</p>
+  <div class="lbl" data-i18n="aimem.section_research_lbl">Backed by research</div>
+  <h2 data-i18n="aimem.section_research_h">Built on <em>peer-reviewed memory architectures</em>.</h2>
+  <p class="sdesc" data-i18n="aimem.section_research_sub">aimem isn't an opinion. It's a working implementation of seven papers, in markdown.</p>
 
   <div class="papers">
     <span class="paper-pill" title="Sumers et al., Princeton 2023">CoALA · 2023</span>
@@ -365,9 +365,9 @@
 
 <!-- Install -->
 <section class="content" id="install">
-  <div class="lbl">Install</div>
-  <h2>Three commands, in <em>under a minute</em>.</h2>
-  <p class="sdesc">Clone, build, symlink. From there: edit any markdown file and the tool-specific adapters regenerate.</p>
+  <div class="lbl" data-i18n="aimem.section_install_lbl">Install</div>
+  <h2 data-i18n="aimem.section_install_h">Three commands, in <em>under a minute</em>.</h2>
+  <p class="sdesc" data-i18n="aimem.section_install_sub">Clone, build, symlink. From there: edit any markdown file and the tool-specific adapters regenerate.</p>
 
   <div class="install-card">
 <span class="cmt"># Clone the repo</span><br/>
@@ -380,8 +380,8 @@ make sync<span class="cmt"> &nbsp;# build, lint, commit (auto-message), push</sp
   </div>
 
   <div class="cta-row" style="margin-top: 1rem;">
-    <a class="btn btn-p" href="https://github.com/LeKCei/ai-memory" target="_blank" rel="noopener">Open on GitHub ↗</a>
-    <a class="btn btn-g" href="/research/">Why memory matters</a>
+    <a class="btn btn-p" href="https://github.com/LeKCei/ai-memory" target="_blank" rel="noopener" data-i18n="aimem.btn_github">Open on GitHub ↗</a>
+    <a class="btn btn-g" href="/research/" data-i18n="aimem.btn_research">Why memory matters</a>
   </div>
 </section>
 

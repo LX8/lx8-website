@@ -1,5 +1,36 @@
 {
   "projects": {
     "default": "lx8-labs-website"
-  }
+  },
+  "targets": {
+    "lx8-labs-website": {
+      "hosting": {
+        "main": [
+          "lx8-labs-website"
+        ],
+        "aimem": [
+          "lx8-aimem"
+        ],
+        "tupa": [
+          "lx8-tupa"
+        ],
+        "bsms": [
+          "lx8-bmss"
+        ],
+        "bipartitebook": [
+          "bipartitebook"
+        ],
+        "tupaide": [
+          "lx8-tupa-ide"
+        ],
+        "installations": [
+          "lx8-installations"
+        ],
+        "mattermem": [
+          "lx8-mattermem"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

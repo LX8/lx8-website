@@ -306,247 +306,12 @@
 
 <section class="courses" id="main">
   <div class="courses-grid">
-
-    <article class="course-card r" data-tag="devops cloud" style="--c:#818cf8">
-      <div class="c-head">
-        <div class="c-ico">K8s</div>
-        <div class="c-meta">
-          <span class="c-level">Intermediate · Production</span>
-          <span class="c-name">Kubernetes for Production</span>
-        </div>
-      </div>
-      <p class="c-desc">From the API server up. By the end you operate clusters confidently — not just <code>kubectl apply</code>, but the <em>why</em> behind etcd quorums, scheduler decisions, and node failure modes.</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 8 modules</span>
-        <span class="c-curr-item">Control plane internals · etcd · API server · scheduler · controller manager</span>
-        <span class="c-curr-item">Workloads · Deployments, StatefulSets, DaemonSets · when to use each</span>
-        <span class="c-curr-item">Networking · CNI · Service types · Ingress · NetworkPolicy</span>
-        <span class="c-curr-item">Storage · CSI · PV/PVC · StorageClass · backup strategy</span>
-        <span class="c-curr-item">Observability · metrics, logs, traces · what to alert on</span>
-        <span class="c-curr-item">Production patterns · HPA, PDB, taints, topology spread</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 18h</span>
-          <span class="c-mode">💻 Self-paced + 2 live sessions</span>
-        </div>
-        <span class="c-status cs-live">● Live</span>
-      </div>
-    </article>
-
-    <article class="course-card r d1" data-tag="ai" style="--c:#67e8f9">
-      <div class="c-head">
-        <div class="c-ico">AI</div>
-        <div class="c-meta">
-          <span class="c-level">Advanced · Production</span>
-          <span class="c-name">AI in Production</span>
-        </div>
-      </div>
-      <p class="c-desc">LLMs and ML systems past the demo. Inference cost, observability, fallback chains, prompt versioning, evals — the boring infrastructure that keeps AI products from embarrassing you on Hacker News.</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 7 modules</span>
-        <span class="c-curr-item">Inference serving · vLLM, TGI, Triton · batching, KV cache, GPU economics</span>
-        <span class="c-curr-item">Prompt engineering at scale · versioning, A/B, golden sets</span>
-        <span class="c-curr-item">Evaluation · LLM-as-judge, ground-truth, regression suites</span>
-        <span class="c-curr-item">Observability · LangSmith / Langfuse / Helicone — and rolling your own</span>
-        <span class="c-curr-item">Retrieval · embeddings, hybrid search, reranking, chunking that doesn't lie</span>
-        <span class="c-curr-item">Cost control · model routing, caching, semantic dedup</span>
-        <span class="c-curr-item">Safety · prompt-injection, PII filtering, fallback chains</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 22h</span>
-          <span class="c-mode">💻 Self-paced + 4 live labs</span>
-        </div>
-        <span class="c-status cs-live">● Live</span>
-      </div>
-    </article>
-
-    <article class="course-card r d2" data-tag="cloud devops" style="--c:#34d399">
-      <div class="c-head">
-        <div class="c-ico">☁</div>
-        <div class="c-meta">
-          <span class="c-level">Intermediate · Architecture</span>
-          <span class="c-name">Cloud Architecture (AWS + GCP)</span>
-        </div>
-      </div>
-      <p class="c-desc">Pick the right primitives for your scale, not the ones the cloud bill calculator nudges you toward. Multi-region, cost modeling, vendor lock, when "managed" is a trap.</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 6 modules</span>
-        <span class="c-curr-item">Compute mental model · VMs vs. containers vs. functions vs. dedicated</span>
-        <span class="c-curr-item">Networking · VPC peering, Transit Gateway, private endpoints</span>
-        <span class="c-curr-item">Storage tiers · S3 / GCS economics, Glacier vs. Deep Archive</span>
-        <span class="c-curr-item">Data services · RDS, Aurora, Spanner, Bigtable — pick the right one</span>
-        <span class="c-curr-item">IaC · Terraform modules, drift detection, secret handling</span>
-        <span class="c-curr-item">Cost · FinOps fundamentals, RI/SP modeling, anomaly detection</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 16h</span>
-          <span class="c-mode">💻 Self-paced</span>
-        </div>
-        <span class="c-status cs-live">● Live</span>
-      </div>
-    </article>
-
-    <article class="course-card r" data-tag="security devops" style="--c:#f59e0b">
-      <div class="c-head">
-        <div class="c-ico">🛡</div>
-        <div class="c-meta">
-          <span class="c-level">Intermediate · Practitioner</span>
-          <span class="c-name">DevSecOps Practitioner</span>
-        </div>
-      </div>
-      <p class="c-desc">Shift left without breaking your team. SAST, DAST, SCA, IaC scanning, secrets management, supply-chain attacks — what's signal, what's noise, what to actually wire into CI.</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 7 modules</span>
-        <span class="c-curr-item">Threat modeling · STRIDE in 30 minutes</span>
-        <span class="c-curr-item">SAST + SCA · Snyk, Semgrep, Trivy — tuning out the noise</span>
-        <span class="c-curr-item">Secrets · Vault, KMS, sealed-secrets, why .env still leaks</span>
-        <span class="c-curr-item">SBOM + provenance · SLSA levels, sigstore, cosign</span>
-        <span class="c-curr-item">Runtime · Falco, eBPF-based detection, audit logs</span>
-        <span class="c-curr-item">Supply chain · npm install considered dangerous</span>
-        <span class="c-curr-item">Incident response · what a useful runbook actually looks like</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 14h</span>
-          <span class="c-mode">💻 Self-paced + 1 CTF lab</span>
-        </div>
-        <span class="c-status cs-wait">In development</span>
-      </div>
-    </article>
-
-    <article class="course-card r d1" data-tag="devops" style="--c:#a78bfa">
-      <div class="c-head">
-        <div class="c-ico">CI</div>
-        <div class="c-meta">
-          <span class="c-level">Beginner · Foundations</span>
-          <span class="c-name">DevOps Foundations</span>
-        </div>
-      </div>
-      <p class="c-desc">Designed for engineers starting out — the patterns we wish existed in 2013. Git workflows that don't fight you, CI/CD without the cult, Docker for people who want to ship — not collect badges.</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 5 modules</span>
-        <span class="c-curr-item">Git · branches, rebases, conflicts — the mental model</span>
-        <span class="c-curr-item">CI/CD · GitHub Actions, GitLab CI, what to test, what to skip</span>
-        <span class="c-curr-item">Docker · images, layers, multi-stage builds, security basics</span>
-        <span class="c-curr-item">Observability 101 · logs, metrics, traces — three pillars in practice</span>
-        <span class="c-curr-item">On-call hygiene · the runbook habit</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 12h</span>
-          <span class="c-mode">💻 Self-paced</span>
-        </div>
-        <span class="c-status cs-soon">Coming soon</span>
-      </div>
-    </article>
-
-    <article class="course-card r d2" data-tag="physics" style="--c:#fb7185">
-      <div class="c-head">
-        <div class="c-ico">⚛</div>
-        <div class="c-meta">
-          <span class="c-level">Advanced · Conceptual</span>
-          <span class="c-name">Theoretical Physics for Engineers</span>
-        </div>
-      </div>
-      <p class="c-desc">Special and general relativity, Maxwell, gauge theory — taught the way a working engineer can actually absorb. Built around the bipartite-theory research that drives our open papers. Math kept tight; intuition kept first.</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 6 modules</span>
-        <span class="c-curr-item">Special relativity · Lorentz transforms from one postulate</span>
-        <span class="c-curr-item">Maxwell unified · the field tensor and why c falls out</span>
-        <span class="c-curr-item">General relativity · the equivalence principle, tensors lightly</span>
-        <span class="c-curr-item">The bipartite reading · three channels of light–gravity coupling</span>
-        <span class="c-curr-item">Cosmology basics · FLRW, the cosmological constant, dark energy</span>
-        <span class="c-curr-item">Reading the literature · how to parse a Phys. Rev. paper</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 20h</span>
-          <span class="c-mode">💻 Self-paced + study group</span>
-        </div>
-        <span class="c-status cs-soon">Coming soon</span>
-      </div>
-    <article class="course-card r" data-tag="rust" style="--c:#f97316">
-      <div class="c-head">
-        <div class="c-ico">RS</div>
-        <div class="c-meta">
-          <span class="c-level">Advanced · Systems</span>
-          <span class="c-name">Native Desktop Apps with Rust</span>
-        </div>
-      </div>
-      <p class="c-desc">Build blazingly fast, cross-platform native applications. Forget Electron bloat. We cover <code>tao</code>, <code>wry</code>, Slint UI, and integrating native PTYs and external processes.</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 5 modules</span>
-        <span class="c-curr-item">Event loops & Windowing · tao, winit, multi-window clusters</span>
-        <span class="c-curr-item">Cross-platform UI · Slint, cosmic-text, tiny-skia</span>
-        <span class="c-curr-item">Native Interop · portable-pty, async bridges</span>
-        <span class="c-curr-item">State Management · IPC, rust channels, thread-safe reactivity</span>
-        <span class="c-curr-item">Performance · zero-height scrollviews, GPU rendering profiling</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 15h</span>
-          <span class="c-mode">💻 Self-paced</span>
-        </div>
-        <span class="c-status cs-live">● Live</span>
-      </div>
-    </article>
-
-    <article class="course-card r d1" data-tag="ai" style="--c:#c084fc">
-      <div class="c-head">
-        <div class="c-ico">🤖</div>
-        <div class="c-meta">
-          <span class="c-level">Intermediate · Applied AI</span>
-          <span class="c-name">Autonomous AI Agents & Memory Systems</span>
-        </div>
-      </div>
-      <p class="c-desc">Move beyond simple chat bots. Build autonomous agents with cross-tool adapters, canonical source memory, and robust fallback endpoints (vLLM, Ollama, LM Studio).</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 5 modules</span>
-        <span class="c-curr-item">Memory Architecture · Ephemeral context vs long-term vector stores</span>
-        <span class="c-curr-item">Tool Use & Adapters · executing code, reading files, bounded sandboxes</span>
-        <span class="c-curr-item">State Machines · Planning modes, self-correction loops</span>
-        <span class="c-curr-item">Local LLM Integration · llama-server, MLX, vLLM presets</span>
-        <span class="c-curr-item">Prompt Engineering · structured output, system schemas</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 12h</span>
-          <span class="c-mode">💻 Self-paced + Lab</span>
-        </div>
-        <span class="c-status cs-live">● Live</span>
-      </div>
-    </article>
-
-    <article class="course-card r d2" data-tag="rust devops" style="--c:#38bdf8">
-      <div class="c-head">
-        <div class="c-ico">⌨️</div>
-        <div class="c-meta">
-          <span class="c-level">Advanced · Engineering</span>
-          <span class="c-name">Advanced IDE Architecture</span>
-        </div>
-      </div>
-      <p class="c-desc">Look under the hood of modern code editors. From rope data structures for fast text edits to LSP integration for workspace-wide diagnostics and breadcrumbs.</p>
-      <div class="c-curr">
-        <span class="c-curr-h">Curriculum · 5 modules</span>
-        <span class="c-curr-item">Text Buffers · Rope structures, gap buffers, tree-sitter integration</span>
-        <span class="c-curr-item">Language Server Protocol · publishDiagnostics, workspace scanning</span>
-        <span class="c-curr-item">Editor UI · split panes, activity rails, virtualized scrolling</span>
-        <span class="c-curr-item">File Systems · gitignore-aware scanning, debounced watchers</span>
-        <span class="c-curr-item">Plugin Systems · WASM runtimes, sandboxed extensions</span>
-      </div>
-      <div class="c-foot">
-        <div class="c-foot-left">
-          <span class="c-dur">⏱ 18h</span>
-          <span class="c-mode">💻 Self-paced</span>
-        </div>
-        <span class="c-status cs-soon">Coming soon</span>
-      </div>
-    </article>
-
-  </div>
+    <!-- Courses loaded dynamically -->
+    <div id="courses-loader" style="grid-column: 1 / -1; padding: 4rem 0; text-align: center;">
+      <div style="display: inline-block; width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--ind3); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+      <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+    </div>
+</div>
 </section>
 
 <section class="cta">
@@ -586,17 +351,16 @@
   const nav = document.getElementById('nav');
   addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 50), { passive: true });
 
-  const ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } }), { threshold: 0.1 });
+  window.ro = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } }), { threshold: 0.1 });
   document.querySelectorAll('.r').forEach(el => ro.observe(el));
 
   // Filter buttons
-  const cards = document.querySelectorAll('.course-card');
   document.querySelectorAll('.filter').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const tag = btn.dataset.tag;
-      cards.forEach(c => {
+      document.querySelectorAll('.course-card').forEach(c => {
         const tags = (c.dataset.tag || '').split(' ');
         c.classList.toggle('c-card-hide', tag !== 'all' && !tags.includes(tag));
       });
@@ -613,5 +377,82 @@
   });
 </script>
 
+
+<script type="module">
+  import { db, collection, getDocs } from '../firebase-init.js';
+
+  async function loadCourses() {
+    const grid = document.querySelector('.courses-grid');
+    try {
+      const qs = await getDocs(collection(db, 'courses'));
+      const loader = document.getElementById('courses-loader');
+      if(loader) loader.remove();
+
+      let i = 0;
+      qs.forEach(doc => {
+        const d = doc.data();
+        let delayClass = '';
+        if (i % 3 === 1) delayClass = 'd1';
+        else if (i % 3 === 2) delayClass = 'd2';
+
+        const statusClass = d.status === 'live' ? 'cs-live' : (d.status === 'upcoming' ? 'cs-soon' : 'cs-wait');
+        const statusText = d.status === 'live' ? '● Live' : (d.status === 'upcoming' ? 'Coming soon' : 'In development');
+        
+        let currHtml = '<span class="c-curr-h">Curriculum</span>';
+        if (d.curriculum && Array.isArray(d.curriculum)) {
+            d.curriculum.forEach(item => {
+                currHtml += `<span class="c-curr-item">${item}</span>`;
+            });
+        }
+
+        const html = `
+          <div class="c-head">
+            <div class="c-ico">${d.icon || ''}</div>
+            <div class="c-meta">
+              <span class="c-level">${d.level || ''}</span>
+              <span class="c-name">${d.title}</span>
+            </div>
+          </div>
+          <p class="c-desc">${d.description || ''}</p>
+          <div class="c-curr">${currHtml}</div>
+          <div class="c-foot">
+            <div class="c-foot-left">
+              <span class="c-dur">⏱ ${d.duration || ''}</span>
+              <span class="c-mode">💻 ${d.mode || ''}</span>
+            </div>
+            <span class="c-status ${statusClass}">${statusText}</span>
+          </div>
+        `;
+        
+        const art = document.createElement('article');
+        art.className = `course-card r ${delayClass}`;
+        art.dataset.tag = d.tag || '';
+        art.style.setProperty('--c', d.color || '#6366f1');
+        art.innerHTML = html;
+        
+        // Add spotlight logic
+        art.addEventListener('pointermove', e => {
+          const rect = art.getBoundingClientRect();
+          art.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+          art.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+        });
+        
+        grid.appendChild(art);
+        i++;
+      });
+      
+      // Re-trigger intersection observer for newly added cards
+      if (window.ro) {
+        document.querySelectorAll('.course-card.r').forEach(el => window.ro.observe(el));
+      }
+    } catch (e) {
+      console.error("Error loading courses", e);
+      grid.innerHTML = '<div style="grid-column: 1/-1; color: var(--text2); text-align: center; padding: 2rem;">Failed to load courses. Please try again later.</div>';
+    }
+  }
+
+  loadCourses();
+</script>
 </body>
+
 </html>

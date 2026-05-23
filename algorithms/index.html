@@ -416,10 +416,6 @@ if (window.self !== window.top) {
   <main id="main">
     <div id="canvas-wrap">
       <canvas id="three-canvas"></canvas>
-      <div id="timeline-overlay">
-        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 1rem; color: #a5b4fc;">The Chronological Line of Algorithms</h2>
-        <div class="tl-svg-wrap" id="tl-svg-wrap"></div>
-      </div>
       <div id="algo-label">Bubble Sort</div>
       <div id="legend"></div>
       <button type="button" id="code-toggle" onclick="toggleCode()"><span>{ }</span><span class="ct-lbl"> Code</span></button>
@@ -450,13 +446,30 @@ if (window.self !== window.top) {
     <div id="code-header">
       <div class="ch-left">
         <h3 id="code-title">Bubble Sort</h3>
-        <span class="ch-tag" id="code-year">1956</span>
+        <span class="ch-tag" id="code-year" style="display:none;">1956</span>
       </div>
       <div class="ch-actions">
         <button type="button" id="code-copy" onclick="copyCode()" aria-label="Copy pseudocode" title="Copy pseudocode">⎘</button>
         <button type="button" id="code-close" onclick="toggleCode()" aria-label="Hide code">→</button>
       </div>
     </div>
+    
+    <div id="algo-details" style="padding: 1rem; border-bottom: 1px solid #18183a; flex-shrink: 0; display: flex; flex-direction: column; gap: 0.6rem;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <span class="info-year" id="info-year">1956</span>
+        <span class="info-creator" id="info-creator">Edward Friend</span>
+      </div>
+      <div class="algo-desc" id="info-desc" style="color: #c0c0e8; font-size: 0.74rem; line-height: 1.5;"></div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; font-size: 0.7rem;">
+        <div class="cx-row"><span class="cx-lbl">Time:</span> <span class="cx-val" id="info-time"></span></div>
+        <div class="cx-row"><span class="cx-lbl">Space:</span> <span class="cx-val" id="info-space"></span></div>
+        <div class="cx-row"><span class="cx-lbl">Stable:</span> <span class="cx-val" id="info-stable"></span></div>
+      </div>
+      
+      <div class="algo-history" id="info-history" style="font-style: italic; color: #818cf8; font-size: 0.7rem; border-top: 1px dashed #2a2a50; padding-top: 0.6rem; line-height: 1.45;"></div>
+    </div>
+
     <div id="code-body"></div>
     <div id="var-panel">
       <div class="vp-title">State</div>
@@ -1113,15 +1126,17 @@ function toggleCode() {
 
 function updateInfoPanel(key) {
   const d = INFO[key]; if (!d) return;
-  document.getElementById('info-name').textContent    = d.name;
+  const nameEl = document.getElementById('info-name');
+  if (nameEl) nameEl.textContent = d.name;
+  
   document.getElementById('info-year').textContent    = fmtYear(d.year);
-  document.getElementById('info-creator').textContent = d.creator;
+  document.getElementById('info-creator').textContent = d.creator || '';
   document.getElementById('info-time').textContent    = d.time;
   document.getElementById('info-space').textContent   = d.space;
   document.getElementById('info-stable').textContent  = d.stable;
   document.getElementById('info-desc').textContent    = d.desc;
   document.getElementById('info-history').textContent = d.history || '';
-  document.getElementById('algo-label').textContent   = `${d.name} · ${fmtYear(d.year)} · ${d.creator}`;
+  document.getElementById('algo-label').textContent   = `${d.name} · ${fmtYear(d.year)} · ${d.creator || ''}`;
 }
 
 // ── DYNAMIC SIDEBAR ───────────────────────────────────────────────────────
@@ -1175,38 +1190,33 @@ function renderSidebar() {
     list.appendChild(e); return;
   }
 
-  if (currentView === 'chrono') {
-    entries.sort((a, b) => a[1].year - b[1].year);
-    for (const era of ERA_BUCKETS) {
-      const bucket = entries.filter(([, d]) => era.test(d.year));
-      if (!bucket.length) continue;
-      const hdr = document.createElement('div'); hdr.className = 'era-hdr'; hdr.textContent = era.label;
-      list.appendChild(hdr);
-      for (const [k, d] of bucket) list.appendChild(makeBtn(k, d));
-    }
-  } else {
-    const groups = {};
-    for (const [k, d] of entries) (groups[d.cat] = groups[d.cat] || []).push([k, d]);
-    const order = ['sort','search','graph','tree','dp','string','ds','math'];
-    for (const cat of order) {
-      if (!groups[cat]) continue;
-      const hdr = document.createElement('div'); hdr.className = 'era-hdr'; hdr.textContent = CAT_NAMES[cat] || cat;
-      list.appendChild(hdr);
-      groups[cat].sort((a, b) => a[1].year - b[1].year);
-      for (const [k, d] of groups[cat]) list.appendChild(makeBtn(k, d));
-    }
+  // Enforce chronological sorting
+  entries.sort((a, b) => a[1].year - b[1].year);
+
+  for (let i = 0; i < entries.length; i++) {
+    const [k, d] = entries[i];
+    list.appendChild(makeTimelineNode(k, d, i === entries.length - 1));
   }
-  // Re-mark active button
-  document.querySelector(`.sb-btn[data-algo="${currentAlgo}"]`)?.classList.add('active');
 }
 
-function makeBtn(key, d) {
-  const b = document.createElement('button');
-  b.className = 'sb-btn';
-  b.dataset.cat = d.cat; b.dataset.algo = key;
-  b.innerHTML = `<span class="nm">${d.name}</span><span class="yr">${fmtYear(d.year)}</span>`;
-  b.addEventListener('click', () => selectAlgo(d.cat, key));
-  return b;
+function makeTimelineNode(key, d, isLast) {
+  const n = document.createElement('div');
+  n.className = 'tl-node';
+  if (key === currentAlgo) n.classList.add('active');
+  n.dataset.cat = d.cat; n.dataset.algo = key;
+  n.innerHTML = `
+    <div class="tl-year">${fmtYear(d.year)}</div>
+    <div style="position: relative;">
+      <div class="tl-dot"></div>
+      ${!isLast ? '<div class="tl-line" style="left: 5px; top: 16px;"></div>' : ''}
+    </div>
+    <div class="tl-content">
+      <div class="tl-name">${d.name}</div>
+      <div class="tl-creator">${d.creator ? d.creator.split(',')[0] : ''}</div>
+    </div>
+  `;
+  n.addEventListener('click', () => selectAlgo(d.cat, key));
+  return n;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -2338,7 +2348,7 @@ async function runAlgo() {
 
 function selectAlgo(cat, algo) {
   currentCat=cat; currentAlgo=algo;
-  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tl-node').forEach(b=>b.classList.remove('active'));
   document.querySelector(`[data-algo="${algo}"]`)?.classList.add('active');
   updateInfoPanel(algo);
   renderCode(algo);
@@ -2454,7 +2464,7 @@ function showKbd() { document.getElementById('kbd-overlay').classList.add('show'
 function closeKbd() { document.getElementById('kbd-overlay').classList.remove('show'); }
 
 function siblingAlgoKey(direction) {
-  const btns = [...document.querySelectorAll('.sb-btn')];
+  const btns = [...document.querySelectorAll('.tl-node')];
   if (!btns.length) return null;
   const idx = btns.findIndex(b => b.dataset.algo === currentAlgo);
   let nextIdx = idx + direction;
@@ -2589,7 +2599,7 @@ renderSidebar();
 updateInfoPanel(bootAlgo);
 renderCode(bootAlgo);
 currentCat = bootCat; currentAlgo = bootAlgo;
-document.querySelector(`.sb-btn[data-algo="${bootAlgo}"]`)?.classList.add('active');
+document.querySelector(`.tl-node[data-algo="${bootAlgo}"]`)?.classList.add('active');
 initViz(bootCat, bootAlgo);
 setTimeout(maybeShowOnboarding, 800);
 </script>

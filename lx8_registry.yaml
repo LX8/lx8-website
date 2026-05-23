@@ -1,0 +1,50 @@
+# Lx8 Labs - Central Product Registry
+# This file is the single source of truth for products, their subdomains, and classifications.
+# Run `python3 scripts/sync_infrastructure.py` to automatically update Firebase Hosting and DNS.
+
+products:
+  # --- Developer Tools ---
+  - id: lx8-aimem
+    subdomain: aimem
+    category: Developer Tools
+    description: AI Memory and Context Management
+    status: Active
+
+  - id: lx8-tupa
+    subdomain: tupa
+    category: Developer Tools
+    description: Native macOS Dev Environment Landing
+    status: Active
+
+  - id: lx8-tupa-ide
+    subdomain: tupaide
+    category: Developer Tools
+    description: Tupã IDE Web Application
+    status: Alpha
+
+  # --- Autonomous Systems ---
+  - id: lx8-bmss
+    subdomain: bsms
+    category: Autonomous Systems
+    description: Aegis Morphic Swarm Suit
+    status: Active
+
+  # --- Publications ---
+  - id: bipartitebook
+    subdomain: bipartitebook
+    category: Publications
+    description: Bipartite Universe Book
+    status: Active
+
+  # --- Infrastructure & Core ---
+  - id: lx8-installations
+    subdomain: installations
+    category: Infrastructure
+    description: Lx8 Labs Management & Deployments
+    status: Active
+
+  - id: lx8-mattermem
+    subdomain: mattermem
+    category: Infrastructure
+    description: Lx8 Mem / Hardware Systems
+    status: Active
