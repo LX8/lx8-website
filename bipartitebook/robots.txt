@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+Disallow: /downloads/
+Disallow: /api/
+
+Sitemap: https://bipartiteuniverse.com/sitemap.xml

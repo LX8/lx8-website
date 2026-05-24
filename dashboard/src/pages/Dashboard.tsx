@@ -49,7 +49,7 @@ export default function Dashboard() {
   const [licenses, setLicenses] = useState<License[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [revealedKeys, setRevealedKeys] = useState<{ [key: string]: boolean }>({});
+  const [revealedKeys, setRevealedKeys] = useState<{ [key: string]: string | boolean }>({});
 
   // Cognitive A11y States
   const [dyslexicMode, setDyslexicMode] = useState(() => localStorage.getItem('lx8-a11y-dyslexic') === 'true');
@@ -188,8 +188,34 @@ export default function Dashboard() {
     }
   };
 
-  const toggleKeyReveal = (key: string) => {
-    setRevealedKeys(prev => ({ ...prev, [key]: !prev[key] }));
+  const toggleKeyReveal = async (licenseId: string) => {
+    if (revealedKeys[licenseId]) {
+      setRevealedKeys(prev => ({ ...prev, [licenseId]: false }));
+      return;
+    }
+    
+    // Fetch Offline ECDSA Key from Firebase Functions
+    try {
+      setActionLoading(`key_${licenseId}`);
+      
+      // We assume the Firebase functions are deployed to us-central1
+      // In local dev, this would be a local emulator URL
+      const response = await fetch('https://us-central1-lx8-labs-website.cloudfunctions.net/generateOfflineLicense', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firebaseUid: currentUser?.uid, licenseId })
+      });
+      
+      if (!response.ok) throw new Error('Failed to generate secure key');
+      
+      const data = await response.json();
+      setRevealedKeys(prev => ({ ...prev, [licenseId]: data.token }));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to generate offline key. Please try again.');
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const hasPurchased = (productId: string) => purchases.some(p => p.productId === productId);
@@ -326,15 +352,16 @@ export default function Dashboard() {
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                      <code style={{ background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '4px', letterSpacing: '1px', flex: 1, fontFamily: 'monospace' }}>
-                        {revealedKeys[lic.licenseKey] ? lic.licenseKey : 'LX8-XXXX-XXXX-XXXX-XXXX'}
+                      <code style={{ background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '4px', letterSpacing: '1px', flex: 1, fontFamily: 'monospace', wordBreak: 'break-all', fontSize: '0.75rem' }}>
+                        {revealedKeys[lic.licenseKey] ? revealedKeys[lic.licenseKey] : 'LX8-XXXX-XXXX-XXXX-XXXX (Offline Signed Key)'}
                       </code>
                       <button 
                         className="secondary" 
                         onClick={() => toggleKeyReveal(lic.licenseKey)}
+                        disabled={actionLoading === `key_${lic.licenseKey}`}
                         style={{ width: 'auto', padding: '6px 12px' }}
                       >
-                        {revealedKeys[lic.licenseKey] ? 'Hide' : 'Reveal'}
+                        {actionLoading === `key_${lic.licenseKey}` ? 'Signing...' : revealedKeys[lic.licenseKey] ? 'Hide' : 'Generate Key'}
                       </button>
                     </div>
 

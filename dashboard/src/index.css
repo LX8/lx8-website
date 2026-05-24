@@ -1,15 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.bunny.net/css?family=atkinson-hyperlegible:400,700,400i,700i&display=swap');
-
+/* LX8 Labs Global Design System */
 :root {
-  --bg-color: #0b0c10;
-  --surface: rgba(255, 255, 255, 0.05);
-  --surface-border: rgba(255, 255, 255, 0.1);
-  --primary: #66fcf1;
-  --secondary: #45a29e;
-  --text: #ffffff;
-  --text-muted: #c5c6c7;
-  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+  /* Color Palette */
+  --bg-dark: #050505;
+  --bg-panel: rgba(20, 20, 20, 0.6);
+  --text-main: #f0f0f0;
+  --text-muted: #888888;
+  --accent-cyan: #00e5ff;
+  --accent-blue: #2979ff;
+  
+  /* Glassmorphism */
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glass-blur: blur(12px);
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
 }
 
 * {
@@ -19,168 +25,113 @@
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text);
   font-family: var(--font-sans);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  
+  /* Dynamic Background Gradient */
   background-image: 
-    radial-gradient(circle at 15% 50%, rgba(69, 162, 158, 0.15), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(102, 252, 241, 0.1), transparent 25%);
-  background-attachment: fixed;
+    radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.03), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(41, 121, 255, 0.04), transparent 25%);
 }
 
-/* Glassmorphism Utilities */
-.glass {
-  background: var(--surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--surface-border);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  width: 100%;
-}
-
-/* Typography */
-h1, h2, h3 {
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+/* Reusable Glass Panel Class */
+.glass-panel {
+  background: var(--bg-panel);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.3s ease;
 }
 
-p {
-  color: var(--text-muted);
-  line-height: 1.6;
+.glass-panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px 0 rgba(0, 229, 255, 0.1);
+  border-color: rgba(0, 229, 255, 0.2);
 }
 
-/* Inputs & Buttons */
-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--surface-border);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: var(--font-sans);
-  transition: all 0.3s ease;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(102, 252, 241, 0.2);
-}
-
-button {
-  width: 100%;
-  padding: 0.75rem 1.5rem;
-  background: var(--primary);
-  color: var(--bg-color);
+/* Premium Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+  color: #fff;
   border: none;
   border-radius: 8px;
-  font-weight: 600;
+  padding: 0.75rem 1.5rem;
   font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
 }
 
-button:hover {
-  background: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 252, 241, 0.3);
+.btn-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
 }
 
-button.secondary {
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
   background: transparent;
-  color: var(--text);
-  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-button.secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Layouts */
-.center-screen {
+/* Layout Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.nav-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  padding: 1.5rem 0;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--glass-border);
 }
 
-.login-card {
-  max-width: 400px;
-  width: 100%;
-  padding: 2.5rem;
-  text-align: center;
+.brand {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #fff, var(--text-muted));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.login-card h1 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.login-card p {
-  margin-bottom: 2rem;
-}
-
-.divider {
+.flex-row {
   display: flex;
+  gap: 1rem;
   align-items: center;
-  text-align: center;
-  margin: 1.5rem 0;
-  color: var(--text-muted);
 }
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid var(--surface-border);
-}
-
-.divider:not(:empty)::before {
-  margin-right: .25em;
-}
-
-.divider:not(:empty)::after {
-  margin-left: .25em;
-}
-
-/* Dyslexia Mode Font Overrides */
-body.dyslexic-mode {
-  font-family: 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif !important;
-  word-spacing: 0.18em !important;
-  letter-spacing: 0.04em !important;
-  line-height: 1.85 !important;
-}
-
-/* Bionic Reading highlights */
-body.bionic-mode .lx8-bionic-word strong {
-  font-weight: 700 !important;
-  color: var(--primary) !important;
-}
-
-/* General Layout adjustments */
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.sso-banner {
-  box-shadow: 0 0 15px rgba(102, 252, 241, 0.05) !important;
-}
-

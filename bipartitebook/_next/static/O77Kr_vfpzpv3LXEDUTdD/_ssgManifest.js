@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fappendix\u002F[id]","\u002Fbook1\u002Fchapter\u002F[id]","\u002Fbook2\u002Fchapter\u002F[id]","\u002Fchapter\u002F[id]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

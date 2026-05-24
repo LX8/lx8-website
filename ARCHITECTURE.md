@@ -33,27 +33,32 @@ All repositories, documentation, and tools are structured under the unified `~/L
 
 ---
 
-## 2. Multi-Site SRE Sync Pipeline (`sync_infrastructure.py`)
+## 2. Smart Multi-Site SRE Deploy Engine (`deploy.py`)
 
 The `Lx8 Labs` web presence is a federated multi-site deployment hosted on Firebase. Each subdomain operates as a standalone site target.
-To avoid manual DevOps overhead, a unified registry `lx8_registry.yaml` defines the active domains, and `scripts/sync_infrastructure.py` orchestrates the SRE synchronization:
+To eliminate manual DevOps overhead and ensure robust version control, a unified registry `lx8_registry.yaml` defines the active domains. The centralized `scripts/deploy.py` engine orchestrates SRE deployment natively from GitHub Actions CI/CD pipelines:
 
 ```mermaid
 graph TD
-    Registry[lx8_registry.yaml] -->|Loads configuration| SyncScript[scripts/sync_infrastructure.py]
-    SyncScript -->|Generates targets| Firebaserc[.firebaserc]
-    SyncScript -->|Generates hosting configs| FirebaseJson[firebase.json]
-    SyncScript -->|Syncs assets recursively| Subdomains[Subdomain Targets: aimem, tupa, etc.]
+    Developer[Developer Push] -->|Triggers| CI[GitHub Actions]
+    CI --> DeployScript[scripts/deploy.py]
     
-    Subdomains -.->|a11y.js| Accessibility[a11y.js]
-    Subdomains -.->|i18n/| Translations[i18n/ folder]
-    Subdomains -.->|firebase-init.js| Telemetry[firebase-init.js]
+    DeployScript -->|1. Hash Diff| ChangeDetection[Detects modified code]
+    DeployScript -->|2. Version Bump| Registry[Updates lx8_registry.yaml & version.json]
+    DeployScript -->|3. Compile| Build[Builds React Dashboard & Next.js Export]
+    DeployScript -->|4. Sync Assets| SyncScript[scripts/sync_infrastructure.py]
+    
+    SyncScript -->|Generates configs| FirebaseJson[firebase.json]
+    SyncScript -->|Replicates global telemetry & i18n| Subdomains[Subdomain Targets]
+    
+    DeployScript -->|5. Targeted Push| Firebase[Firebase Hosting deploy --only]
 ```
 
-### Script Tasks:
-- **Configuration Generation**: Automatically generates `firebase.json` and `.firebaserc` mapping subdomains to site IDs.
-- **CDN Caching Injection**: Configures global edge caching headers (`max-age=31536000`, 1 year) for all media, JS, and CSS to guarantee **zero bandwidth origin costs**.
-- **Asset Replication**: Replicates the central `i18n/` translations, `a11y.js` accessibility framework, and `firebase-init.js` performance tracking to each subdomain's public directory to prevent 404s.
+### Key Automated SRE Capabilities:
+- **Zero-Cost Telemetry Caching**: Injects explicit Firebase edge caching headers: 1-year `max-age` for static assets (ensuring zero origin egress) and `no-cache` ETags for `.html` (ensuring immediate user updates via zero-bandwidth 304s).
+- **Smart Change Detection**: Fast cryptographic hashing pruned of heavy directories (`node_modules`, `dist`) ensures identical builds are skipped.
+- **Semantic Version Tracking**: Automatically increments versions and commits `version.json` payloads containing the active Git hash, creating an immutable audit trail readable by the central Dashboard.
+- **Cross-Framework Compilation**: Automates localized builds for React (Vite) and Next.js targets before syncing them to the final Firebase static subdomains.
 
 ---
 

@@ -13,9 +13,17 @@ The platform is designed with a strict zero-build-step philosophy, prioritizing 
 * **Frontend Engine:** Vanilla HTML5 / CSS3.
 * **Design Language:** Tactile Brutalism, featuring progressive disclosure mechanisms (horizontal scroll-snap carousels) to minimize cognitive load.
 * **CSS Architecture:** A unified, cache-optimized `global.css` governs base design tokens, responsive typography, and navigation states to ensure sub-second First Contentful Paint (FCP).
-* **3D Visualizations:** WebGL integration via `three.js` (deferred loading) for the Bipartite Universe interactive physics engine.
-* **Machine Experience (MX):** Extensive `application/ld+json` schema implementations for seamless product ingestion by LLMs and search engines.
-* **Authentication & Backend:** (In Progress) Firebase Authentication and Cloud Firestore for subscription management and course gating.
+* **3D Visualizations:** WebGL integration via `three.js` (deferred loading) for the Bipartite Universe## Global Architecture
+
+Lx8 Labs is built on a sovereign, cross-platform architecture:
+1. **Central OS Dashboard:** React/Vite unified control plane.
+2. **Omni-Channel Licensing:** 
+   - **Web Apps (Bipartite Book):** Firebase Auth Custom Claims.
+   - **Native/CLI (Tupã IDE, aimem):** Offline-first ECDSA cryptographically signed tokens.
+   - **Hardware (mattermem):** Zero-touch device pairing.
+3. **Telemetry Engine:** React ErrorBoundary mapped to Firebase Analytics (Web Crashlytics equivalent).
+4. **SRE Deploy Engine:** A custom Python orchestrator (`scripts/deploy.py`) that performs local hashing and live cloud verification to achieve zero-cost idempotency.
+5. **Support Agent:** AI Triage Agent running on Firebase Functions, listening to the `/support` queue.
 
 ## Project Structure & Architecture
 
@@ -39,28 +47,32 @@ The website codebase operates as the central control plane inside the larger `~/
 
 ## SRE & Infrastructure Synchronization
 
-We use an automated pipeline to sync subdomains, configure CDN caching headers, and replicate translation/telemetry assets recursively across all site targets:
+Lx8 Labs utilizes an intelligent, zero-cost CI/CD SRE pipeline powered by GitHub Actions and a centralized Python deployment engine.
 
-1. Maintain the product registry in `lx8_registry.yaml`.
-2. Sync the configurations and folders locally:
-   ```bash
-   python3 scripts/sync_infrastructure.py
-   ```
-3. Deploy to production:
-   ```bash
-   firebase deploy
-   ```
+1. **Product Registry**: Maintain the product subdomains and version tracks in `lx8_registry.yaml`.
+2. **Automated CI/CD**: Pushing to the `main` branch automatically triggers the `.github/workflows/deploy.yml` pipeline.
+3. **Smart Deploy Engine (`scripts/deploy.py`)**:
+   - Analyzes codebase hashes to identify which subdomains have modified files.
+   - Automatically bumps Semantic Versions and generates a `version.json` payload for auditing.
+   - Rebuilds and synchronizes all global telemetry, React dashboards, and translations.
+   - Deploys **only** dirty targets to Firebase via targeted CLI commands.
+   - Implements aggressive zero-cost caching (1-year `max-age` for static assets, and `no-cache` ETags for immediate HTML revalidation).
+
+To manually force a global deploy locally:
+```bash
+python3 scripts/deploy.py --force
+```
 
 ## Local Development
 
-The platform requires no local build steps (e.g., no Node.js/NPM builds required for UI compilation).
+The platform requires minimal local setup.
 
 1. Clone the repository and navigate to the root directory.
 2. Serve the static files locally:
    ```bash
    python3 -m http.server 8000
    ```
-3. Access the site via `http://localhost:8000`.
+3. To test the dashboard locally, navigate to `dashboard/` and run `npm run dev`.
 
 ## Intellectual Property & Licensing
 

@@ -87,11 +87,20 @@ def update_firebase_config(registry_data):
         ],
         "headers": [
             {
-                "source": "**/*.@(js|css|html|png|jpg|jpeg|gif|svg|woff|woff2)",
+                "source": "**/*.@(js|css|png|jpg|jpeg|gif|svg|woff|woff2)",
                 "headers": [
                     {
                         "key": "Cache-Control",
                         "value": "max-age=31536000"
+                    }
+                ]
+            },
+            {
+                "source": "**/*.html",
+                "headers": [
+                    {
+                        "key": "Cache-Control",
+                        "value": "no-cache"
                     }
                 ]
             }
@@ -135,11 +144,20 @@ def update_firebase_config(registry_data):
             ],
             "headers": [
                 {
-                    "source": "**/*.@(js|css|html|png|jpg|jpeg|gif|svg|woff|woff2)",
+                    "source": "**/*.@(js|css|png|jpg|jpeg|gif|svg|woff|woff2)",
                     "headers": [
                         {
                             "key": "Cache-Control",
                             "value": "max-age=31536000"
+                        }
+                    ]
+                },
+                {
+                    "source": "**/*.html",
+                    "headers": [
+                        {
+                            "key": "Cache-Control",
+                            "value": "no-cache"
                         }
                     ]
                 }

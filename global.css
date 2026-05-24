@@ -53,9 +53,9 @@ a:focus-visible, button:focus-visible, .filter:focus-visible, input:focus-visibl
 .ft-links a, .filter, .back-link { min-height: 24px; display: inline-flex; align-items: center; }
 
 /* Motion */
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } .r { opacity: 1 !important; transform: none !important; } .blob, .chip-dot { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } .r { opacity: 1 !important; transform: none !important; } .chip-dot { animation: none !important; } }
 body.paused-animations *, body.paused-animations *::before, body.paused-animations *::after { animation-play-state: paused !important; transition: none !important; }
-body.paused-animations .blob, body.paused-animations .orbit-body, body.paused-animations path { animation: none !important; }
+body.paused-animations .orbit-body, body.paused-animations path { animation: none !important; }
 
 /* Cognitive & Visual */
 body.dyslexic-mode { font-family: system-ui, -apple-system, sans-serif !important; letter-spacing: 0.05em !important; line-height: 1.8 !important; word-spacing: 0.1em !important; }
