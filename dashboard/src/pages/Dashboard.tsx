@@ -8,6 +8,9 @@ import {
   fetchUserLicenses
 } from '../services/mock_billing';
 import type { Purchase, License } from '../services/mock_billing';
+import { logEvent } from 'firebase/analytics';
+import { initTelemetry } from '../firebase';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Bionic Reading Highlighting Engine for ADHD Cognitive Focus
 function BionicText({ text, active }: { text: string; active: boolean }) {
@@ -50,6 +53,16 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [revealedKeys, setRevealedKeys] = useState<{ [key: string]: string | boolean }>({});
+  const [analytics, setAnalytics] = useState<any>(null);
+
+  useEffect(() => {
+    initTelemetry().then((telemetry) => {
+      if (telemetry?.analytics) {
+        setAnalytics(telemetry.analytics);
+        logEvent(telemetry.analytics, 'dashboard_view', { uid: currentUser?.uid });
+      }
+    });
+  }, [currentUser]);
 
   // Cognitive A11y States
   const [dyslexicMode, setDyslexicMode] = useState(() => localStorage.getItem('lx8-a11y-dyslexic') === 'true');
@@ -177,6 +190,14 @@ export default function Dashboard() {
   const handleCheckoutMock = async (productId: string, productName: string) => {
     if (!currentUser) return;
     setActionLoading(productId);
+    
+    if (analytics) {
+      logEvent(analytics, 'checkout_started', {
+        product_id: productId,
+        product_name: productName
+      });
+    }
+
     try {
       await simulatePurchaseWebhook(currentUser.uid, currentUser.email || '', productId);
       await loadUserData();
@@ -198,6 +219,12 @@ export default function Dashboard() {
     try {
       setActionLoading(`key_${licenseId}`);
       
+      if (analytics) {
+        logEvent(analytics, 'generate_offline_key_started', {
+          license_id: licenseId
+        });
+      }
+
       // We assume the Firebase functions are deployed to us-central1
       // In local dev, this would be a local emulator URL
       const response = await fetch('https://us-central1-lx8-labs-website.cloudfunctions.net/generateOfflineLicense', {
@@ -210,6 +237,12 @@ export default function Dashboard() {
       
       const data = await response.json();
       setRevealedKeys(prev => ({ ...prev, [licenseId]: data.token }));
+      
+      if (analytics) {
+        logEvent(analytics, 'generate_offline_key_success', {
+          license_id: licenseId
+        });
+      }
     } catch (err) {
       console.error(err);
       alert('Failed to generate offline key. Please try again.');
@@ -221,15 +254,28 @@ export default function Dashboard() {
   const hasPurchased = (productId: string) => purchases.some(p => p.productId === productId);
 
   return (
-    <div className="container">
+    <motion.div 
+      className="container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       {/* SSO Cookie Active Banner */}
-      <div className="glass sso-banner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 1.25rem', marginBottom: '1.5rem', borderRadius: '10px', fontSize: '0.78rem', border: '1px solid rgba(102, 252, 241, 0.18)', background: 'rgba(102, 252, 241, 0.04)' }}>
+      <motion.div 
+        className="glass sso-banner" 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 1.25rem', marginBottom: '1.5rem', borderRadius: '10px', fontSize: '0.78rem', border: '1px solid rgba(102, 252, 241, 0.18)', background: 'rgba(102, 252, 241, 0.04)' }}
+        role="alert"
+        aria-live="polite"
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="dot" style={{ width: '8px', height: '8px', background: '#66fcf1', borderRadius: '50%', boxShadow: '0 0 8px #66fcf1' }}></span>
+          <span className="dot" aria-hidden="true" style={{ width: '8px', height: '8px', background: '#66fcf1', borderRadius: '50%', boxShadow: '0 0 8px #66fcf1' }}></span>
           <span>Shared SSO Cookie Active: <strong>.lx8labs.com</strong> (Seamless cross-subdomain access session)</span>
         </div>
         <span style={{ color: 'var(--text-muted)' }}>Secure SSL Gated</span>
-      </div>
+      </motion.div>
 
       {/* Header Panel */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -242,9 +288,16 @@ export default function Dashboard() {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button className="secondary" onClick={handleLogout} style={{ width: 'auto' }}>
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="secondary" 
+            onClick={handleLogout} 
+            style={{ width: 'auto' }}
+            aria-label="Sign Out of Lx8 Central OS"
+          >
             Sign Out
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -255,14 +308,19 @@ export default function Dashboard() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
           {/* Welcome Card */}
-          <div className="glass" style={{ padding: '2rem' }}>
+          <motion.div 
+            className="glass" 
+            style={{ padding: '2rem' }}
+            whileHover={{ y: -2 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             <h2>
               Welcome, <span style={{ color: 'var(--primary)' }}>{currentUser?.displayName || currentUser?.email}</span>
             </h2>
             <p style={{ marginTop: '0.5rem' }}>
               <BionicText text="Manage your secure applications, view analytical books, and configure offline-first CLI credentials. High-contrast, neurodivergent accessibility is natively active." active={bionicMode} />
             </p>
-          </div>
+          </motion.div>
 
           {/* SRE Infrastructure Version Control & Audit Board */}
           <div className="glass" style={{ padding: '2rem' }}>
@@ -326,50 +384,65 @@ export default function Dashboard() {
             </h3>
             
             {loading ? (
-              <p>Loading active licenses...</p>
+              <p aria-live="polite">Loading active licenses...</p>
             ) : licenses.length === 0 ? (
-              <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed var(--surface-border)', textAlign: 'center' }}>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed var(--surface-border)', textAlign: 'center' }}
+              >
                 <p style={{ marginBottom: '1rem' }}>No active license keys found on your account.</p>
-                <button 
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleCheckoutMock('prod_tupa_ide', 'Tupã IDE Pro')}
                   disabled={actionLoading !== null}
                   style={{ width: 'auto' }}
+                  aria-label="Simulate Purchase of Tupã IDE Pro"
                 >
                   {actionLoading === 'prod_tupa_ide' ? 'Processing...' : 'Simulate Tupã Purchase ($29)'}
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {licenses.map(lic => (
-                  <div key={lic.licenseKey} className="glass" style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <motion.div 
+                    key={lic.licenseKey} 
+                    className="glass" 
+                    whileHover={{ scale: 1.01 }}
+                    style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.06)' }}
+                  >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                       <strong style={{ color: 'var(--primary)' }}>
                         {lic.productId === 'lx8-tupa-ide' ? 'Tupã IDE macOS Pro' : 'aimem CLI Pro'}
                       </strong>
-                      <span className="badge" style={{ padding: '3px 8px', borderRadius: '4px', background: 'rgba(74,222,128,0.12)', color: '#4ade80', fontSize: '0.7rem', border: '1px solid rgba(74,222,128,0.25)' }}>
+                      <span className="badge" aria-label={`License Status: ${lic.status}`} style={{ padding: '3px 8px', borderRadius: '4px', background: 'rgba(74,222,128,0.12)', color: '#4ade80', fontSize: '0.7rem', border: '1px solid rgba(74,222,128,0.25)' }}>
                         {lic.status.toUpperCase()}
                       </span>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                      <code style={{ background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '4px', letterSpacing: '1px', flex: 1, fontFamily: 'monospace', wordBreak: 'break-all', fontSize: '0.75rem' }}>
+                      <code aria-label="Offline License Key" style={{ background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '4px', letterSpacing: '1px', flex: 1, fontFamily: 'monospace', wordBreak: 'break-all', fontSize: '0.75rem' }}>
                         {revealedKeys[lic.licenseKey] ? revealedKeys[lic.licenseKey] : 'LX8-XXXX-XXXX-XXXX-XXXX (Offline Signed Key)'}
                       </code>
-                      <button 
+                      <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         className="secondary" 
                         onClick={() => toggleKeyReveal(lic.licenseKey)}
                         disabled={actionLoading === `key_${lic.licenseKey}`}
                         style={{ width: 'auto', padding: '6px 12px' }}
+                        aria-label={revealedKeys[lic.licenseKey] ? "Hide License Key" : "Generate Offline License Key"}
                       >
                         {actionLoading === `key_${lic.licenseKey}` ? 'Signing...' : revealedKeys[lic.licenseKey] ? 'Hide' : 'Generate Key'}
-                      </button>
+                      </motion.button>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      <span>Activated: <strong>{lic.activatedDevices.length} / {lic.maxDevices}</strong> devices</span>
-                      <span>Created: {new Date(lic.createdAt).toLocaleDateString()}</span>
+                      <span aria-label={`Activated Devices: ${lic.activatedDevices.length} out of ${lic.maxDevices}`}>Activated: <strong>{lic.activatedDevices.length} / {lic.maxDevices}</strong> devices</span>
+                      <span aria-label={`Created on ${new Date(lic.createdAt).toLocaleDateString()}`}>Created: {new Date(lic.createdAt).toLocaleDateString()}</span>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             )}
@@ -558,25 +631,30 @@ export default function Dashboard() {
       </div>
 
       {/* Focus Line Ruler Node Overlay */}
-      {rulerActive && (
-        <div 
-          className="a11y-ruler" 
-          style={{ 
-            position: 'fixed', 
-            left: 0, 
-            right: 0, 
-            height: '45px', 
-            pointerEvents: 'none', 
-            zIndex: 9998, 
-            background: 'rgba(102, 252, 241, 0.05)', 
-            borderTop: '1px dashed rgba(102, 252, 241, 0.3)', 
-            borderBottom: '1px dashed rgba(102, 252, 241, 0.3)', 
-            boxShadow: '0 0 80px rgba(102, 252, 241, 0.02)', 
-            transform: `translateY(${rulerY}px)`, 
-            transition: 'transform 0.05s ease-out' 
-          }}
-        />
-      )}
-    </div>
+      <AnimatePresence>
+        {rulerActive && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, y: rulerY }}
+            exit={{ opacity: 0 }}
+            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+            className="a11y-ruler" 
+            style={{ 
+              position: 'fixed', 
+              left: 0, 
+              right: 0, 
+              height: '45px', 
+              pointerEvents: 'none', 
+              zIndex: 9998, 
+              background: 'rgba(102, 252, 241, 0.05)', 
+              borderTop: '1px dashed rgba(102, 252, 241, 0.3)', 
+              borderBottom: '1px dashed rgba(102, 252, 241, 0.3)', 
+              boxShadow: '0 0 80px rgba(102, 252, 241, 0.02)'
+            }}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

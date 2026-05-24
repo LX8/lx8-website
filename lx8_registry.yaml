@@ -4,40 +4,40 @@ products:
   category: Developer Tools
   description: AI Memory and Context Management
   status: Active
-  version: 1.0.5
+  version: 1.0.6
 - id: lx8-tupa
   subdomain: tupa
   category: Developer Tools
   description: Native macOS Dev Environment Landing
   status: Active
-  version: 1.0.5
+  version: 1.0.6
 - id: lx8-tupa-ide
   subdomain: tupaide
   category: Developer Tools
   description: "Tup\xE3 IDE Web Application"
   status: Alpha
-  version: 1.0.5
+  version: 1.0.6
 - id: lx8-bmss
   subdomain: suit
   category: Autonomous Systems
   description: Aegis Morphic Swarm Suit
   status: Active
-  version: 1.0.8
+  version: 1.0.9
 - id: bipartitebook
   subdomain: bipartitebook
   category: Publications
   description: Bipartite Universe Book
   status: Active
-  version: 1.0.8
+  version: 1.0.9
 - id: lx8-installations
   subdomain: installations
   category: Infrastructure
   description: Lx8 Labs Management & Deployments
   status: Active
-  version: 1.0.5
+  version: 1.0.6
 - id: lx8-mattermem
   subdomain: mattermem
   category: Infrastructure
   description: Lx8 Mem / Hardware Systems
   status: Active
-  version: 1.0.5
+  version: 1.0.6

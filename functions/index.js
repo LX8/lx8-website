@@ -1,11 +1,24 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
-const admin = require("firebase-admin");
 const crypto = require("crypto");
 const fs = require("fs");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const { logger } = require("firebase-functions");
+let stripeInstance = null;
+const getStripe = () => {
+  if (!stripeInstance) {
+    stripeInstance = require("stripe")(process.env.STRIPE_SECRET_KEY || "sk_test_dummy");
+  }
+  return stripeInstance;
+};
 
-admin.initializeApp();
+let adminInstance = null;
+const getAdmin = () => {
+  if (!adminInstance) {
+    adminInstance = require("firebase-admin");
+    adminInstance.initializeApp();
+  }
+  return adminInstance;
+};
 
 // 1. Stripe Webhook for License Provisioning
 exports.stripeWebhook = onRequest({ maxInstances: 1, concurrency: 80 }, async (req, res) => {
@@ -14,9 +27,9 @@ exports.stripeWebhook = onRequest({ maxInstances: 1, concurrency: 80 }, async (r
 
   try {
     // Verify the webhook signature securely
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(req.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET || "whsec_dummy");
   } catch (err) {
-    console.error(`Webhook Error: ${err.message}`);
+    logger.error(`Webhook Error: ${err.message}`);
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
@@ -33,17 +46,17 @@ exports.stripeWebhook = onRequest({ maxInstances: 1, concurrency: 80 }, async (r
       const licenseKey = "LX8-" + Math.random().toString(36).substr(2, 9).toUpperCase() + "-" + Date.now().toString(36).toUpperCase();
       
       // 2. Save to Firestore under the user's profile
-      await admin.firestore().collection("users").doc(firebaseUid).collection("licenses").doc(licenseKey).set({
+      await getAdmin().firestore().collection("users").doc(firebaseUid).collection("licenses").doc(licenseKey).set({
         active: true,
         productId: session.metadata?.productId || "unknown",
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: getAdmin().firestore.FieldValue.serverTimestamp(),
         subscriptionId: session.subscription || null,
         stripeCustomerId: session.customer
       });
 
-      console.log(`Successfully provisioned license ${licenseKey} for user ${firebaseUid}`);
+      logger.info(`Successfully provisioned license ${licenseKey} for user ${firebaseUid}`);
     } else {
-      console.warn("Checkout completed, but no client_reference_id (Firebase UID) was provided.");
+      logger.warn("Checkout completed, but no client_reference_id (Firebase UID) was provided.");
     }
   }
 
@@ -75,7 +88,7 @@ exports.createCheckoutSession = onRequest({ cors: true, maxInstances: 1, concurr
   }
 
   try {
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       payment_method_types: ['card'],
       customer_email: email || undefined,
       client_reference_id: firebaseUid, // Crucial for webhook association
@@ -95,7 +108,7 @@ exports.createCheckoutSession = onRequest({ cors: true, maxInstances: 1, concurr
 
     res.json({ id: session.id, url: session.url });
   } catch (error) {
-    console.error('Stripe Session Error:', error);
+    logger.error('Stripe Session Error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -129,10 +142,10 @@ exports.triageAgent = onDocumentCreated({ document: "users/{userId}/support/{tic
   // Simulate AI "Thinking" delay before replying
   await new Promise(resolve => setTimeout(resolve, 1500));
 
-  await admin.firestore().collection("users").doc(userId).collection("support").add({
+  await getAdmin().firestore().collection("users").doc(userId).collection("support").add({
     content: aiResponse,
     sender: 'agent',
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdAt: getAdmin().firestore.FieldValue.serverTimestamp(),
     status: newStatus
   });
 
@@ -156,7 +169,7 @@ exports.generateOfflineLicense = onRequest({ cors: true, maxInstances: 1, concur
 
   try {
     // 1. Verify the license exists and is active in Firestore
-    const licenseDoc = await admin.firestore().collection("users").doc(firebaseUid).collection("licenses").doc(licenseId).get();
+    const licenseDoc = await getAdmin().firestore().collection("users").doc(firebaseUid).collection("licenses").doc(licenseId).get();
     
     if (!licenseDoc.exists || !licenseDoc.data().active) {
       return res.status(403).send('License not found or inactive');
@@ -169,7 +182,7 @@ exports.generateOfflineLicense = onRequest({ cors: true, maxInstances: 1, concur
     try {
       privateKeyPem = process.env.LICENSE_PRIVATE_KEY || fs.readFileSync('./enterprise_private.pem', 'utf8');
     } catch (e) {
-      console.error("Missing private key:", e);
+      logger.error("Missing private key:", e);
       return res.status(500).send("Critical Error: Enterprise Private Key not configured.");
     }
 
@@ -196,7 +209,113 @@ exports.generateOfflineLicense = onRequest({ cors: true, maxInstances: 1, concur
 
     res.json({ token: offlineToken });
   } catch (error) {
-    console.error('Offline License Generation Error:', error);
+    logger.error('Offline License Generation Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 5. Global Single Sign-On (SSO) Session Cookie Generator
+exports.createSessionCookie = onRequest({ cors: true, maxInstances: 1, concurrency: 80 }, async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).send('Method Not Allowed');
+  }
+
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).send('Missing idToken');
+  }
+
+  try {
+    // Set session expiration to 14 days
+    const expiresIn = 1000 * 60 * 60 * 24 * 14;
+    
+    // Create the session cookie from the Firebase ID token
+    const sessionCookie = await getAdmin().auth().createSessionCookie(idToken, { expiresIn });
+    
+    // Set the cookie securely on the root domain (.lx8labs.com)
+    // In local development, we omit the domain so it works on localhost
+    const isLocalhost = req.hostname === 'localhost' || req.hostname === '127.0.0.1';
+    const domainOpt = isLocalhost ? '' : 'Domain=.lx8labs.com;';
+    
+    const options = { maxAge: expiresIn, httpOnly: true, secure: !isLocalhost };
+    
+    res.setHeader('Set-Cookie', `__session=${sessionCookie}; ${domainOpt} Path=/; Max-Age=${expiresIn / 1000}; HttpOnly; ${!isLocalhost ? 'Secure; SameSite=Lax;' : 'SameSite=Lax;'}`);
+    res.json({ status: 'success' });
+  } catch (error) {
+    logger.error('SSO Cookie Generation Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 6. Client Management: Device Tracking & Registration
+exports.registerClientDevice = onRequest({ cors: true, maxInstances: 1, concurrency: 80 }, async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).send('Method Not Allowed');
+  }
+
+  const { firebaseUid, licenseId, hardwareFingerprint, osVersion } = req.body;
+
+  if (!firebaseUid || !licenseId || !hardwareFingerprint) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  try {
+    const licenseRef = getAdmin().firestore().collection("users").doc(firebaseUid).collection("licenses").doc(licenseId);
+    const licenseDoc = await licenseRef.get();
+    
+    if (!licenseDoc.exists || !licenseDoc.data().active) {
+      return res.status(403).send('License not found or inactive');
+    }
+
+    const devicesRef = licenseRef.collection("devices");
+    
+    // Run a transaction to ensure we don't exceed the device limit (e.g., max 3)
+    await getAdmin().firestore().runTransaction(async (transaction) => {
+      const snapshot = await transaction.get(devicesRef);
+      const devices = snapshot.docs;
+      
+      const deviceExists = devices.find(d => d.id === hardwareFingerprint);
+      
+      if (!deviceExists && devices.length >= 3) {
+        throw new Error('Device limit exceeded. Max 3 devices allowed per license.');
+      }
+      
+      transaction.set(devicesRef.doc(hardwareFingerprint), {
+        osVersion: osVersion || "unknown",
+        lastSeen: getAdmin().firestore.FieldValue.serverTimestamp(),
+        registeredAt: deviceExists ? deviceExists.data().registeredAt : getAdmin().firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    });
+
+    logger.info(`Successfully registered device ${hardwareFingerprint} for license ${licenseId}`);
+    res.json({ status: 'success', deviceId: hardwareFingerprint });
+  } catch (error) {
+    logger.error('Device Registration Error:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// 7. Client Management: Revoke Device
+exports.revokeClientDevice = onRequest({ cors: true, maxInstances: 1, concurrency: 80 }, async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).send('Method Not Allowed');
+  }
+
+  const { firebaseUid, licenseId, hardwareFingerprint } = req.body;
+
+  if (!firebaseUid || !licenseId || !hardwareFingerprint) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  try {
+    await getAdmin().firestore().collection("users").doc(firebaseUid)
+      .collection("licenses").doc(licenseId)
+      .collection("devices").doc(hardwareFingerprint).delete();
+
+    logger.info(`Successfully revoked device ${hardwareFingerprint} for license ${licenseId}`);
+    res.json({ status: 'success' });
+  } catch (error) {
+    logger.error('Device Revocation Error:', error);
     res.status(500).json({ error: error.message });
   }
 });

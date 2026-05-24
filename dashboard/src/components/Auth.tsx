@@ -1,7 +1,20 @@
 import { useState } from 'react';
 import { auth, googleProvider } from '../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+
+const triggerSSOCookie = async (user: User) => {
+  try {
+    const idToken = await user.getIdToken();
+    await fetch('https://us-central1-lx8-labs-website.cloudfunctions.net/createSessionCookie', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken })
+    });
+  } catch (err) {
+    console.error('SSO Cookie Error:', err);
+  }
+};
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,11 +27,13 @@ export default function Auth() {
     e.preventDefault();
     setError('');
     try {
+      let userCredential;
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
       }
+      await triggerSSOCookie(userCredential.user);
       navigate('/portal');
     } catch (err: any) {
       setError(err.message);
@@ -27,7 +42,8 @@ export default function Auth() {
 
   const handleGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      await triggerSSOCookie(result.user);
       navigate('/portal');
     } catch (err: any) {
       setError(err.message);

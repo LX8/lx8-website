@@ -1,0 +1,18 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: telemetry-processor-scaler
+  namespace: lx8-hyperscale
+spec:
+  scaleTargetRef:
+    name: telemetry-processor
+  pollingInterval:  5       # How often to check the Pub/Sub queue length
+  cooldownPeriod:   30      # How long to wait before scaling down after queue is empty
+  minReplicaCount:  0       # CRITICAL: Scale to ZERO when idle to save 100% cost
+  maxReplicaCount:  500     # Allow massive scale-out during global launches
+  triggers:
+  - type: gcp-pubsub
+    metadata:
+      subscriptionName: "projects/lx8-labs-website/subscriptions/telemetry-worker-sub"
+      targetMessageCount: "1000" # Spin up a new pod for every 1000 messages in the queue
+      credentialsFromEnv: GCP_CREDENTIALS

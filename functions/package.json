@@ -9,7 +9,8 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "20"
+    "node": "^20.19.0 || ^22.13.0 || >=24",
+    "npm": ">=10.0.0"
   },
   "main": "index.js",
   "dependencies": {

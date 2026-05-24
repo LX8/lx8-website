@@ -4,15 +4,24 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if request.auth != null && (
         request.auth.uid == userId ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        request.auth.token.admin == true
       );
-      allow write: if request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow write: if request.auth != null && request.auth.token.admin == true;
     }
     match /courses/{courseId} {
       allow read: if true;
-      allow write: if request.auth != null && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+    match /licenses/{licenseId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.userId ||
+        request.auth.token.admin == true
+      );
+      allow write: if false; // Only the backend Stripe webhook can write licenses
+    }
+    match /telemetry/{telemetryId} {
+      allow write: if true; // Temporary for testing, Edge function will handle this at scale
+      allow read: if request.auth != null && request.auth.token.admin == true;
     }
   }
 }
