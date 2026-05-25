@@ -100,6 +100,46 @@ python3 -m http.server 8000
 cd dashboard && npm install && npm run dev
 ```
 
+## Subdomain Health & TLS
+
+A scheduled GitHub Action (`.github/workflows/subdomain-health.yml`) probes
+every hosting target every 6 hours. The same probe can be run locally:
+
+```bash
+pip install pyyaml certifi
+python3 scripts/verify_subdomains.py --include-apex
+```
+
+Subdomain pages are generated from `lx8_registry.yaml`:
+
+```bash
+python3 scripts/build_placeholders.py            # render any stubs
+python3 scripts/build_placeholders.py --force    # refresh generated pages
+                                                 # (hand-written pages are
+                                                 # protected by a sentinel
+                                                 # marker and never touched)
+```
+
+### Custom-domain status (manual binding required in Firebase Console)
+
+Five subdomains have their DNS pointed at Firebase but no TLS cert minted yet.
+Bind each custom domain to its site at
+<https://console.firebase.google.com/project/lx8-labs-website/hosting/sites>
+and Firebase will issue a Let's Encrypt cert within 24–48h.
+
+| Custom domain                 | Bind to Firebase site | Current state             |
+| ----------------------------- | --------------------- | ------------------------- |
+| `aimem.lx8labs.com`           | `lx8-aimem`           | TLS hostname mismatch     |
+| `tupa.lx8labs.com`            | `lx8-tupa`            | TLS hostname mismatch     |
+| `tupaide.lx8labs.com`         | `lx8-tupa-ide`        | TLS hostname mismatch     |
+| `mattermem.lx8labs.com`       | `lx8-mattermem`       | TLS hostname mismatch     |
+| `suit.lx8labs.com`            | `lx8-bmss`            | TLS hostname mismatch     |
+| `bipartitebook.lx8labs.com`   | `bipartitebook`       | 404 — domain not linked   |
+| `installations.lx8labs.com`   | `lx8-installations`   | 404 — domain not linked   |
+
+Every native Firebase URL (`https://<site-id>.web.app/`) is reachable and
+serves content; the gap is purely at the custom-domain layer.
+
 ## Security model
 
 - **Cloud Functions** authenticate every mutating endpoint with a Firebase
