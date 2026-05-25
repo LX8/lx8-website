@@ -1,4 +1,5 @@
 name: QA — html-validate · link check · Lighthouse
+
 on:
   push:
     branches: [main]
@@ -8,6 +9,46 @@ permissions:
   contents: read
 
 jobs:
+  sitemap-drift:
+    name: Sitemap drift check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        # Need git history so `git log -1` gives stable lastmod dates that
+        # match what the script will emit locally on a contributor's machine.
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Verify sitemap.xml matches filesystem
+        run: python3 scripts/generate_sitemap.py --check
+
+  placeholder-stub-check:
+    name: Subdomain stub check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install pyyaml
+        run: pip install pyyaml
+      - name: Fail if a subdomain still has a one-line <h1> stub
+        run: python3 scripts/build_placeholders.py --check
+
+  csp-drift:
+    name: CSP drift check
+    runs-on: ubuntu-latest
+    # The apex (lx8labs.com) is served by GitHub Pages, which can't set
+    # response headers. The inline <meta> CSP is therefore the only
+    # security policy in effect there, and it must stay in lock-step
+    # with the canonical CSP in firebase.json (which governs the
+    # subdomains served by Firebase Hosting).
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Verify <meta> CSP matches firebase.json
+        run: python3 scripts/sync_csp.py --check
+
   html-validate:
     name: HTML validate
     runs-on: ubuntu-latest
@@ -17,16 +58,26 @@ jobs:
         with: { node-version: '20' }
       - name: Install html-validate
         run: npm install -g html-validate@^9.0.0
-      - name: Run on every .html file
+      - name: Validate authored HTML (excluding generated output)
+        # We prune three subtrees before walking the file list:
+        #   - any node_modules anywhere (vendored deps)
+        #   - bipartitebook/      (Next.js export; React-specific
+        #                          attributes html-validate flags as
+        #                          invalid — we lint the source repo,
+        #                          not the build output)
+        #   - every */dashboard   (Vite-built React app; same reasoning)
+        # find -prune is more reliable than `-not -path` over deep trees.
         run: |
-          shopt -s globstar nullglob
-          files=( **/*.html )
+          mapfile -t files < <(find . \
+            \( -type d \( -name node_modules -o -name __pycache__ \
+                       -o -path './bipartitebook' \
+                       -o -path './dashboard' -o -path '*/dashboard' \) -prune \) \
+            -o -type f -name '*.html' -print)
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No HTML files."; exit 0
           fi
-          # --max-warnings 200 lets us land minor stylistic warnings (button type, etc.)
-          # without blocking; only errors fail. The project config in .htmlvalidate.json
-          # demotes rules unsuited to hand-crafted scoped-CSS single-file pages.
+          echo "Validating ${#files[@]} files:"
+          printf '  %s\n' "${files[@]}"
           html-validate --max-warnings 200 "${files[@]}"
 
   link-check:
@@ -37,20 +88,33 @@ jobs:
       - name: lychee (offline, internal links only)
         uses: lycheeverse/lychee-action@v2
         with:
-          # --root-dir lets lychee resolve root-relative links like /about.html
-          # against the repo root rather than the filesystem root.
-          # --exclude '^https?://' skips external URLs; CI shouldn't fail because
-          # LinkedIn rate-limits us.
+          # Excluded paths:
+          #   - node_modules under functions/ and dashboard/
+          #   - the Next.js bipartitebook export
+          #   - every */dashboard/ directory: the Vite-built dashboard's
+          #     index.html references hashed asset paths like
+          #     `/dashboard/assets/index-XYZ.css` that only exist after
+          #     `npm run build` — they're absent in a fresh checkout and
+          #     would falsely report broken.
           args: |
             --offline --no-progress --include-fragments
             --root-dir "$GITHUB_WORKSPACE"
             --exclude "^mailto:"
             --exclude "^https?://"
+            --exclude-path "functions/node_modules"
+            --exclude-path "dashboard"
+            --exclude-path "aimem/dashboard"
+            --exclude-path "bipartitebook"
+            --exclude-path "installations/dashboard"
+            --exclude-path "mattermem/dashboard"
+            --exclude-path "suit/dashboard"
+            --exclude-path "tupa/dashboard"
+            --exclude-path "tupaide/dashboard"
             "**/*.html" "**/*.md"
           fail: true
 
   lighthouse:
-    name: Lighthouse CI (homepage + algo + tupa + aimem)
+    name: Lighthouse CI (homepage + algorithms + tupa + aimem)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -58,19 +122,21 @@ jobs:
         with: { node-version: '20' }
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli@0.14.x
-      - name: Run Lighthouse against four key pages
+      - name: Serve & audit
         env:
           LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
-          # Serve the static site locally then audit.
+          # Static-serve the site, then audit. URLs match on-disk layout —
+          # flat .html files don't exist; pages live under <name>/index.html
+          # and are reached via /<name>/.
           npx --yes http-server -p 8080 -s . &
           SERVER_PID=$!
           sleep 2
           lhci collect \
             --url=http://localhost:8080/ \
-            --url=http://localhost:8080/algorithms.html \
-            --url=http://localhost:8080/tupa.html \
-            --url=http://localhost:8080/aimem.html \
+            --url=http://localhost:8080/algorithms/ \
+            --url=http://localhost:8080/tupa/ \
+            --url=http://localhost:8080/aimem/ \
             --numberOfRuns=1 \
             --settings.preset=desktop
           lhci upload --target=filesystem --outputDir=./lhci-reports || true

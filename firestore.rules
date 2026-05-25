@@ -1,26 +1,84 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ── USERS ─────────────────────────────────────────────────────────
     match /users/{userId} {
       allow read: if request.auth != null && (
         request.auth.uid == userId ||
         request.auth.token.admin == true
       );
       allow write: if request.auth != null && request.auth.token.admin == true;
+
+      // Subcollections that follow user-scoped access patterns.
+      match /licenses/{licenseId} {
+        allow read: if request.auth != null && (
+          request.auth.uid == userId ||
+          request.auth.token.admin == true
+        );
+        // Licenses are mutated server-side only (Stripe webhook -> Cloud
+        // Function with admin SDK). Clients never write directly.
+        allow write: if false;
+
+        match /devices/{deviceId} {
+          // Device records are created/updated/deleted via authenticated
+          // Cloud Functions (registerClientDevice / revokeClientDevice).
+          // Direct client writes are denied.
+          allow read: if request.auth != null && (
+            request.auth.uid == userId ||
+            request.auth.token.admin == true
+          );
+          allow write: if false;
+        }
+      }
+
+      match /support/{ticketId} {
+        // A user can read and append to their own ticket queue. The triage
+        // agent posts replies via the admin SDK and bypasses these rules.
+        allow read: if request.auth != null && (
+          request.auth.uid == userId ||
+          request.auth.token.admin == true
+        );
+        allow create: if request.auth != null && request.auth.uid == userId
+          && request.resource.data.sender == 'user'
+          && request.resource.data.content is string
+          && request.resource.data.content.size() < 8000;
+        allow update, delete: if request.auth != null && request.auth.token.admin == true;
+      }
     }
+
+    // ── COURSES ───────────────────────────────────────────────────────
+    // Public catalogue — anyone can read; only admins author.
     match /courses/{courseId} {
       allow read: if true;
       allow write: if request.auth != null && request.auth.token.admin == true;
     }
+
+    // ── LICENSES (legacy top-level path) ──────────────────────────────
+    // Kept readable by owner/admin for back-compat with older clients.
+    // New writes go through /users/{uid}/licenses/{id} above.
     match /licenses/{licenseId} {
       allow read: if request.auth != null && (
         request.auth.uid == resource.data.userId ||
         request.auth.token.admin == true
       );
-      allow write: if false; // Only the backend Stripe webhook can write licenses
+      allow write: if false;
     }
+
+    // ── TELEMETRY ─────────────────────────────────────────────────────
+    // Previously `allow write: if true` ("Temporary for testing") — that
+    // exposed the project to unauthenticated write spam and runaway billing.
+    // Now: only authenticated clients can submit a telemetry event for
+    // themselves, with a strict shape and size cap. Admin can read; nobody
+    // (not even the author) can update or delete after the fact.
     match /telemetry/{telemetryId} {
-      allow write: if true; // Temporary for testing, Edge function will handle this at scale
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid','event','payload','ts'])
+        && request.resource.data.event is string
+        && request.resource.data.event.size() < 128
+        && (!('payload' in request.resource.data) || request.resource.data.payload is map);
+      allow update, delete: if false;
       allow read: if request.auth != null && request.auth.token.admin == true;
     }
   }

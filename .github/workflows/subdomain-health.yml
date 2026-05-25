@@ -1,0 +1,77 @@
+name: Subdomain health
+
+# Pings every Lx8 Labs subdomain at both its custom URL (subdomain.lx8labs.com)
+# and its native Firebase URL (*.web.app), then reports a status table.
+#
+# Cadence: every 6 hours plus manual dispatch. The job fails only when a native
+# URL is unreachable or non-200 — custom-domain trouble (missing TLS cert, 4xx
+# from an unbound custom domain) is surfaced as a warn but does NOT fail the
+# workflow, because those issues are resolved manually in the Firebase Console
+# and we don't want a recurring red X on the dashboard while that's pending.
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'  # offset minute to dodge GH cron stampede on the hour
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # The job summary is written to the workflow run; no other write scopes needed.
+
+jobs:
+  probe:
+    name: Probe live subdomains
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install minimal deps
+        run: pip install --quiet pyyaml certifi
+
+      - name: Probe subdomains
+        id: probe
+        run: |
+          # Capture both the human-readable table and the JSON in one go so we
+          # can drop the JSON into the job summary as a collapsible block.
+          set +e
+          python3 scripts/verify_subdomains.py --include-apex --check-headers \
+            | tee /tmp/probe-table.txt
+          rc=${PIPESTATUS[0]}
+          python3 scripts/verify_subdomains.py --include-apex --check-headers --json \
+            > /tmp/probe.json
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          exit $rc
+
+      - name: Write job summary
+        if: always()
+        run: |
+          {
+            echo "## Lx8 Subdomain Health"
+            echo ""
+            echo '```'
+            cat /tmp/probe-table.txt
+            echo '```'
+            echo ""
+            echo "<details><summary>Raw JSON</summary>"
+            echo ""
+            echo '```json'
+            cat /tmp/probe.json
+            echo '```'
+            echo ""
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload probe artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: subdomain-probe-${{ github.run_id }}
+          path: |
+            /tmp/probe-table.txt
+            /tmp/probe.json
+          retention-days: 14
+          if-no-files-found: ignore

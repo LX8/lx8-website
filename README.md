@@ -1,82 +1,196 @@
 # Lx8 Labs Web Platform
 
-[![Deploy Status](https://img.shields.io/badge/deploy-active-success.svg)](https://lx8labs.com)
-[![Architecture](https://img.shields.io/badge/architecture-static--html-blue.svg)]()
-[![Performance](https://img.shields.io/badge/lighthouse-100-brightgreen.svg)]()
+[![Deploy](https://github.com/LX8/lx8-website/actions/workflows/deploy.yml/badge.svg)](https://github.com/LX8/lx8-website/actions/workflows/deploy.yml)
+[![QA](https://github.com/LX8/lx8-website/actions/workflows/qa.yml/badge.svg)](https://github.com/LX8/lx8-website/actions/workflows/qa.yml)
 
-The official web platform and digital storefront for **Lx8 Labs**, encompassing the Tupã IDE ecosystem, the Bipartite Universe course architecture, and laboratory insights.
+The official web platform and digital storefront for **Lx8 Labs** — the Tupã
+IDE ecosystem, the Bipartite Universe course architecture, the aimem
+context server, and laboratory insights.
 
 ## Architecture & Stack
 
-The platform is designed with a strict zero-build-step philosophy, prioritizing raw performance, minimal dependencies, and semantic HTML/CSS over heavy JavaScript frameworks.
+Strict zero-build-step authoring policy at the root: raw performance, minimal
+dependencies, semantic HTML/CSS over JavaScript frameworks. The control-plane
+dashboard (`dashboard/`) is the one exception — it builds with Vite into
+static assets that get copied into each subdomain.
 
-* **Frontend Engine:** Vanilla HTML5 / CSS3.
-* **Design Language:** Tactile Brutalism, featuring progressive disclosure mechanisms (horizontal scroll-snap carousels) to minimize cognitive load.
-* **CSS Architecture:** A unified, cache-optimized `global.css` governs base design tokens, responsive typography, and navigation states to ensure sub-second First Contentful Paint (FCP).
-* **3D Visualizations:** WebGL integration via `three.js` (deferred loading) for the Bipartite Universe## Global Architecture
+- **Frontend Engine** — Vanilla HTML5 / CSS3 at the root.
+- **Design Language** — Tactile Brutalism, with horizontal scroll-snap
+  carousels for progressive disclosure.
+- **CSS Architecture** — Unified `global.css` for design tokens, responsive
+  typography, and nav states. Targets sub-second First Contentful Paint.
+- **3D Visualisations** — `three.js`, deferred-loaded, for the Algorithm Lab
+  and Bipartite Universe scenes.
+- **Hosting** — Firebase Hosting (multi-site), one target per subdomain.
+- **Backend** — Firebase Auth + Firestore + Cloud Functions (Node 20)
+  for Stripe checkout, license provisioning, and the support triage agent.
+
+## Global Architecture
 
 Lx8 Labs is built on a sovereign, cross-platform architecture:
-1. **Central OS Dashboard:** React/Vite unified control plane.
-2. **Omni-Channel Licensing:** 
-   - **Web Apps (Bipartite Book):** Firebase Auth Custom Claims.
-   - **Native/CLI (Tupã IDE, aimem):** Offline-first ECDSA cryptographically signed tokens.
-   - **Hardware (mattermem):** Zero-touch device pairing.
-3. **Telemetry Engine:** React ErrorBoundary mapped to Firebase Analytics (Web Crashlytics equivalent).
-4. **SRE Deploy Engine:** A custom Python orchestrator (`scripts/deploy.py`) that performs local hashing and live cloud verification to achieve zero-cost idempotency.
-5. **Support Agent:** AI Triage Agent running on Firebase Functions, listening to the `/support` queue.
 
-## Project Structure & Architecture
+1. **Central OS Dashboard** — React/Vite unified control plane (`dashboard/`).
+2. **Omni-Channel Licensing**
+   - Web apps (Bipartite Book): Firebase Auth custom claims.
+   - Native / CLI (Tupã IDE, aimem): offline-first ECDSA-signed tokens.
+   - Hardware (mattermem): zero-touch device pairing.
+3. **Telemetry** — Firebase Performance Monitoring; the prior open-write
+   Firestore rule has been replaced with an authed, schema-validated rule.
+4. **SRE Deploy** — A Python orchestrator (`scripts/deploy.py`) does hash
+   diffing, semver bumps, and per-target Firebase deploys.
+5. **Support Agent** — Cloud Function on the `/support` queue.
 
-The website codebase operates as the central control plane inside the larger `~/Lx8Labs/` workspace. For a comprehensive overview of systems design, SRE sync pipelines, and the multi-language (i18n) framework, see [ARCHITECTURE.md](file:///Users/alexeiferreira/Lx8Labs/internal/Website/ARCHITECTURE.md).
+## Project Structure
 
 ```text
-├── index.html            # Main Landing & Core Navigation
-├── aimem/                # Subdomain public folder: aimem.lx8labs.com
-├── tupa/                 # Subdomain public folder: tupa.lx8labs.com
-├── bsms/                 # Subdomain public folder: bsms.lx8labs.com
-├── bipartitebook/        # Subdomain public folder: bipartitebook.lx8labs.com
-├── installations/        # Subdomain public folder: installations.lx8labs.com
-├── mattermem/            # Subdomain public folder: mattermem.lx8labs.com
-├── i18n/                 # Centralized multi-language translations and engine
-├── scripts/              # SRE infrastructure & automated sync scripts
-├── global.css            # Centralized Design Tokens & CSS Engine
-├── firebase-init.js      # Consolidated Firebase Auth, DB, & Telemetry
-├── firebase.json         # Orchestrated Firebase Hosting config
-└── ARCHITECTURE.md       # Master system design specifications
+├── index.html             # Landing & core navigation
+├── algorithms/            # Algorithm Lab (3D visualiser)
+├── tupa/                  # tupa.lx8labs.com mirror (managed via Firebase target)
+├── aimem/                 # aimem.lx8labs.com mirror
+├── bipartitebook/         # bipartitebook.lx8labs.com — Next.js export
+├── installations/         # installations.lx8labs.com
+├── mattermem/             # mattermem.lx8labs.com
+├── about/ courses/ shop/ ... # Authored static pages
+├── dashboard/             # React/Vite control plane (builds to dashboard/dist)
+├── functions/             # Cloud Functions (Stripe, licensing, triage)
+├── i18n/                  # Centralized translations + runtime engine
+├── scripts/               # SRE automation
+│   ├── deploy.py
+│   ├── sync_infrastructure.py   # Single source of truth for firebase.json
+│   ├── dns_*.py
+│   └── legacy/                  # Archived one-off patcher scripts
+├── global.css             # Design tokens & shared styles
+├── firebase-init.js       # Firebase Auth/DB/Telemetry bootstrap
+├── firebase.json          # Generated from sync_infrastructure.py
+└── ARCHITECTURE.md        # Full systems design
 ```
 
-## SRE & Infrastructure Synchronization
+## Where the domain actually serves from
 
-Lx8 Labs utilizes an intelligent, zero-cost CI/CD SRE pipeline powered by GitHub Actions and a centralized Python deployment engine.
+The serving topology is **split** and easy to get wrong:
 
-1. **Product Registry**: Maintain the product subdomains and version tracks in `lx8_registry.yaml`.
-2. **Automated CI/CD**: Pushing to the `main` branch automatically triggers the `.github/workflows/deploy.yml` pipeline.
-3. **Smart Deploy Engine (`scripts/deploy.py`)**:
-   - Analyzes codebase hashes to identify which subdomains have modified files.
-   - Automatically bumps Semantic Versions and generates a `version.json` payload for auditing.
-   - Rebuilds and synchronizes all global telemetry, React dashboards, and translations.
-   - Deploys **only** dirty targets to Firebase via targeted CLI commands.
-   - Implements aggressive zero-cost caching (1-year `max-age` for static assets, and `no-cache` ETags for immediate HTML revalidation).
+| Surface                           | Served by         | TLS / headers                  |
+| --------------------------------- | ----------------- | ------------------------------ |
+| `lx8labs.com` (apex)              | GitHub Pages      | Cloudflare in front, no CSP    |
+| `lx8labs.com/*` (root sections)   | GitHub Pages      | same — meta CSP is the policy  |
+| `*.lx8labs.com` (subdomains)      | Firebase Hosting  | full firebase.json header set  |
+| `lx8-*.web.app` (native fallback) | Firebase Hosting  | full firebase.json header set  |
 
-To manually force a global deploy locally:
+GitHub Pages can't set response headers, so the apex relies entirely on
+the inline `<meta http-equiv="Content-Security-Policy">` written into
+every authored page. `scripts/sync_csp.py` keeps that meta tag in
+lock-step with the CSP that firebase.json emits for the subdomains —
+single source of truth, two enforcement layers.
+
+## SRE & Infrastructure
+
+Pushes to `main` trigger:
+
+1. **QA** (`.github/workflows/qa.yml`) — runs six gates:
+   - `html-validate` over authored pages
+   - lychee internal-link check
+   - Lighthouse against homepage + three flagship sections
+   - `sitemap.xml` drift (regenerated from filesystem)
+   - subdomain placeholder stub check
+   - CSP drift between firebase.json and inline `<meta>` tags
+2. **Deploy** (`.github/workflows/deploy.yml`) — `firebase deploy --only
+   hosting,functions,firestore:rules`. Requires repo secret
+   `FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE` (a Firebase service-account
+   JSON). Without that secret, every step is skipped with a CI notice
+   so QA still gates merges. Pass a custom `only` value via
+   `workflow_dispatch` to deploy a single surface (e.g. `functions`).
+3. **Subdomain health** (`.github/workflows/subdomain-health.yml`) — every
+   6 h, probes both the custom-domain and native-URL of every target and
+   audits the response headers (CSP / HSTS / X-Frame-Options / X-Content-
+   Type-Options). Surfaces drift as warnings without failing the workflow.
+
+To regenerate the Firebase config from the registry:
+
+```bash
+python3 scripts/sync_infrastructure.py
+```
+
+To force a global deploy locally:
+
 ```bash
 python3 scripts/deploy.py --force
 ```
 
 ## Local Development
 
-The platform requires minimal local setup.
+```bash
+# Static root
+python3 -m http.server 8000
 
-1. Clone the repository and navigate to the root directory.
-2. Serve the static files locally:
-   ```bash
-   python3 -m http.server 8000
-   ```
-3. To test the dashboard locally, navigate to `dashboard/` and run `npm run dev`.
+# Dashboard (in another terminal)
+cd dashboard && npm install && npm run dev
+
+# Run every CI gate locally (mirrors qa.yml exactly)
+bash scripts/qa-local.sh
+```
+
+## Subdomain Health & TLS
+
+A scheduled GitHub Action (`.github/workflows/subdomain-health.yml`) probes
+every hosting target every 6 hours. The same probe can be run locally:
+
+```bash
+pip install pyyaml certifi
+python3 scripts/verify_subdomains.py --include-apex
+```
+
+Subdomain pages are generated from `lx8_registry.yaml`:
+
+```bash
+python3 scripts/build_placeholders.py            # render any stubs
+python3 scripts/build_placeholders.py --force    # refresh generated pages
+                                                 # (hand-written pages are
+                                                 # protected by a sentinel
+                                                 # marker and never touched)
+```
+
+### Custom-domain status (manual binding required in Firebase Console)
+
+Five subdomains have their DNS pointed at Firebase but no TLS cert minted yet.
+Bind each custom domain to its site at
+<https://console.firebase.google.com/project/lx8-labs-website/hosting/sites>
+and Firebase will issue a Let's Encrypt cert within 24–48h.
+
+| Custom domain                 | Bind to Firebase site | Current state             |
+| ----------------------------- | --------------------- | ------------------------- |
+| `aimem.lx8labs.com`           | `lx8-aimem`           | TLS hostname mismatch     |
+| `tupa.lx8labs.com`            | `lx8-tupa`            | TLS hostname mismatch     |
+| `tupaide.lx8labs.com`         | `lx8-tupa-ide`        | TLS hostname mismatch     |
+| `mattermem.lx8labs.com`       | `lx8-mattermem`       | TLS hostname mismatch     |
+| `suit.lx8labs.com`            | `lx8-bmss`            | TLS hostname mismatch     |
+| `bipartitebook.lx8labs.com`   | `bipartitebook`       | 404 — domain not linked   |
+| `installations.lx8labs.com`   | `lx8-installations`   | 404 — domain not linked   |
+
+Every native Firebase URL (`https://<site-id>.web.app/`) is reachable and
+serves content; the gap is purely at the custom-domain layer.
+
+## Security model
+
+- **Cloud Functions** authenticate every mutating endpoint with a Firebase
+  ID token from the `Authorization: Bearer …` header. The UID is taken from
+  the verified token, never from the request body.
+- **License keys** use `crypto.randomBytes` (CSPRNG), not `Math.random`.
+- **Firestore telemetry** writes require auth and a strict shape (≤128-char
+  `event`, ≤8 kB payload, `uid` must match `request.auth.uid`).
+- **Content-Security-Policy** has one canonical value living in
+  `firebase.json` (target `main`). Firebase Hosting applies it as a response
+  header for the subdomains; `scripts/sync_csp.py` mirrors the same value
+  into a `<meta>` tag on every authored page (the apex is on GitHub Pages,
+  which can't set response headers). CI gate `csp-drift` blocks merges
+  where the two diverge.
 
 ## Intellectual Property & Licensing
 
-The core repositories, native source files (Rust, Swift, Metal), and raw manuscripts within the `~/Lx8Labs/` taxonomy are **strictly proprietary and confidential intellectual property of Lx8 Labs**. The public website and SRE deployment scripts are licensed strictly under their respective headers; no proprietary algorithms or product core models are exposed.
+The core repositories, native source files (Rust, Swift, Metal), and raw
+manuscripts within the `~/Lx8Labs/` taxonomy are **strictly proprietary and
+confidential intellectual property of Lx8 Labs**. The public website and SRE
+deployment scripts are licensed strictly under their respective headers; no
+proprietary algorithms or product core models are exposed.
 
 ---
 *© 2026 Lx8 Labs. All rights reserved.*

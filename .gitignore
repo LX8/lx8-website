@@ -1,4 +1,37 @@
+# ── OS / editor ──────────────────────────────────────────────────────────
 .DS_Store
+*.swp
+*.swo
+
+# ── Secrets & credentials (defence-in-depth; CI builds keys at runtime) ──
 *.pem
+firebase-key.json
+serviceAccount*.json
+.env
+.env.*
+!.env.example
+
+# ── Build outputs ────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.firebase/
+.vite/
+
+# ── Dependencies ─────────────────────────────────────────────────────────
+node_modules/
+**/node_modules/
+
+# ── Python tooling ───────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+
+# ── Logs & local state ───────────────────────────────────────────────────
 tunnel.log
 lighthouse-report.json
+lhci-reports/
+.deploy_cache.json
+firebase-debug.log
+firebase-debug.*.log

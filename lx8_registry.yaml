@@ -1,43 +1,57 @@
 products:
 - id: lx8-aimem
   subdomain: aimem
+  name: aimem
   category: Developer Tools
   description: AI Memory and Context Management
+  tagline: One canonical markdown source. Every AI tool reads from here. CoALA taxonomy, MCP-native, ~73% fewer tokens per session.
   status: Active
   version: 1.0.6
 - id: lx8-tupa
   subdomain: tupa
+  name: Tupã IDE
   category: Developer Tools
   description: Native macOS Dev Environment Landing
+  tagline: A native macOS IDE built in Rust, Slint, and Metal. Made for engineers who care about latency.
   status: Active
   version: 1.0.6
 - id: lx8-tupa-ide
   subdomain: tupaide
+  name: Tupã IDE (Web)
   category: Developer Tools
-  description: "Tup\xE3 IDE Web Application"
+  description: Tupã IDE Web Application
+  tagline: The web companion to the native Tupã IDE. Early alpha — feature parity with the desktop edition is not the goal.
   status: Alpha
   version: 1.0.6
 - id: lx8-bmss
   subdomain: suit
+  name: Aegis Morphic Swarm Suit
   category: Autonomous Systems
   description: Aegis Morphic Swarm Suit
+  tagline: Speculative-engineering research into programmable-matter exoskeletons. Falsifiable simulations, TRL-gated subsystems, companion-project roadmap. Internal codename — not a product.
   status: Active
   version: 1.0.9
 - id: bipartitebook
   subdomain: bipartitebook
+  name: The Bipartite Universe
   category: Publications
   description: Bipartite Universe Book
+  tagline: Interactive publishing platform for "A Symphony of Physics". Read the chapters, run the simulations.
   status: Active
   version: 1.0.9
 - id: lx8-installations
   subdomain: installations
+  name: Lx8 Installations
   category: Infrastructure
   description: Lx8 Labs Management & Deployments
-  status: Active
+  tagline: Managed installation and deployment services for Lx8 Labs customers. Site coming together — early customers are invited via lx8labs.com.
+  status: Coming Soon
   version: 1.0.6
 - id: lx8-mattermem
   subdomain: mattermem
+  name: mattermem
   category: Infrastructure
   description: Lx8 Mem / Hardware Systems
-  status: Active
+  tagline: Hardware-backed memory systems for native devices. Zero-touch pairing, signed offline tokens, ECDSA-anchored device identity.
+  status: Coming Soon
   version: 1.0.6
