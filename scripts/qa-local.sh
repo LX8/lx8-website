@@ -40,6 +40,11 @@ step "feed.xml drift"
 python3 scripts/generate_feed.py --check && ok "feed.xml up to date" \
     || fail "feed.xml is stale — run: python3 scripts/generate_feed.py"
 
+# 2c. i18n key coverage across en / pt-BR / de
+step "i18n key coverage"
+python3 scripts/check_i18n.py >/dev/null && ok "every data-i18n key translated in all 3 languages" \
+    || { python3 scripts/check_i18n.py; fail "i18n gap — fill in i18n/translations.js"; }
+
 # 3. Subdomain placeholder stubs
 step "subdomain stub check"
 python3 scripts/build_placeholders.py --check && ok "no <h1>Welcome to…</h1> stubs" \
