@@ -95,6 +95,29 @@ jobs:
         working-directory: dashboard
         run: npm run build
 
+      - name: Sync dashboard build into every subdomain
+        if: steps.gate.outputs.ok == 'true'
+        # `firebase deploy` ships whatever's already on disk under each
+        # subdomain's `dashboard/` folder. Before this step those folders
+        # held a stale 1.3 KB stub from the last sync_infrastructure.py
+        # run. We rsync the freshly-built dashboard/dist into each
+        # subdomain so the dashboard the customer sees matches the
+        # source on this commit.
+        run: |
+          set -euo pipefail
+          if [ ! -d dashboard/dist ]; then
+            echo "::error ::dashboard/dist missing after npm run build"
+            exit 1
+          fi
+          for sub in aimem tupa tupaide suit bipartitebook installations mattermem; do
+            if [ -d "$sub" ]; then
+              echo "→ syncing dashboard/dist → $sub/dashboard/"
+              rm -rf "$sub/dashboard"
+              mkdir -p "$sub/dashboard"
+              cp -R dashboard/dist/. "$sub/dashboard/"
+            fi
+          done
+
       - name: Install Cloud Functions deps
         if: steps.gate.outputs.ok == 'true'
         working-directory: functions
