@@ -82,7 +82,8 @@ def load_site_map() -> dict[str, str]:
 
 
 def probe(url: str) -> dict:
-    """Single HEAD probe with timing."""
+    """Single HEAD probe with timing. Captures response headers so we can
+    also audit the security-header configuration in the same pass."""
     req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": USER_AGENT})
     started = 0.0
     try:
@@ -96,6 +97,7 @@ def probe(url: str) -> dict:
                 "ok": resp.status == 200,
                 "elapsed_ms": round(elapsed_ms, 1),
                 "error": None,
+                "headers": {k.lower(): v for k, v in resp.headers.items()},
             }
     except urllib.error.HTTPError as e:
         import time
@@ -104,13 +106,80 @@ def probe(url: str) -> dict:
             "url": url, "code": e.code, "ok": False,
             "elapsed_ms": round(elapsed_ms, 1),
             "error": f"http {e.code}",
+            "headers": {k.lower(): v for k, v in (e.headers or {}).items()},
         }
     except (urllib.error.URLError, socket.timeout, ssl.SSLError, ConnectionError) as e:
         return {
             "url": url, "code": None, "ok": False,
             "elapsed_ms": None,
-            "error": str(getattr(e, "reason", e)) or e.__class__.__name__,
+            "error": _short_transport_error(e),
+            "headers": {},
         }
+
+
+def _short_transport_error(exc: BaseException) -> str:
+    """Map a noisy transport exception into a 1-line tag suitable for a
+    status table cell. Keeps the table grep-able from CI logs."""
+    reason = getattr(exc, "reason", exc)
+    msg = str(reason) or exc.__class__.__name__
+    lower = msg.lower()
+    if "hostname mismatch" in lower or "doesn't match" in lower:
+        return "tls hostname mismatch"
+    if "certificate verify failed" in lower:
+        return "tls verify failed"
+    if "ssl" in lower and "handshake" in lower:
+        return "tls handshake failed"
+    if "name or service not known" in lower or "name resolution" in lower or "nodename" in lower:
+        return "dns NXDOMAIN"
+    if "connection refused" in lower:
+        return "conn refused"
+    if "timed out" in lower:
+        return "timeout"
+    return msg[:48]
+
+
+# Security headers we expect on every Lx8 response. Mirrors the policy in
+# firebase.json — if anything here is missing it usually means the Hosting
+# headers block didn't match the path or didn't apply to that target.
+REQUIRED_SECURITY_HEADERS = (
+    "content-security-policy",
+    "strict-transport-security",
+    "x-content-type-options",
+    "x-frame-options",
+)
+
+
+def audit_headers(headers: dict[str, str]) -> list[str]:
+    """Return a list of human-readable findings (empty when all required
+    headers are present)."""
+    missing = [h for h in REQUIRED_SECURITY_HEADERS if h not in headers]
+    findings: list[str] = []
+    if missing:
+        findings.append("missing: " + ", ".join(missing))
+
+    # Sanity-check HSTS max-age is at least 1 year (per industry best
+    # practice and what firebase.json declares).
+    hsts = headers.get("strict-transport-security", "")
+    if hsts:
+        try:
+            max_age = int(hsts.split("max-age=", 1)[1].split(";", 1)[0])
+            if max_age < 31_536_000:
+                findings.append(f"hsts max-age={max_age} (<1y)")
+        except (ValueError, IndexError):
+            findings.append("hsts unparseable")
+
+    # CSP with 'unsafe-eval' is a known footgun — flag it. 'unsafe-inline'
+    # for scripts is similar; we tolerate it for styles since the Hosting
+    # CSP already permits it project-wide.
+    csp = headers.get("content-security-policy", "")
+    if "'unsafe-eval'" in csp:
+        findings.append("csp allows 'unsafe-eval'")
+    if "script-src" in csp:
+        script_src = csp.split("script-src", 1)[1].split(";", 1)[0]
+        if "'unsafe-inline'" in script_src:
+            findings.append("csp script-src allows 'unsafe-inline'")
+
+    return findings
 
 
 def fetch_version(url: str) -> Optional[dict]:
@@ -126,7 +195,7 @@ def fetch_version(url: str) -> Optional[dict]:
     return None
 
 
-def evaluate(custom: dict, native: dict) -> tuple[int, list[str]]:
+def evaluate(custom: dict, native: dict, *, audit_headers_flag: bool) -> tuple[int, list[str]]:
     """Combine the two probes into a single severity + notes."""
     notes: list[str] = []
     sev = S_OK
@@ -141,6 +210,14 @@ def evaluate(custom: dict, native: dict) -> tuple[int, list[str]]:
         # in the Firebase Console and a 4xx is a known waiting state.
         sev = max(sev, S_WARN)
         notes.append(f"custom {custom['error'] or custom['code']}")
+
+    if audit_headers_flag and native["ok"]:
+        # Audit the *native* response — custom domains may be served by an
+        # upstream proxy (Cloudflare) that strips/adds headers, but the
+        # native .web.app URL talks straight to Firebase.
+        for finding in audit_headers(native["headers"]):
+            sev = max(sev, S_WARN)
+            notes.append(f"headers: {finding}")
 
     return sev, notes
 
@@ -191,6 +268,10 @@ def main() -> int:
                         help="Minimum severity that triggers a non-zero exit.")
     parser.add_argument("--include-apex", action="store_true",
                         help="Also probe https://lx8labs.com/ (the main site).")
+    parser.add_argument("--check-headers", action="store_true",
+                        help="Also audit security headers on the native URL; "
+                             "missing CSP/HSTS/X-Frame-Options or weak HSTS "
+                             "becomes a warning.")
     args = parser.parse_args()
 
     products = load_registry()
@@ -220,7 +301,7 @@ def main() -> int:
 
     rows: list[dict] = []
     with ThreadPoolExecutor(max_workers=8) as pool:
-        futs = {pool.submit(probe_pair, t): t for t in targets}
+        futs = {pool.submit(probe_pair, t, args.check_headers): t for t in targets}
         for fut in as_completed(futs):
             rows.append(fut.result())
 
@@ -237,12 +318,12 @@ def main() -> int:
     return 0
 
 
-def probe_pair(target: dict) -> dict:
+def probe_pair(target: dict, audit_headers_flag: bool = False) -> dict:
     """Probe both URLs for one target plus version.json from the native URL."""
     custom = probe(target["custom_url"])
     native = probe(target["native_url"])
     version = fetch_version(target["native_url"]) if native["ok"] else None
-    severity, notes = evaluate(custom, native)
+    severity, notes = evaluate(custom, native, audit_headers_flag=audit_headers_flag)
     return {
         **target,
         "custom": custom,

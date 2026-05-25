@@ -9,6 +9,31 @@ permissions:
   contents: read
 
 jobs:
+  sitemap-drift:
+    name: Sitemap drift check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        # Need git history so `git log -1` gives stable lastmod dates that
+        # match what the script will emit locally on a contributor's machine.
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Verify sitemap.xml matches filesystem
+        run: python3 scripts/generate_sitemap.py --check
+
+  placeholder-stub-check:
+    name: Subdomain stub check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install pyyaml
+        run: pip install pyyaml
+      - name: Fail if a subdomain still has a one-line <h1> stub
+        run: python3 scripts/build_placeholders.py --check
+
   html-validate:
     name: HTML validate
     runs-on: ubuntu-latest

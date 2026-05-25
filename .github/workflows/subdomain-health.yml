@@ -38,10 +38,10 @@ jobs:
           # Capture both the human-readable table and the JSON in one go so we
           # can drop the JSON into the job summary as a collapsible block.
           set +e
-          python3 scripts/verify_subdomains.py --include-apex \
+          python3 scripts/verify_subdomains.py --include-apex --check-headers \
             | tee /tmp/probe-table.txt
           rc=${PIPESTATUS[0]}
-          python3 scripts/verify_subdomains.py --include-apex --json \
+          python3 scripts/verify_subdomains.py --include-apex --check-headers --json \
             > /tmp/probe.json
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
           exit $rc
