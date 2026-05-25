@@ -8,6 +8,8 @@
   "background_color": "#000000",
   "theme_color": "#6366f1",
   "orientation": "any",
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
     {
       "src": "https://avatars.githubusercontent.com/u/7157081?s=192",
@@ -25,22 +27,22 @@
   "shortcuts": [
     {
       "name": "Products",
-      "url": "/products.html",
+      "url": "/products/",
       "description": "All four products"
     },
     {
       "name": "Algorithm Lab",
-      "url": "/algorithms.html",
+      "url": "/algorithms/",
       "description": "39 algorithms in 3D"
     },
     {
       "name": "aimem",
-      "url": "/aimem.html",
+      "url": "https://aimem.lx8labs.com/",
       "description": "AI memory, one canonical source"
     },
     {
       "name": "Tupã IDE",
-      "url": "/tupa.html",
+      "url": "https://tupa.lx8labs.com/",
       "description": "Native macOS dev environment"
     }
   ]

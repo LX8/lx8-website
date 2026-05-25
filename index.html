@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://js.stripe.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com https://*.googleusercontent.com; connect-src 'self' https://*.googleapis.com https://*.cloudfunctions.net https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; frame-src 'self' https://js.stripe.com https://lx8-labs-website.firebaseapp.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;">
   <!-- Content-Security-Policy is set at the Hosting layer in firebase.json,
        here. Two CSPs intersect (the strictest wins per directive), which
        previously blocked bunny.net fonts and GitHub avatars at runtime. -->
@@ -72,12 +73,12 @@
   <meta property="og:url"         content="https://lx8labs.com/" />
   <meta property="og:title"       content="Lx8 Labs — DevOps · AI · Research" />
   <meta property="og:description" content="A Bell Labs-inspired studio for DevOps, AI tools, courses and open research." />
-  <meta property="og:image"       content="https://avatars.githubusercontent.com/u/7157081?v=4" />
+  <meta property="og:image"       content="https://lx8labs.com/og-image.png" />
   <meta name="twitter:card"       content="summary_large_image" />
   <meta name="twitter:site"       content="@lx8labs" />
   <meta name="twitter:title"      content="Lx8 Labs" />
   <meta name="twitter:description" content="Research · Tools · Ideas" />
-  <meta name="twitter:image"      content="https://avatars.githubusercontent.com/u/7157081?v=4" />
+  <meta name="twitter:image"      content="https://lx8labs.com/og-image.png" />
   <link rel="preconnect" href="https://fonts.bunny.net" />
   <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" />
   <style>
