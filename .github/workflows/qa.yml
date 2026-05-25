@@ -22,6 +22,21 @@ jobs:
       - name: Verify sitemap.xml matches filesystem
         run: python3 scripts/generate_sitemap.py --check
 
+  feed-drift:
+    name: Feed drift check
+    runs-on: ubuntu-latest
+    # feed.xml is regenerated from each insights/*.html article's
+    # <meta property="article:published_time" …> tag, so an article being
+    # added or its date being changed must be reflected in the committed
+    # feed in the same PR.
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Verify feed.xml matches insights metadata
+        run: python3 scripts/generate_feed.py --check
+
   placeholder-stub-check:
     name: Subdomain stub check
     runs-on: ubuntu-latest

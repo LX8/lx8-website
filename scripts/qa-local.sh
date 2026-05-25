@@ -35,6 +35,11 @@ step "CSP drift"
 python3 scripts/sync_csp.py --check && ok "CSP in sync" \
     || fail "meta CSP drift — run: python3 scripts/sync_csp.py"
 
+# 2b. feed.xml drift from insights/*.html metadata
+step "feed.xml drift"
+python3 scripts/generate_feed.py --check && ok "feed.xml up to date" \
+    || fail "feed.xml is stale — run: python3 scripts/generate_feed.py"
+
 # 3. Subdomain placeholder stubs
 step "subdomain stub check"
 python3 scripts/build_placeholders.py --check && ok "no <h1>Welcome to…</h1> stubs" \
