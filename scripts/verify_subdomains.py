@@ -149,6 +149,51 @@ REQUIRED_SECURITY_HEADERS = (
 )
 
 
+import re
+import subprocess
+
+
+def tls_san_covers(host: str) -> tuple[bool, str | None]:
+    """Open a raw TLS connection to host:443, dump the cert via OpenSSL,
+    return (covers_host, presented_subject_or_first_san).
+
+    A custom-domain probe failing because of TLS hostname mismatch is the
+    standard "domain not yet bound in Firebase Console" failure mode — the
+    DNS resolves to Firebase's edge IP but Firebase hasn't minted a cert
+    for the host yet, so it serves the default `*.firebaseapp.com` cert
+    whose SAN list doesn't cover the hostname.
+    """
+    try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        with socket.create_connection((host, 443), timeout=TIMEOUT) as sock:
+            with ctx.wrap_socket(sock, server_hostname=host) as ssock:
+                der = ssock.getpeercert(binary_form=True)
+        result = subprocess.run(
+            ["openssl", "x509", "-noout", "-text"],
+            input=ssl.DER_cert_to_PEM_cert(der).encode(),
+            capture_output=True, check=True, timeout=4,
+        )
+        text = result.stdout.decode()
+        subject_match = re.search(r"Subject:[^\n]*CN\s*=\s*([^\n,]+)", text)
+        subject = subject_match.group(1).strip() if subject_match else ""
+        san_block = re.search(r"X509v3 Subject Alternative Name:\s*\n\s*([^\n]+)", text)
+        sans = re.findall(r"DNS:([^,\s]+)", san_block.group(1)) if san_block else []
+        covers = False
+        for s in sans:
+            if s == host:
+                covers = True
+                break
+            # Wildcard SAN (only matches one label deep).
+            if s.startswith("*.") and host.endswith(s[1:]) and host.count(".") == s.count("."):
+                covers = True
+                break
+        return covers, subject or (sans[0] if sans else None)
+    except (socket.timeout, ssl.SSLError, ConnectionError, OSError, subprocess.SubprocessError):
+        return False, None
+
+
 def audit_headers(headers: dict[str, str]) -> list[str]:
     """Return a list of human-readable findings (empty when all required
     headers are present)."""
@@ -319,11 +364,37 @@ def main() -> int:
 
 
 def probe_pair(target: dict, audit_headers_flag: bool = False) -> dict:
-    """Probe both URLs for one target plus version.json from the native URL."""
+    """Probe both URLs for one target plus version.json from the native URL.
+
+    On any custom-domain failure we also dump the TLS cert to figure out
+    whether the issue is "domain not bound in Firebase Console" (cert
+    doesn't cover the host → tls_san_covers=False) or "domain bound but
+    serving 404" (cert covers the host → it's a content/binding issue).
+    The actionable hint goes into `target['action']`.
+    """
     custom = probe(target["custom_url"])
     native = probe(target["native_url"])
     version = fetch_version(target["native_url"]) if native["ok"] else None
     severity, notes = evaluate(custom, native, audit_headers_flag=audit_headers_flag)
+
+    action: str | None = None
+    if not custom["ok"]:
+        host = target["custom_url"].split("/")[2]
+        covers, _subject = tls_san_covers(host)
+        if not covers:
+            action = (
+                f"In Firebase Console → site `{target['site']}` → Add custom "
+                f"domain `{host}`. Cert will provision in ~24-48 h."
+            )
+        else:
+            # Cert is good; 404 means content / wrong-site binding.
+            action = (
+                f"Custom domain `{host}` is bound (cert valid) but serves 404. "
+                f"Check that the binding points at `{target['site']}` and that "
+                f"that site has content (native URL: {target['native_url']})."
+            )
+        notes.append(action)
+
     return {
         **target,
         "custom": custom,
@@ -332,6 +403,7 @@ def probe_pair(target: dict, audit_headers_flag: bool = False) -> dict:
         "severity": severity,
         "severity_label": LEVEL_NAMES[severity],
         "notes": notes,
+        "action": action,
     }
 
 

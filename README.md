@@ -167,25 +167,43 @@ python3 scripts/build_placeholders.py --force    # refresh generated pages
                                                  # marker and never touched)
 ```
 
-### Custom-domain status (manual binding required in Firebase Console)
+### Custom-domain status — two distinct failure modes (manual fix)
 
-Five subdomains have their DNS pointed at Firebase but no TLS cert minted yet.
-Bind each custom domain to its site at
+`scripts/verify_subdomains.py` reports the TLS cert that's actually
+served at each custom hostname; the table below is the diagnostic split.
+
+**Path A — domain has never been bound to a Firebase site.** TLS
+handshake fails because Firebase serves its default
+`CN=firebaseapp.com` cert and the host isn't a SAN. DNS is correct
+(`A 199.36.158.100`). One-time fix per host:
 <https://console.firebase.google.com/project/lx8-labs-website/hosting/sites>
-and Firebase will issue a Let's Encrypt cert within 24–48h.
+→ click the site → **Add custom domain** → paste the host. Firebase
+mints a Let's Encrypt cert in ~24-48 h after the verification step.
 
-| Custom domain                 | Bind to Firebase site | Current state             |
-| ----------------------------- | --------------------- | ------------------------- |
-| `aimem.lx8labs.com`           | `lx8-aimem`           | TLS hostname mismatch     |
-| `tupa.lx8labs.com`            | `lx8-tupa`            | TLS hostname mismatch     |
-| `tupaide.lx8labs.com`         | `lx8-tupa-ide`        | TLS hostname mismatch     |
-| `mattermem.lx8labs.com`       | `lx8-mattermem`       | TLS hostname mismatch     |
-| `suit.lx8labs.com`            | `lx8-bmss`            | TLS hostname mismatch     |
-| `bipartitebook.lx8labs.com`   | `bipartitebook`       | 404 — domain not linked   |
-| `installations.lx8labs.com`   | `lx8-installations`   | 404 — domain not linked   |
+| Host                          | Bind to site     | Current cert |
+| ----------------------------- | ---------------- | ------------ |
+| `aimem.lx8labs.com`           | `lx8-aimem`      | `*.firebaseapp.com` (default) |
+| `tupa.lx8labs.com`            | `lx8-tupa`       | `*.firebaseapp.com` |
+| `tupaide.lx8labs.com`         | `lx8-tupa-ide`   | `*.firebaseapp.com` |
+| `mattermem.lx8labs.com`       | `lx8-mattermem`  | `*.firebaseapp.com` |
+| `suit.lx8labs.com`            | `lx8-bmss`       | `*.firebaseapp.com` |
 
-Every native Firebase URL (`https://<site-id>.web.app/`) is reachable and
-serves content; the gap is purely at the custom-domain layer.
+**Path B — domain bound but to the wrong site.** TLS is valid (cert
+covers the host) but the response is `404`, meaning Firebase routed
+the request to a hosting site that doesn't have content for `/`. The
+content does exist on the *native* URL — just not on whatever site the
+custom domain is currently linked to. Either re-bind to the right site
+or move the content.
+
+| Host                          | Native URL (200)                    | Custom URL (404) |
+| ----------------------------- | ----------------------------------- | ---------------- |
+| `bipartitebook.lx8labs.com`   | `https://bipartitebook.web.app/`    | bound elsewhere  |
+| `installations.lx8labs.com`   | `https://lx8-installations.web.app/`| bound elsewhere  |
+
+Every native `<site-id>.web.app` URL is reachable and serves the
+correct content; the gap is purely at the custom-domain binding layer.
+Once each row above is resolved, the scheduled `subdomain-health`
+workflow will start reporting `✓ ok` automatically.
 
 ## Security model
 
