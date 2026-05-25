@@ -96,26 +96,46 @@
 </nav>
 
 <article id="main">
+  <!--
+    DRAFT IMPRESSUM — DO NOT TREAT AS LEGALLY COMPLIANT UNTIL EVERY
+    <span class="placeholder"> below has been replaced with real data.
+    German TMG § 5 mandates a physical address and a means of "quick
+    electronic contact" for any commercial website. Until the address
+    fields are real, this page is non-compliant for any commercial
+    transaction routed through lx8labs.com.
+
+    Required fields, in order:
+      - Street and house number (real)
+      - Postal code + city (real, Berlin assumed)
+      - Email (a routable mailbox you actually monitor)
+      - USt-IdNr (omit the entire <h2>VAT…</h2> block if not yet registered;
+        ship after registration completes)
+  -->
   <div class="chip">Legal · TMG § 5</div>
   <h1>Impressum</h1>
   <p class="updated">Information pursuant to § 5 TMG (German Telemedia Act) and § 55 RStV.</p>
 
-  <h2>Operator</h2>
-  <div class="info-box">
-    <p><strong>Alexei Lemos Cavalcante Ferreira</strong></p>
-    <p>Lx8 Labs <span class="placeholder">— sole proprietorship · Einzelunternehmen</span></p>
-    <p><span class="placeholder">[Street and number — fill in]</span></p>
-    <p><span class="placeholder">[ZIP] Berlin, Germany</span></p>
+  <div role="alert" style="margin:1rem 0 2rem; padding:1rem 1.25rem; border-radius:8px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.4); color:#fbbf24; font-size:0.9rem;">
+    ⚠ <strong>Draft.</strong> Address, contact email and VAT ID below are placeholders.
+    Fill in before any commercial use.
   </div>
 
-  <h2>Contact</h2>
+  <h2>Operator <small style="font-weight:400; color:var(--text3); font-size:0.8em;">— required by TMG § 5 (1) Nr. 1</small></h2>
   <div class="info-box">
-    <p>Email: <span class="placeholder">[contact@lx8labs.com — confirm or change]</span></p>
+    <p><strong>Alexei Lemos Cavalcante Ferreira</strong></p>
+    <p>Lx8 Labs <span class="placeholder" data-impressum-todo="entity-form">— sole proprietorship · Einzelunternehmen</span></p>
+    <p><span class="placeholder" data-impressum-todo="street">[Street and number — fill in]</span></p>
+    <p><span class="placeholder" data-impressum-todo="postcode">[ZIP] Berlin, Germany</span></p>
+  </div>
+
+  <h2>Contact <small style="font-weight:400; color:var(--text3); font-size:0.8em;">— required by TMG § 5 (1) Nr. 2</small></h2>
+  <div class="info-box">
+    <p>Email: <span class="placeholder" data-impressum-todo="email">[contact@lx8labs.com — confirm or change]</span></p>
     <p>Website: <a href="https://lx8labs.com">https://lx8labs.com</a></p>
   </div>
 
-  <h2>VAT identification number</h2>
-  <p>VAT ID (USt-IdNr.) according to § 27 a UStG: <span class="placeholder">[DE… — add when registered, or omit if not VAT-registered]</span></p>
+  <h2>VAT identification number <small style="font-weight:400; color:var(--text3); font-size:0.8em;">— TMG § 5 (1) Nr. 6 (omit whole section if not VAT-registered)</small></h2>
+  <p>VAT ID (USt-IdNr.) according to § 27 a UStG: <span class="placeholder" data-impressum-todo="vat-id">[DE… — add when registered, or omit if not VAT-registered]</span></p>
 
   <h2>Responsible for content (§ 55 Abs. 2 RStV)</h2>
   <p>Alexei Lemos Cavalcante Ferreira (address as above)</p>
