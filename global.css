@@ -72,26 +72,35 @@ body.high-contrast * { box-shadow: none !important; text-shadow: none !important
 }
 
 /* ── RENDERING PERFORMANCE ── */
+/* `content-visibility: auto` lets the browser skip rendering off-screen
+   sections until they enter the viewport; `contain-intrinsic-size`
+   reserves layout space so the scrollbar doesn't jump. The hero is
+   exempt because it's always above the fold. */
 section:not(#hero), footer, .products-grid, .courses-grid {
   content-visibility: auto;
   contain-intrinsic-size: auto 500px;
 }
 
-.projects-grid, .news-grid { 
-  display: flex !important; 
-  gap: 16px; 
-  overflow-x: auto; 
-  padding-bottom: 1.5rem; 
-  scroll-snap-type: x mandatory; 
-  scrollbar-width: none; 
-  -webkit-overflow-scrolling: touch; 
+/* Scroll-snap carousels. Previously the `display: flex !important` rule
+   shadowed the section-level `content-visibility: auto` on whatever
+   section wraps the carousel, defeating the rendering-skip optimisation.
+   Drop `!important` — class specificity already beats the section
+   selector — and the `grid-column: auto !important` on children that
+   was a relic of an earlier grid attempt. */
+.projects-grid, .news-grid {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 1.5rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 .projects-grid::-webkit-scrollbar, .news-grid::-webkit-scrollbar { display: none; }
-.projects-grid > *, .news-grid > * { 
-  scroll-snap-align: center; 
+.projects-grid > *, .news-grid > * {
+  scroll-snap-align: center;
   flex: 0 0 85%;
   max-width: 420px;
-  grid-column: auto !important;
 }
 @media (min-width: 768px) {
   .projects-grid > *, .news-grid > * { flex: 0 0 45%; max-width: 500px; }

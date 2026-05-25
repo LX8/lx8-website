@@ -1,7 +1,15 @@
 // High-Performance Zero-Cost Canvas Engine
 // Replaces heavy CSS filter: blur() blobs with an optimized, 60fps aesthetic field.
+//
+// Deferral strategy:
+//   The 180-particle canvas + 60fps requestAnimationFrame loop is purely
+//   decorative — never required for first contentful paint, first input,
+//   or any text content. Starting it inside requestIdleCallback frees up
+//   the main thread during initial parse/render, which lowers TBT on
+//   weak devices. We fall back to setTimeout(0) on browsers without
+//   requestIdleCallback (Safari before 17).
 
-(function initBackgroundEngine() {
+function _initBackgroundEngine() {
   const canvas = document.createElement('canvas');
   canvas.id = 'bg-canvas';
   canvas.style.position = 'fixed';
@@ -83,4 +91,12 @@
     ctx.fillStyle = '#05050a';
     ctx.fillRect(0, 0, w, h);
   }
-})();
+}
+
+if (typeof requestIdleCallback === 'function') {
+  requestIdleCallback(_initBackgroundEngine, { timeout: 1500 });
+} else {
+  // Safari ≤ 16 has no requestIdleCallback; setTimeout 0 still defers past
+  // first paint, which is the property we actually care about.
+  setTimeout(_initBackgroundEngine, 0);
+}
