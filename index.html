@@ -79,7 +79,12 @@
   <meta name="twitter:title"      content="Lx8 Labs" />
   <meta name="twitter:description" content="Research · Tools · Ideas" />
   <meta name="twitter:image"      content="https://lx8labs.com/og-image.png" />
-  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <!-- Performance: preconnect to the font + avatar origins early so the
+       handshake overlaps with HTML parse. The avatar is the largest
+       above-the-fold image (nav logo with fetchpriority="high"). -->
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="preconnect" href="https://avatars.githubusercontent.com" crossorigin />
+  <link rel="preload" as="image" href="https://avatars.githubusercontent.com/u/7157081?v=4" fetchpriority="high" />
   <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -370,7 +375,7 @@
 <nav id="nav">
   <a href="#hero" class="logo-a">
     <div class="logo-img">
-      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" />
+      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async" />
     </div>
     <span class="logo-txt">Lx8 <span>Labs</span></span>
   </a>
@@ -967,7 +972,7 @@
 <footer>
   <div class="ft-left">
     <div class="ft-logo">
-      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" />
+      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="24" height="24" loading="lazy" decoding="async" />
     </div>
     <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="https://lx8labs.com" style="color:var(--ind4);text-decoration:none;">lx8labs.com</a></span>
   </div>
