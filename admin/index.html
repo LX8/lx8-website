@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <!-- Zero-Cost Security Hardening -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
   <meta name="referrer" content="no-referrer">
   <script>if (window !== window.top) window.top.location = window.location;</script>
 
@@ -475,19 +474,16 @@
       <table>
         <thead>
           <tr>
-            <th>User</th>
-            <th>Email</th>
-            <th>Subscription</th>
-            <th>Status</th>
-            <th>Joined</th>
-            <th>Action</th>
+            <th scope="col">User</th>
+            <th scope="col">Email</th>
+            <th scope="col">Subscription</th>
+            <th scope="col">Status</th>
+            <th scope="col">Joined</th>
+            <th scope="col">Action</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td><strong>John Doe</strong></td>
         <tbody id="users-tbody">
-          <!-- Populated by JS -->
+          <!-- Populated by JS at runtime; loadUsers() in the module script below -->
         </tbody>
       </table>
     </div>

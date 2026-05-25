@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Zero-Cost Security Hardening -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
+  <!-- Content-Security-Policy is set at the Hosting layer in firebase.json,
+       here. Two CSPs intersect (the strictest wins per directive), which
+       previously blocked bunny.net fonts and GitHub avatars at runtime. -->
   <meta name="referrer" content="no-referrer">
   <script>if (window !== window.top) window.top.location = window.location;</script>
 
@@ -55,7 +56,7 @@
       {
         "@type": "WebApplication",
         "name": "Algorithm Lab",
-        "url": "https://lx8labs.com/algorithms.html",
+        "url": "https://lx8labs.com/algorithms/",
         "description": "39 classic algorithms as interactive 3D visualizations with synchronized pseudocode and live variable inspector. Spans 2,300+ years from Euclid's GCD to Tim Sort.",
         "applicationCategory": "EducationalApplication",
         "operatingSystem": "Web Browser",
