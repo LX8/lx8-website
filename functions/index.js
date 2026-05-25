@@ -151,6 +151,26 @@ const requireAuth = async (req, res) => {
 };
 
 /**
+ * Hard cap on request payload size for non-webhook HTTP endpoints. None of
+ * our flows legitimately receives more than a few KB of JSON; capping at
+ * 64 KB protects against decompression bombs and accidental large POSTs
+ * without affecting any real client. The stripeWebhook handler is exempt
+ * because Stripe's payload size is governed by Stripe itself and signed.
+ *
+ * Returns true if the request was rejected (the caller should `return`
+ * immediately); false otherwise.
+ */
+const MAX_BODY_BYTES = 64 * 1024;
+const enforceBodyCap = (req, res) => {
+  const size = req.rawBody ? Buffer.byteLength(req.rawBody) : 0;
+  if (size > MAX_BODY_BYTES) {
+    respondError(res, 413, `Payload too large (limit ${MAX_BODY_BYTES} bytes)`);
+    return true;
+  }
+  return false;
+};
+
+/**
  * Record a Stripe event id in `stripe_events/{id}` inside a transaction.
  * Returns true the first time it's seen, false on every subsequent call.
  * The doc carries a `processedAt` server timestamp so a TTL policy in
@@ -336,6 +356,7 @@ exports.createCheckoutSession = onRequest({
   concurrency: 80,
 }, async (req, res) => {
   if (req.method !== "POST") return respondError(res, 405, "Method Not Allowed");
+  if (enforceBodyCap(req, res)) return;
 
   const decoded = await requireAuth(req, res);
   if (!decoded) return;
@@ -402,7 +423,25 @@ exports.triageAgent = onDocumentCreated({
   if (ticket.sender !== "user") return; // Only respond to user-authored tickets
 
   const userId = event.params.userId;
+  const ticketId = event.params.ticketId;
   const ticketContent = (ticket.content || "").toLowerCase();
+
+  // Idempotency: Firestore re-delivers onDocumentCreated events on retry.
+  // Before posting another canned reply we check whether an agent has
+  // already responded to this ticket; if so, bail. The check is keyed on
+  // the `inReplyTo` field we write below, so multiple invocations for the
+  // same ticket are de-duplicated regardless of timing.
+  const db = getAdmin().firestore();
+  const FieldValue = getAdmin().firestore.FieldValue;
+  const existingReply = await db
+    .collection("users").doc(userId).collection("support")
+    .where("sender", "==", "agent")
+    .where("inReplyTo", "==", ticketId)
+    .limit(1).get();
+  if (!existingReply.empty) {
+    logger.info(`triageAgent: skipping duplicate delivery for ticket ${ticketId}`);
+    return;
+  }
 
   let aiResponse = "I have escalated this issue to a human engineer. They will respond shortly.";
   let newStatus = "OPEN";
@@ -420,12 +459,13 @@ exports.triageAgent = onDocumentCreated({
 
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  await getAdmin().firestore()
+  await db
     .collection("users").doc(userId)
     .collection("support").add({
       content: aiResponse,
       sender: "agent",
-      createdAt: getAdmin().firestore.FieldValue.serverTimestamp(),
+      inReplyTo: ticketId,
+      createdAt: FieldValue.serverTimestamp(),
       status: newStatus,
     });
 
@@ -442,6 +482,7 @@ exports.generateOfflineLicense = onRequest({
   concurrency: 80,
 }, async (req, res) => {
   if (req.method !== "POST") return respondError(res, 405, "Method Not Allowed");
+  if (enforceBodyCap(req, res)) return;
 
   const decoded = await requireAuth(req, res);
   if (!decoded) return;
@@ -507,6 +548,7 @@ exports.createSessionCookie = onRequest({
   concurrency: 80,
 }, async (req, res) => {
   if (req.method !== "POST") return respondError(res, 405, "Method Not Allowed");
+  if (enforceBodyCap(req, res)) return;
 
   const { idToken } = req.body || {};
   if (!idToken) return respondError(res, 400, "Missing idToken");
@@ -538,6 +580,7 @@ exports.registerClientDevice = onRequest({
   concurrency: 80,
 }, async (req, res) => {
   if (req.method !== "POST") return respondError(res, 405, "Method Not Allowed");
+  if (enforceBodyCap(req, res)) return;
 
   const decoded = await requireAuth(req, res);
   if (!decoded) return;
@@ -597,6 +640,7 @@ exports.revokeClientDevice = onRequest({
   concurrency: 80,
 }, async (req, res) => {
   if (req.method !== "POST") return respondError(res, 405, "Method Not Allowed");
+  if (enforceBodyCap(req, res)) return;
 
   const decoded = await requireAuth(req, res);
   if (!decoded) return;
@@ -632,6 +676,7 @@ exports.createBillingPortalSession = onRequest({
   concurrency: 80,
 }, async (req, res) => {
   if (req.method !== "POST") return respondError(res, 405, "Method Not Allowed");
+  if (enforceBodyCap(req, res)) return;
 
   const decoded = await requireAuth(req, res);
   if (!decoded) return;
@@ -668,6 +713,7 @@ exports.restorePurchases = onRequest({
   concurrency: 40,
 }, async (req, res) => {
   if (req.method !== "POST") return respondError(res, 405, "Method Not Allowed");
+  if (enforceBodyCap(req, res)) return;
 
   const decoded = await requireAuth(req, res);
   if (!decoded) return;
