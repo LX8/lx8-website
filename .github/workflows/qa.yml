@@ -8,16 +8,6 @@ on:
 permissions:
   contents: read
 
-# Paths shared by every job to keep noise out of CI:
-#   - vendored deps (node_modules)
-#   - built artifacts checked into the static site (bipartitebook/* is a
-#     Next.js export and uses React-specific attributes html-validate flags
-#     as invalid; lint the source repo, not the build output)
-env:
-  EXCLUDE_GLOBS: >-
-    -not -path './**/node_modules/*'
-    -not -path './bipartitebook/*'
-
 jobs:
   html-validate:
     name: HTML validate
@@ -29,18 +19,25 @@ jobs:
       - name: Install html-validate
         run: npm install -g html-validate@^9.0.0
       - name: Validate authored HTML (excluding generated output)
+        # We prune three subtrees before walking the file list:
+        #   - any node_modules anywhere (vendored deps)
+        #   - bipartitebook/      (Next.js export; React-specific
+        #                          attributes html-validate flags as
+        #                          invalid — we lint the source repo,
+        #                          not the build output)
+        #   - every */dashboard   (Vite-built React app; same reasoning)
+        # find -prune is more reliable than `-not -path` over deep trees.
         run: |
-          # shellcheck disable=SC2086
-          mapfile -t files < <(find . -type f -name '*.html' ${EXCLUDE_GLOBS})
+          mapfile -t files < <(find . \
+            \( -type d \( -name node_modules -o -name __pycache__ \
+                       -o -path './bipartitebook' \
+                       -o -path './dashboard' -o -path '*/dashboard' \) -prune \) \
+            -o -type f -name '*.html' -print)
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No HTML files."; exit 0
           fi
           echo "Validating ${#files[@]} files:"
           printf '  %s\n' "${files[@]}"
-          # --max-warnings 200 lets minor stylistic warnings (button type, etc.)
-          # land without blocking; only errors fail. Rules unsuited to
-          # hand-crafted scoped-CSS single-file pages are demoted in
-          # .htmlvalidate.json.
           html-validate --max-warnings 200 "${files[@]}"
 
   link-check:
@@ -51,18 +48,28 @@ jobs:
       - name: lychee (offline, internal links only)
         uses: lycheeverse/lychee-action@v2
         with:
-          # --root-dir lets lychee resolve root-relative links like /about.html
-          # against the repo root rather than the filesystem root.
-          # We skip external URLs (CI shouldn't fail because LinkedIn rate-limits
-          # us) and excluded paths (node_modules and the Next.js export).
+          # Excluded paths:
+          #   - node_modules under functions/ and dashboard/
+          #   - the Next.js bipartitebook export
+          #   - every */dashboard/ directory: the Vite-built dashboard's
+          #     index.html references hashed asset paths like
+          #     `/dashboard/assets/index-XYZ.css` that only exist after
+          #     `npm run build` — they're absent in a fresh checkout and
+          #     would falsely report broken.
           args: |
             --offline --no-progress --include-fragments
             --root-dir "$GITHUB_WORKSPACE"
             --exclude "^mailto:"
             --exclude "^https?://"
             --exclude-path "functions/node_modules"
-            --exclude-path "dashboard/node_modules"
+            --exclude-path "dashboard"
+            --exclude-path "aimem/dashboard"
             --exclude-path "bipartitebook"
+            --exclude-path "installations/dashboard"
+            --exclude-path "mattermem/dashboard"
+            --exclude-path "suit/dashboard"
+            --exclude-path "tupa/dashboard"
+            --exclude-path "tupaide/dashboard"
             "**/*.html" "**/*.md"
           fail: true
 
@@ -79,9 +86,9 @@ jobs:
         env:
           LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
-          # Serve the static site locally, then audit. The URLs match the
-          # actual on-disk layout — flat .html files don't exist; pages live
-          # under <name>/index.html and are reached via /<name>/.
+          # Static-serve the site, then audit. URLs match on-disk layout —
+          # flat .html files don't exist; pages live under <name>/index.html
+          # and are reached via /<name>/.
           npx --yes http-server -p 8080 -s . &
           SERVER_PID=$!
           sleep 2
