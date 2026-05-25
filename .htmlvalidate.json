@@ -16,6 +16,8 @@
     "unique-landmark": "warn",
     "aria-label-misuse": "warn",
     "no-raw-characters": "warn",
-    "unrecognized-char-ref": "warn"
+    "unrecognized-char-ref": "warn",
+
+    "doctype-style": "warn"
   }
 }

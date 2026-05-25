@@ -1,4 +1,5 @@
 name: QA — html-validate · link check · Lighthouse
+
 on:
   push:
     branches: [main]
@@ -6,6 +7,16 @@ on:
 
 permissions:
   contents: read
+
+# Paths shared by every job to keep noise out of CI:
+#   - vendored deps (node_modules)
+#   - built artifacts checked into the static site (bipartitebook/* is a
+#     Next.js export and uses React-specific attributes html-validate flags
+#     as invalid; lint the source repo, not the build output)
+env:
+  EXCLUDE_GLOBS: >-
+    -not -path './**/node_modules/*'
+    -not -path './bipartitebook/*'
 
 jobs:
   html-validate:
@@ -17,16 +28,19 @@ jobs:
         with: { node-version: '20' }
       - name: Install html-validate
         run: npm install -g html-validate@^9.0.0
-      - name: Run on every .html file
+      - name: Validate authored HTML (excluding generated output)
         run: |
-          shopt -s globstar nullglob
-          files=( **/*.html )
+          # shellcheck disable=SC2086
+          mapfile -t files < <(find . -type f -name '*.html' ${EXCLUDE_GLOBS})
           if [ "${#files[@]}" -eq 0 ]; then
             echo "No HTML files."; exit 0
           fi
-          # --max-warnings 200 lets us land minor stylistic warnings (button type, etc.)
-          # without blocking; only errors fail. The project config in .htmlvalidate.json
-          # demotes rules unsuited to hand-crafted scoped-CSS single-file pages.
+          echo "Validating ${#files[@]} files:"
+          printf '  %s\n' "${files[@]}"
+          # --max-warnings 200 lets minor stylistic warnings (button type, etc.)
+          # land without blocking; only errors fail. Rules unsuited to
+          # hand-crafted scoped-CSS single-file pages are demoted in
+          # .htmlvalidate.json.
           html-validate --max-warnings 200 "${files[@]}"
 
   link-check:
@@ -39,18 +53,21 @@ jobs:
         with:
           # --root-dir lets lychee resolve root-relative links like /about.html
           # against the repo root rather than the filesystem root.
-          # --exclude '^https?://' skips external URLs; CI shouldn't fail because
-          # LinkedIn rate-limits us.
+          # We skip external URLs (CI shouldn't fail because LinkedIn rate-limits
+          # us) and excluded paths (node_modules and the Next.js export).
           args: |
             --offline --no-progress --include-fragments
             --root-dir "$GITHUB_WORKSPACE"
             --exclude "^mailto:"
             --exclude "^https?://"
+            --exclude-path "functions/node_modules"
+            --exclude-path "dashboard/node_modules"
+            --exclude-path "bipartitebook"
             "**/*.html" "**/*.md"
           fail: true
 
   lighthouse:
-    name: Lighthouse CI (homepage + algo + tupa + aimem)
+    name: Lighthouse CI (homepage + algorithms + tupa + aimem)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -58,19 +75,21 @@ jobs:
         with: { node-version: '20' }
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli@0.14.x
-      - name: Run Lighthouse against four key pages
+      - name: Serve & audit
         env:
           LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
-          # Serve the static site locally then audit.
+          # Serve the static site locally, then audit. The URLs match the
+          # actual on-disk layout — flat .html files don't exist; pages live
+          # under <name>/index.html and are reached via /<name>/.
           npx --yes http-server -p 8080 -s . &
           SERVER_PID=$!
           sleep 2
           lhci collect \
             --url=http://localhost:8080/ \
-            --url=http://localhost:8080/algorithms.html \
-            --url=http://localhost:8080/tupa.html \
-            --url=http://localhost:8080/aimem.html \
+            --url=http://localhost:8080/algorithms/ \
+            --url=http://localhost:8080/tupa/ \
+            --url=http://localhost:8080/aimem/ \
             --numberOfRuns=1 \
             --settings.preset=desktop
           lhci upload --target=filesystem --outputDir=./lhci-reports || true

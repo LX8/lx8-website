@@ -1,25 +1,75 @@
-name: Deploy Firebase Hosting
+name: Deploy to Firebase Hosting
+
+# Single source-of-truth deploy. Replaces the previous "Master SRE Orchestrator"
+# pipeline (deleted: it referenced private cross-org repos with no secrets
+# and ran `npm ci` in a directory with no package.json).
+#
+# Required repository secret:
+#   FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE
+#     A Firebase service-account JSON (Project Settings -> Service accounts ->
+#     Generate new private key). Paste the entire JSON file as the secret value.
+#
+# Until that secret is provisioned, the deploy job is skipped (with a notice in
+# the job summary) instead of failing — so QA stays green and you can land
+# changes without a red X on every commit.
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  build_and_deploy:
+  deploy:
+    name: Build & deploy
     runs-on: ubuntu-latest
     steps:
+      - name: Check service-account secret
+        id: gate
+        env:
+          HAS_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE != '' }}
+        run: |
+          if [ "$HAS_SA" = "true" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice ::FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE secret is not set — deploy skipped."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.gate.outputs.ok == 'true'
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.ok == 'true'
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          node-version: '20'
 
-      - name: Deploy to Firebase Hosting
+      - name: Install dashboard deps
+        if: steps.gate.outputs.ok == 'true'
+        working-directory: dashboard
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: Build dashboard
+        if: steps.gate.outputs.ok == 'true'
+        working-directory: dashboard
+        run: npm run build
+
+      - name: Deploy to Firebase Hosting (all targets)
+        if: steps.gate.outputs.ok == 'true'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.GCP_CREDENTIALS }}'
-          projectId: lx8-labs-website
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE }}
           channelId: live
+          projectId: lx8-labs-website
