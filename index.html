@@ -365,13 +365,13 @@
 
 <!-- ── MOBILE DRAWER ── -->
 <div class="mobile-nav" id="mobile-nav">
-  <a href="/products/" onclick="closeMobileNav()">Products</a>
-  <a href="/shop/" onclick="closeMobileNav()">Shop</a>
-  <a href="/courses/" onclick="closeMobileNav()">Learn</a>
-  <a href="/research/" onclick="closeMobileNav()">Research</a>
-  <a href="/changelog/" onclick="closeMobileNav()">Log</a>
-  <a href="/team/" onclick="closeMobileNav()">Studio</a>
-  <a href="/index.html#consulting" class="nl-cta" onclick="closeMobileNav()" data-i18n="nav.work">Work With Us</a>
+  <a href="/products/" data-action="close-mobile-nav">Products</a>
+  <a href="/shop/" data-action="close-mobile-nav">Shop</a>
+  <a href="/courses/" data-action="close-mobile-nav">Learn</a>
+  <a href="/research/" data-action="close-mobile-nav">Research</a>
+  <a href="/changelog/" data-action="close-mobile-nav">Log</a>
+  <a href="/team/" data-action="close-mobile-nav">Studio</a>
+  <a href="/index.html#consulting" class="nl-cta" data-action="close-mobile-nav" data-i18n="nav.work">Work With Us</a>
 </div>
 
 <!-- ── NAV ── -->
@@ -391,7 +391,7 @@
     <a href="/team/"     class="nl" data-i18n="nav.studio">Studio</a>
     <a href="/index.html#consulting" class="nl nl-cta" data-i18n="nav.work">Work With Us</a>
   </div>
-  <button type="button" class="ham" id="ham-btn" aria-label="Menu" onclick="toggleMobileNav()">
+  <button type="button" class="ham" id="ham-btn" aria-label="Menu" data-action="toggle-mobile-nav">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -751,7 +751,7 @@
 
     <div class="bento">
 
-      <div class="card r d2" style="cursor:pointer" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">
+      <div class="card r d2" style="cursor:pointer" data-action="scroll-to" data-scroll-target="theory">
         <div class="card-ico ci-b">🔭</div>
         <div class="card-name">Bipartite Theory</div>
         <p class="card-desc">Three-channel taxonomy of light–gravity coupling. An original research framework by Alexei Ferreira (2026) with interactive 3D visualization.</p>
@@ -1104,6 +1104,33 @@
   }
   // close on Escape
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileNav(); });
+
+  // ── Event delegation (replaces inline onclick handlers) ─────────────
+  // Single click listener routes to the right function based on a
+  // `data-action` attribute. Lets the strict CSP drop `'unsafe-inline'`
+  // from script-src once every other inline handler in the codebase is
+  // removed.
+  document.addEventListener('click', e => {
+    const target = e.target.closest('[data-action]');
+    if (!target) return;
+    const action = target.getAttribute('data-action');
+    switch (action) {
+      case 'toggle-mobile-nav':
+        toggleMobileNav();
+        break;
+      case 'close-mobile-nav':
+        closeMobileNav();
+        break;
+      case 'scroll-to': {
+        const id = target.getAttribute('data-scroll-target');
+        if (id) {
+          const node = document.getElementById(id);
+          if (node) node.scrollIntoView({ behavior: 'smooth' });
+        }
+        break;
+      }
+    }
+  });
 
 </script>
 </body>
