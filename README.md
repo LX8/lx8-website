@@ -99,6 +99,24 @@ Pushes to `main` trigger:
    JSON). Without that secret, every step is skipped with a CI notice
    so QA still gates merges. Pass a custom `only` value via
    `workflow_dispatch` to deploy a single surface (e.g. `functions`).
+
+   **Cloud Function secrets** are bound at runtime via Firebase Functions
+   v2 `defineSecret()` (see `functions/index.js`). Provision them once via
+   the Firebase CLI before the first deploy of `functions`:
+
+   ```bash
+   firebase functions:secrets:set STRIPE_SECRET_KEY        # sk_live_… (or sk_test_…)
+   firebase functions:secrets:set STRIPE_WEBHOOK_SECRET    # whsec_…
+   firebase functions:secrets:set LICENSE_PRIVATE_KEY      # PEM contents of enterprise_private.pem
+   firebase functions:secrets:set PRICE_TUPA               # price_… for Tupã IDE
+   firebase functions:secrets:set PRICE_BIPARTITE_BOOK     # price_… for Bipartite Universe Book
+   firebase functions:secrets:set PRICE_AIMEM              # price_… for aimem
+   ```
+
+   These have no `"sk_test_dummy"`-style fallbacks anymore — a missing
+   secret fails the function at cold start, surfacing the
+   misconfiguration immediately rather than letting placeholder values
+   reach production.
 3. **Subdomain health** (`.github/workflows/subdomain-health.yml`) — every
    6 h, probes both the custom-domain and native-URL of every target and
    audits the response headers (CSP / HSTS / X-Frame-Options / X-Content-
@@ -174,7 +192,24 @@ serves content; the gap is purely at the custom-domain layer.
 - **Cloud Functions** authenticate every mutating endpoint with a Firebase
   ID token from the `Authorization: Bearer …` header. The UID is taken from
   the verified token, never from the request body.
+- **CORS** on every HTTP function is an explicit allowlist of `lx8labs.com`
+  + the seven `*.lx8labs.com` subdomains + the two native Firebase URLs.
+  No `cors: true`. Other origins get a CORS rejection at the platform
+  layer.
 - **License keys** use `crypto.randomBytes` (CSPRNG), not `Math.random`.
+- **Stripe webhook idempotency** is enforced both ways: a Firestore
+  transaction writes `stripe_events/{event.id}` *before* any handler
+  runs, so a redelivery from Stripe (default policy retries up to 3 days)
+  is a guaranteed no-op. `checkout.sessions.create` also passes
+  `{ idempotencyKey: sha256(uid|productId|day) }` so a user double-click
+  doesn't open two parallel checkouts.
+- **Refund handling**: `charge.refunded` flips the matching license to
+  `active: false, refundedAt: …`. `generateOfflineLicense` refuses to mint
+  a fresh signed token for a refunded license.
+- **Error surface**: every catch funnels through a `respondError` helper
+  that logs the internal error with a request id and returns only a
+  generic public message. We no longer leak Stripe internals or
+  "Enterprise Private Key not configured" to clients.
 - **Firestore telemetry** writes require auth and a strict shape (≤128-char
   `event`, ≤8 kB payload, `uid` must match `request.auth.uid`).
 - **Content-Security-Policy** has one canonical value living in

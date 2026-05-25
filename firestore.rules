@@ -65,6 +65,15 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ── STRIPE EVENT SENTINELS ────────────────────────────────────────
+    // Webhook idempotency log. Written exclusively by `stripeWebhook` via
+    // the admin SDK (which bypasses these rules); no client should ever
+    // read or write this collection. Configure a TTL policy on
+    // `stripe_events.processedAt` of 90 days via the Firebase Console.
+    match /stripe_events/{eventId} {
+      allow read, write: if false;
+    }
+
     // ── TELEMETRY ─────────────────────────────────────────────────────
     // Previously `allow write: if true` ("Temporary for testing") — that
     // exposed the project to unauthenticated write spam and runaway billing.
