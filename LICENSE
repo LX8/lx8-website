@@ -1,0 +1,45 @@
+MIT License
+
+Copyright (c) 2014-2026 LX8 CONSULTORIA EM TECNOLOGIA DA INFORMAÇÃO LTDA
+(trading as "Lx8 Consulting" / brand "Lx8 Labs")
+Founder: Alexei Lemos Cavalcante Ferreira
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+──────────────────────────────────────────────────────────────────────────────
+
+Scope and exclusions
+
+The MIT licence above applies to the source code in this repository
+(static HTML/CSS/JS, Cloud Functions in Node.js, Python SRE scripts in
+scripts/, GitHub Actions workflows, configuration).
+
+It does NOT extend to:
+
+  - The "Lx8 Labs" and "Lx8 Consulting" word marks and any associated
+    logos / brand assets (avatars, og-image.png, glyphs). Those remain
+    the property of Lx8 Consulting Ltda.
+  - The Bipartite Universe Book manuscript content under
+    bipartitebook/ (compiled HTML from a separate copyrighted source
+    repository; consult LX8/bipartite-universe-book for terms).
+  - Any embedded third-party assets (font files, images of named
+    artists) that carry their own upstream licences.
+
+If you fork this repo to power your own site, please remove or replace
+the Lx8 Labs branding before publishing.
