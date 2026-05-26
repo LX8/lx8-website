@@ -167,18 +167,39 @@ python3 scripts/build_placeholders.py --force    # refresh generated pages
                                                  # marker and never touched)
 ```
 
-### Custom-domain status — two distinct failure modes (manual fix)
+### Custom-domain status — automated via REST API (no console clicks)
 
 `scripts/verify_subdomains.py` reports the TLS cert that's actually
 served at each custom hostname; the table below is the diagnostic split.
 
+The bind operation is automated via `scripts/bind_custom_domains.py` +
+`.github/workflows/bind-domains.yml` (runs on `workflow_dispatch` +
+weekly cron). Both are gated on `FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE`
+— the same secret `deploy.yml` already uses; once that exists, trigger
+the workflow once and Firebase mints the LE certs (~30 min – 24 h).
+Zero-cost because lx8-website is public, so GitHub Actions minutes are
+free.
+
 **Path A — domain has never been bound to a Firebase site.** TLS
 handshake fails because Firebase serves its default
 `CN=firebaseapp.com` cert and the host isn't a SAN. DNS is correct
-(`A 199.36.158.100`). One-time fix per host:
+(`A 199.36.158.100`). Fix:
+
+```bash
+# Once: provision FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE repo secret.
+# Service account needs roles/firebasehosting.admin on lx8-labs-website.
+# Then either trigger via workflow_dispatch, or wait for the weekly cron.
+gh workflow run bind-domains.yml --repo LX8/lx8-website
+
+# Or locally with gcloud auth:
+gcloud auth application-default login
+python3 scripts/bind_custom_domains.py --apply
+```
+
+Manual fallback (one-time clicks if you'd rather not provision the
+secret):
 <https://console.firebase.google.com/project/lx8-labs-website/hosting/sites>
-→ click the site → **Add custom domain** → paste the host. Firebase
-mints a Let's Encrypt cert in ~24-48 h after the verification step.
+→ click the site → **Add custom domain** → paste the host.
 
 | Host                          | Bind to site     | Current cert |
 | ----------------------------- | ---------------- | ------------ |

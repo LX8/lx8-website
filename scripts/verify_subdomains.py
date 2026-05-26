@@ -382,9 +382,13 @@ def probe_pair(target: dict, audit_headers_flag: bool = False) -> dict:
         host = target["custom_url"].split("/")[2]
         covers, _subject = tls_san_covers(host)
         if not covers:
+            # Preferred fix is the automated workflow; fall back to manual.
             action = (
-                f"In Firebase Console → site `{target['site']}` → Add custom "
-                f"domain `{host}`. Cert will provision in ~24-48 h."
+                f"`{host}` not bound to site `{target['site']}`. "
+                f"Run: `gh workflow run bind-domains.yml --repo LX8/lx8-website` "
+                f"(needs FIREBASE_SERVICE_ACCOUNT secret with "
+                f"roles/firebasehosting.admin). Manual fallback: Firebase "
+                f"Console → site `{target['site']}` → Add custom domain `{host}`."
             )
         else:
             # Cert is good; 404 means content / wrong-site binding.
