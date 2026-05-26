@@ -62,6 +62,40 @@ jobs:
       - name: Fail if a subdomain still has a one-line <h1> stub
         run: python3 scripts/build_placeholders.py --check
 
+  dashboard-build:
+    name: Dashboard build check
+    runs-on: ubuntu-latest
+    # The Vite-built React dashboard ships to every subdomain's
+    # /dashboard/ route. The deploy job runs `npm run build` but is
+    # gated on FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE — most
+    # contributors won't trigger it. This job catches typos, missing
+    # imports, and tsc errors at PR time so a breaking change never
+    # silently lands on main.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: dashboard/package-lock.json
+      - name: Install
+        working-directory: dashboard
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
+      - name: Lint
+        working-directory: dashboard
+        # ESLint config is present (eslint.config.js with react-hooks /
+        # react-refresh plugins). Surface violations as warnings only so
+        # a lint slip doesn't block an otherwise-correct build.
+        run: npm run lint || echo "::warning ::dashboard lint reported issues"
+      - name: Build (tsc + vite)
+        working-directory: dashboard
+        run: npm run build
+
   csp-drift:
     name: CSP drift check
     runs-on: ubuntu-latest
