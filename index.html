@@ -13,6 +13,10 @@
   <title>Lx8 Labs — DevOps · AI · Research</title>
   <meta name="description" content="Lx8 Labs — DevOps consulting, AI-powered tools, courses, and open research. Founded 2013 by Alexei Ferreira." />
   <link rel="canonical" href="https://lx8labs.com/" />
+  <link rel="alternate" hreflang="en" href="https://lx8labs.com/?lang=en" />
+  <link rel="alternate" hreflang="pt-BR" href="https://lx8labs.com/?lang=pt-BR" />
+  <link rel="alternate" hreflang="de" href="https://lx8labs.com/?lang=de" />
+  <link rel="alternate" hreflang="x-default" href="https://lx8labs.com/" />
 
   <!-- Favicon -->
   <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
@@ -71,6 +75,9 @@
   <!-- Open Graph / Social -->
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://lx8labs.com/" />
+    <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="pt_BR" />
+  <meta property="og:locale:alternate" content="de_DE" />
   <meta property="og:title"       content="Lx8 Labs — DevOps · AI · Research" />
   <meta property="og:description" content="A Bell Labs-inspired studio for DevOps, AI tools, courses and open research." />
   <meta property="og:image"       content="https://lx8labs.com/og-image.png" />
@@ -79,7 +86,12 @@
   <meta name="twitter:title"      content="Lx8 Labs" />
   <meta name="twitter:description" content="Research · Tools · Ideas" />
   <meta name="twitter:image"      content="https://lx8labs.com/og-image.png" />
-  <link rel="preconnect" href="https://fonts.bunny.net" />
+  <!-- Performance: preconnect to the font + avatar origins early so the
+       handshake overlaps with HTML parse. The avatar is the largest
+       above-the-fold image (nav logo with fetchpriority="high"). -->
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="preconnect" href="https://avatars.githubusercontent.com" crossorigin />
+  <link rel="preload" as="image" href="https://avatars.githubusercontent.com/u/7157081?v=4" fetchpriority="high" />
   <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -114,8 +126,6 @@
     .display em { font-style: italic; color: var(--amber); }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--ind); border-radius: 2px; }
-
-
 
     /* ── NAV ── */
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 2.5rem; transition: all 0.3s; }
@@ -353,24 +363,22 @@
 <script defer src="/a11y.js"></script>
 <script defer src="/bg-engine.js"></script>
 
-
-
 <!-- ── MOBILE DRAWER ── -->
 <div class="mobile-nav" id="mobile-nav">
-  <a href="/products/" onclick="closeMobileNav()">Products</a>
-  <a href="/shop/" onclick="closeMobileNav()">Shop</a>
-  <a href="/courses/" onclick="closeMobileNav()">Learn</a>
-  <a href="/research/" onclick="closeMobileNav()">Research</a>
-  <a href="/changelog/" onclick="closeMobileNav()">Log</a>
-  <a href="/team/" onclick="closeMobileNav()">Studio</a>
-  <a href="/index.html#consulting" class="nl-cta" onclick="closeMobileNav()" data-i18n="nav.work">Work With Us</a>
+  <a href="/products/" data-action="close-mobile-nav">Products</a>
+  <a href="/shop/" data-action="close-mobile-nav">Shop</a>
+  <a href="/courses/" data-action="close-mobile-nav">Learn</a>
+  <a href="/research/" data-action="close-mobile-nav">Research</a>
+  <a href="/changelog/" data-action="close-mobile-nav">Log</a>
+  <a href="/team/" data-action="close-mobile-nav">Studio</a>
+  <a href="/index.html#consulting" class="nl-cta" data-action="close-mobile-nav" data-i18n="nav.work">Work With Us</a>
 </div>
 
 <!-- ── NAV ── -->
 <nav id="nav">
   <a href="#hero" class="logo-a">
     <div class="logo-img">
-      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" />
+      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async" />
     </div>
     <span class="logo-txt">Lx8 <span>Labs</span></span>
   </a>
@@ -383,7 +391,7 @@
     <a href="/team/"     class="nl" data-i18n="nav.studio">Studio</a>
     <a href="/index.html#consulting" class="nl nl-cta" data-i18n="nav.work">Work With Us</a>
   </div>
-  <button type="button" class="ham" id="ham-btn" aria-label="Menu" onclick="toggleMobileNav()">
+  <button type="button" class="ham" id="ham-btn" aria-label="Menu" data-action="toggle-mobile-nav">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -690,7 +698,6 @@
 
 <div class="divider"></div>
 
-
 <!-- ── SHOP & CREATIONS ── -->
 <section id="shop" class="section">
   <div class="inner">
@@ -744,7 +751,7 @@
 
     <div class="bento">
 
-      <div class="card r d2" style="cursor:pointer" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">
+      <div class="card r d2" style="cursor:pointer" data-action="scroll-to" data-scroll-target="theory">
         <div class="card-ico ci-b">🔭</div>
         <div class="card-name">Bipartite Theory</div>
         <p class="card-desc">Three-channel taxonomy of light–gravity coupling. An original research framework by Alexei Ferreira (2026) with interactive 3D visualization.</p>
@@ -874,7 +881,6 @@
 
 <div class="divider"></div>
 
-
 <!-- ── MEDIA & YOUTUBE ── -->
 <section id="media" class="section" style="padding-bottom: 0;">
   <div class="inner">
@@ -967,7 +973,7 @@
 <footer>
   <div class="ft-left">
     <div class="ft-logo">
-      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" />
+      <img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="24" height="24" loading="lazy" decoding="async" />
     </div>
     <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="https://lx8labs.com" style="color:var(--ind4);text-decoration:none;">lx8labs.com</a></span>
   </div>
@@ -1098,6 +1104,33 @@
   }
   // close on Escape
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileNav(); });
+
+  // ── Event delegation (replaces inline onclick handlers) ─────────────
+  // Single click listener routes to the right function based on a
+  // `data-action` attribute. Lets the strict CSP drop `'unsafe-inline'`
+  // from script-src once every other inline handler in the codebase is
+  // removed.
+  document.addEventListener('click', e => {
+    const target = e.target.closest('[data-action]');
+    if (!target) return;
+    const action = target.getAttribute('data-action');
+    switch (action) {
+      case 'toggle-mobile-nav':
+        toggleMobileNav();
+        break;
+      case 'close-mobile-nav':
+        closeMobileNav();
+        break;
+      case 'scroll-to': {
+        const id = target.getAttribute('data-scroll-target');
+        if (id) {
+          const node = document.getElementById(id);
+          if (node) node.scrollIntoView({ behavior: 'smooth' });
+        }
+        break;
+      }
+    }
+  });
 
 </script>
 </body>

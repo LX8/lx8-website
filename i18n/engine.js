@@ -13,7 +13,26 @@
     document.cookie = `${name}=${value};path=/;domain=${domain};max-age=31536000;SameSite=Lax`;
   }
 
-  let currentLang = getCookie('lx8-lang') || localStorage.getItem('lx8-lang') || DEFAULT_LANG;
+  // Precedence: ?lang=… query param > lx8-lang cookie > localStorage > default.
+  // The query param wins so hreflang alternates work for search-engine crawlers
+  // that visit https://lx8labs.com/?lang=pt-BR and expect the page to render in
+  // pt-BR regardless of any cookie. If a query param is present we also
+  // persist it to cookie/localStorage so subsequent navigation sticks.
+  const VALID_LANGS = new Set(['en', 'pt-BR', 'de']);
+  function getLangFromQuery() {
+    try {
+      const q = new URLSearchParams(window.location.search).get('lang');
+      return q && VALID_LANGS.has(q) ? q : null;
+    } catch (_) {
+      return null;
+    }
+  }
+  const queryLang = getLangFromQuery();
+  let currentLang = queryLang || getCookie('lx8-lang') || localStorage.getItem('lx8-lang') || DEFAULT_LANG;
+  if (queryLang) {
+    setCookie('lx8-lang', queryLang);
+    try { localStorage.setItem('lx8-lang', queryLang); } catch (_) {}
+  }
 
   function updateDOM(lang) {
     document.documentElement.lang = lang;

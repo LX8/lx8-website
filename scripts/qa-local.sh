@@ -35,10 +35,38 @@ step "CSP drift"
 python3 scripts/sync_csp.py --check && ok "CSP in sync" \
     || fail "meta CSP drift — run: python3 scripts/sync_csp.py"
 
+# 2b. feed.xml drift from insights/*.html metadata
+step "feed.xml drift"
+python3 scripts/generate_feed.py --check && ok "feed.xml up to date" \
+    || fail "feed.xml is stale — run: python3 scripts/generate_feed.py"
+
+# 2c. i18n key coverage across en / pt-BR / de
+step "i18n key coverage"
+python3 scripts/check_i18n.py >/dev/null && ok "every data-i18n key translated in all 3 languages" \
+    || { python3 scripts/check_i18n.py; fail "i18n gap — fill in i18n/translations.js"; }
+
 # 3. Subdomain placeholder stubs
 step "subdomain stub check"
 python3 scripts/build_placeholders.py --check && ok "no <h1>Welcome to…</h1> stubs" \
     || fail "stub subdomain found — run: python3 scripts/build_placeholders.py"
+
+# 3b. Dashboard build (tsc + vite). Skipped if no node_modules and SKIP_DASHBOARD=1.
+step "dashboard build (tsc + vite)"
+if [ -n "${SKIP_DASHBOARD:-}" ]; then
+    printf '%sSKIP_DASHBOARD set — skipping dashboard build%s\n' "$c_dim" "$c_reset"
+elif [ ! -d dashboard ]; then
+    printf '%sno dashboard/ — skipping%s\n' "$c_dim" "$c_reset"
+else
+    (cd dashboard && \
+        if [ -f package-lock.json ]; then
+            npm ci --silent --no-audit --no-fund
+        else
+            npm install --silent --no-audit --no-fund
+        fi && \
+        npm run build) \
+    && ok "dashboard built" \
+    || fail "dashboard build failed — fix tsc/vite errors"
+fi
 
 # 4. html-validate over authored HTML
 step "html-validate"

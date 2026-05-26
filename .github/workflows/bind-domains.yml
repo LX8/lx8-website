@@ -1,0 +1,75 @@
+name: Bind custom domains
+
+# Idempotently bind every entry in lx8_registry.yaml to its Firebase
+# Hosting site via the v1beta1 Hosting REST API. Runs on:
+#
+#   workflow_dispatch  — manual trigger after first secret setup or
+#                        when adding a new subdomain to the registry
+#   schedule           — weekly drift check; will no-op if everything
+#                        is bound. Cheap insurance against console
+#                        drift or a future-added subdomain that nobody
+#                        thought to bind.
+#
+# Required repository secret:
+#   FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE
+#     Same secret deploy.yml uses. The service account needs
+#     `roles/firebasehosting.admin` (and the default
+#     `roles/firebase.viewer`) for the customDomains:create API to
+#     accept the call. If you provisioned it for deploy.yml without
+#     that role, add it once at
+#     https://console.cloud.google.com/iam-admin/iam?project=lx8-labs-website
+#
+# Why this lives here and not in LX8/lx8-infrastructure (where the
+# Terraform declaration also lives): private repos in the LX8 org
+# don't have paid Actions minutes (policy 2026-05-20). Public repos
+# get the free tier — so the actual ops run from here. The TF in
+# lx8-infrastructure is declarative intent until paid CI exists.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly, mid-week, off-peak UTC. Adjust if you add many subdomains.
+    - cron: '17 4 * * 3'
+
+permissions:
+  contents: read
+
+jobs:
+  bind:
+    name: Bind subdomains
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check service-account secret
+        id: gate
+        env:
+          HAS_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE != '' }}
+        run: |
+          if [ "$HAS_SA" = "true" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice ::FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE not set — bind step skipped."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.ok == 'true'
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.ok == 'true'
+        with: { python-version: '3.11' }
+
+      - name: Write service-account credentials
+        if: steps.gate.outputs.ok == 'true'
+        env:
+          SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LX8_LABS_WEBSITE }}
+        run: |
+          printf '%s' "$SA_JSON" > "$RUNNER_TEMP/sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+
+      - name: Install minimal deps
+        if: steps.gate.outputs.ok == 'true'
+        run: pip install --quiet pyyaml google-auth
+
+      - name: Bind missing custom domains
+        if: steps.gate.outputs.ok == 'true'
+        run: python3 scripts/bind_custom_domains.py --apply
