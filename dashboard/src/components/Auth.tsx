@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { auth, googleProvider } from '../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, User } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, type User } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
 const triggerSSOCookie = async (user: User) => {
