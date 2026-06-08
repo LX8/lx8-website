@@ -6,7 +6,13 @@ const { logger } = require("firebase-functions");
 let stripeInstance = null;
 const getStripe = () => {
   if (!stripeInstance) {
-    stripeInstance = require("stripe")(process.env.STRIPE_SECRET_KEY || "sk_test_dummy");
+    // Fail closed: never fall back to a dummy key. A missing secret must be a
+    // hard error, not a silent insecure default.
+    const secret = process.env.STRIPE_SECRET_KEY;
+    if (!secret) {
+      throw new Error("STRIPE_SECRET_KEY is not configured");
+    }
+    stripeInstance = require("stripe")(secret);
   }
   return stripeInstance;
 };
@@ -26,8 +32,14 @@ exports.stripeWebhook = onRequest({ maxInstances: 1, concurrency: 80 }, async (r
   let event;
 
   try {
-    // Verify the webhook signature securely
-    event = getStripe().webhooks.constructEvent(req.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET || "whsec_dummy");
+    // Verify the webhook signature securely. Fail closed if the signing secret
+    // isn't configured — never fall back to a dummy secret, which would let an
+    // attacker forge "payment succeeded" events and mint licenses for free.
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      throw new Error("STRIPE_WEBHOOK_SECRET is not configured");
+    }
+    event = getStripe().webhooks.constructEvent(req.rawBody, sig, webhookSecret);
   } catch (err) {
     logger.error(`Webhook Error: ${err.message}`);
     res.status(400).send(`Webhook Error: ${err.message}`);

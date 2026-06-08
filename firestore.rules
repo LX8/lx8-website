@@ -9,6 +9,8 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.token.admin == true;
     }
     match /courses/{courseId} {
+      // Public catalog: intentionally world-readable. If any course doc holds
+      // non-public fields, gate read behind auth instead. Writes stay admin-only.
       allow read: if true;
       allow write: if request.auth != null && request.auth.token.admin == true;
     }
@@ -20,7 +22,10 @@ service cloud.firestore {
       allow write: if false; // Only the backend Stripe webhook can write licenses
     }
     match /telemetry/{telemetryId} {
-      allow write: if true; // Temporary for testing, Edge function will handle this at scale
+      // SECURITY: never world-writable (was `if true` → anyone could flood the DB,
+      // a DoS + Firestore-cost-injection vector). Telemetry must be written by the
+      // backend Cloud Function via the Admin SDK, which bypasses these rules.
+      allow write: if false;
       allow read: if request.auth != null && request.auth.token.admin == true;
     }
   }
