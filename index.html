@@ -697,7 +697,7 @@
     <p class="sdesc r d2">Hardware kits born from our studio, comprehensive books, and partner collaborations.</p>
 
     <div class="projects-grid" style="margin-bottom: 2rem;">
-      <a href="/shop/" class="p-card bento r d1" style="grid-column: span 6;">
+      <a href="/shop/" class="p-card bento r d1" style="grid-column: span 6; display: none;">
         <div class="bento-bg" style="background: radial-gradient(circle at top right, rgba(167,139,250,0.1), transparent 70%);"></div>
         <div class="bento-content">
           <div class="p-head">
@@ -742,7 +742,7 @@
 
     <div class="bento">
 
-      <div class="card r d2" style="cursor:pointer" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">
+      <div class="card r d2" style="cursor:pointer; display: none;" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">
         <div class="card-ico ci-b">🔭</div>
         <div class="card-name">Bipartite Theory</div>
         <p class="card-desc">Three-channel taxonomy of light–gravity coupling. An original research framework by Alexei Ferreira (2026) with interactive 3D visualization.</p>
@@ -754,6 +754,20 @@
           View visualization
           <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </span>
+      </div>
+
+      <div class="card r d2">
+        <div class="card-ico ci-ghost">🧠</div>
+        <span class="soon-badge">Coming soon</span>
+        <div class="card-name" style="color:var(--text3)">aimem</div>
+        <p class="card-desc" style="color:var(--text3)">Local-first AI memory and semantic indexing engine.</p>
+      </div>
+
+      <div class="card r d3">
+        <div class="card-ico ci-ghost">🔮</div>
+        <span class="soon-badge">Coming soon</span>
+        <div class="card-name" style="color:var(--text3)">mattermem</div>
+        <p class="card-desc" style="color:var(--text3)">A state memory and computational framework.</p>
       </div>
 
       <div class="card r d4">
@@ -858,7 +872,7 @@
 <div class="divider"></div>
 
 <!-- ── THEORY VIZ ── -->
-<section id="theory" class="section">
+<section id="theory" class="section" style="display: none;">
   <div class="th-top">
     <div class="lbl r">Research · Bipartite Theory</div>
     <h2 class="sh r d1">Light, Gravity &amp; Time</h2>
