@@ -35,7 +35,6 @@ new_ft_links = """  <div class="ft-links">
     <a href="https://youtube.com/@AlexeiFerreira" target="_blank" rel="noopener">YouTube ↗</a>
     <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub ↗</a>
     <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener">LinkedIn ↗</a>
-    <a href="https://x.com/lx8labs" target="_blank" rel="noopener">X ↗</a>
   </div>"""
 
 for filename in os.listdir(dir_path):
