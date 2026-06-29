@@ -1,0 +1,11 @@
+# Cloudflare Pages — edge redirects.
+# Syntax: <source> <destination> <status> (one rule per line, first match wins).
+#
+# The 4 book downloads in bipartitebook/downloads/ (51-53M each) exceed Pages'
+# 25 MiB-per-file upload limit, so they cannot ship in the static tree. They
+# live in R2 instead, behind a custom subdomain (books.lx8labs.com), and the
+# minified Next.js bundle's existing /bipartitebook/downloads/* hrefs are
+# rewritten transparently at the edge — no client-side change, no JS rebuild.
+# 302 (temporary) during cutover so we can roll back without cache pinning;
+# promote to 301 once R2 is verified stable.
+/bipartitebook/downloads/* https://books.lx8labs.com/:splat 302

@@ -39,13 +39,21 @@ the book page. R2 supports a custom-domain mapping, so a clean URL like
 This matches the audit-honest brand value (the dyslexia-accessible variant in
 particular is part of the accessibility differentiator — must stay downloadable).
 
-Concrete steps (do BEFORE the first Pages deploy succeeds):
+**Concrete steps** (do BEFORE the first Pages deploy succeeds):
 
 1. `wrangler r2 bucket create lx8-book-downloads`
-2. `for f in bipartitebook/downloads/{*.pdf,*.epub}; do wrangler r2 object put lx8-book-downloads/"$(basename $f)" --file "$f"; done`
+2. `for f in bipartitebook/downloads/{*.pdf,*.epub}; do wrangler r2 object put lx8-book-downloads/"$(basename "$f")" --file "$f"; done`
 3. In the Cloudflare dashboard → R2 → bucket → Settings → Connect Domain → `books.lx8labs.com`.
-4. Update the download links in `bipartitebook/index.html` (and any other page that points at `bipartitebook/downloads/*`) to the R2 URLs.
-5. Add `bipartitebook/downloads/*.pdf` and `*.epub` to a `.assetsignore` in the repo root so Pages skips them on upload.
+
+The repo already ships the rest:
+
+- `.assetsignore` (root) — Pages skips the 4 large files on upload.
+- `_redirects` (root) — at the edge, `/bipartitebook/downloads/*` 302s to
+  `https://books.lx8labs.com/:splat`. The download links live inside a minified
+  Next.js bundle (`bipartitebook/_next/static/chunks/…`), and rewriting
+  minified JS is fragile; the edge redirect keeps the existing hrefs working
+  with no client-side change and no JS rebuild. Once R2 is verified stable,
+  promote the redirect from 302 → 301 for SEO.
 
 ## Cutover runbook (zero-downtime)
 
@@ -123,6 +131,9 @@ remains published until Phase C step 7).
 - [ ] `curl -sI https://lx8labs.com/bipartitebook/` → 200
 - [ ] `curl -sI https://books.lx8labs.com/The_Bipartite_Universe.epub` → 200
   (the R2-hosted book downloads)
+- [ ] `curl -sI https://lx8labs.com/bipartitebook/downloads/The_Bipartite_Universe.epub` → 302
+  with `Location: https://books.lx8labs.com/The_Bipartite_Universe.epub`
+  (the edge redirect works end-to-end)
 - [ ] `gh repo view LX8/lx8-website --json visibility --jq .visibility` → `PRIVATE`
 - [ ] `gh api repos/LX8/lx8-website/pages` → 404 (site unpublished)
 - [ ] A push to `main` triggers `cloudflare-pages.yml` and the change appears live
