@@ -1,0 +1,37 @@
+name: Deploy to Cloudflare Pages
+
+# Replaces deploy.yml (Firebase Hosting, sunset). The site is a static tree
+# served from the repo root — no build step at deploy time; Python scripts in
+# the repo are pre-commit transformations the operator runs locally.
+#
+# Required repo secrets:
+#   CLOUDFLARE_API_TOKEN — token with Account.Cloudflare Pages:Edit
+#   CLOUDFLARE_ACCOUNT_ID — the LX8 Cloudflare account id
+#
+# Deploys to project "lx8labs" on Cloudflare Pages. The custom domain
+# lx8labs.com is attached on the Cloudflare side (one-time, in the dashboard).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # `wrangler pages deploy` uploads the repo root as the deployment.
+          # `--commit-dirty=true` lets it deploy even when wrangler thinks
+          # there are pending changes (always true in CI checkouts).
+          command: pages deploy . --project-name=lx8labs --branch=main --commit-dirty=true
