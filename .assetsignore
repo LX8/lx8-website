@@ -1,0 +1,11 @@
+# Cloudflare Pages — files to skip at upload time. Same syntax as .gitignore.
+#
+# The 4 book artifacts (51-53M each) exceed Pages' 25 MiB-per-file limit and
+# are served from R2 via the edge-redirect in `_redirects`. The 0-byte
+# `toPdfViaTempFile*.pdf` is a build-time leftover that should never have
+# been committed; ignored here so it doesn't ride along to production.
+bipartitebook/downloads/The_Bipartite_Universe.epub
+bipartitebook/downloads/The_Bipartite_Universe_BW.pdf
+bipartitebook/downloads/The_Bipartite_Universe_Color.pdf
+bipartitebook/downloads/The_Bipartite_Universe_Dyslexia.pdf
+bipartitebook/downloads/toPdfViaTempFile*.pdf
