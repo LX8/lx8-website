@@ -356,6 +356,7 @@
       font-size: 1.05rem; font-weight: 700; color: #a5b4fc;
     }
     .stat-l { font-size: 0.58rem; color: #3a3a6a; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 1px; }
+  </style>
   <link rel="stylesheet" href="/global.css" />
 
 <script>
@@ -386,7 +387,7 @@ if (window.self !== window.top) {
 
 <nav id="nav">
   <a href="/" class="logo-a">
-    <div class="logo-img"><img src="https://avatars.githubusercontent.com/u/7157081?v=4" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async"/></div>
+    <div class="logo-img"><img src="/img/lx8-mark.png" alt="Lx8 Labs" width="34" height="34" loading="eager" fetchpriority="high" decoding="async"/></div>
     <span class="logo-txt">Lx8 <span>Labs</span></span>
   </a>
   <a href="/" class="back-link">← Home</a>
@@ -397,7 +398,7 @@ if (window.self !== window.top) {
 <div id="app">
 
   <!-- ── SIDEBAR ── -->
-    <aside id="sidebar">
+    <aside id="sidebar" aria-label="Algorithm timeline">
     <div class="sb-logo">⚗ Chronology of Algorithms</div>
     
     <div class="sb-search" id="sb-search-wrap" style="border-bottom: 1px solid #18183a;">
@@ -438,10 +439,10 @@ if (window.self !== window.top) {
         <div class="stat"><div class="stat-n" id="stat-time">0ms</div><div class="stat-l">Time</div></div>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- ── CODE PANEL (permanent right column) ── -->
-  <aside id="code-panel">
+  <aside id="code-panel" aria-label="Algorithm details and pseudocode">
     <div id="code-header">
       <div class="ch-left">
         <h3 id="code-title">Bubble Sort</h3>
@@ -480,8 +481,8 @@ if (window.self !== window.top) {
 </div>
 </div> <!-- Close #app-container -->
 
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 // ── THREE.JS CORE ─────────────────────────────────────────────────────────────
 const canvas = document.getElementById('three-canvas');
@@ -523,6 +524,11 @@ window.addEventListener('resize', resizeRenderer);
 resizeRenderer();
 
 
+let isRunning = false, stopFlag = false;
+let currentCat = 'sort', currentAlgo = 'bubble';
+let vizObjects = [];
+let speed = 5;
+let cmp = 0, swp = 0, tStart = 0;
 let needsRender = true;
 controls.addEventListener('change', () => { needsRender = true; });
 // Also trigger render when hovering elements or resizing
@@ -541,12 +547,6 @@ document.addEventListener('mousemove', () => { if(!isRunning) needsRender = true
 
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-let isRunning = false, stopFlag = false;
-let currentCat = 'sort', currentAlgo = 'bubble';
-let vizObjects = [];
-let speed = 5;
-let cmp = 0, swp = 0, tStart = 0;
-
 const sleep  = ms => new Promise(r => setTimeout(r, ms));
 // Speed 1 = 900ms (read code line by line) · Speed 5 = 100ms · Speed 10 = 14ms
 let stepMode = false;
