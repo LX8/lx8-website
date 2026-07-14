@@ -1,23 +1,17 @@
 {
   "name": "Lx8 Labs",
-  "short_name": "Lx8",
-  "description": "A small research-and-engineering studio in the Bell Labs lineage. Built around DevOps, AI, and theoretical physics. Founded 2013, based in Berlin.",
+  "short_name": "Lx8 Labs",
+  "description": "Software, research and intelligent systems built with evidence.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#6366f1",
+  "background_color": "#0a0b0d",
+  "theme_color": "#0a0b0d",
   "orientation": "any",
   "icons": [
     {
-      "src": "https://avatars.githubusercontent.com/u/7157081?s=192",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://avatars.githubusercontent.com/u/7157081?s=512",
-      "sizes": "512x512",
+      "src": "/img/lx8-mark.png",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"
     }
@@ -25,23 +19,23 @@
   "shortcuts": [
     {
       "name": "Products",
-      "url": "/products.html",
-      "description": "All four products"
+      "url": "/products/",
+      "description": "Lx8 Labs product family"
     },
     {
       "name": "Algorithm Lab",
-      "url": "/algorithms.html",
-      "description": "39 algorithms in 3D"
+      "url": "/algorithms/",
+      "description": "Interactive algorithm visualizations"
     },
     {
       "name": "aimem",
-      "url": "/aimem.html",
-      "description": "AI memory, one canonical source"
+      "url": "/aimem/",
+      "description": "Local-first AI memory"
     },
     {
-      "name": "Tupã IDE",
-      "url": "/tupa.html",
-      "description": "Native macOS dev environment"
+      "name": "Tupã",
+      "url": "/tupa/",
+      "description": "Local-first intelligence for work and creation"
     }
   ]
 }

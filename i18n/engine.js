@@ -27,16 +27,12 @@
     });
     
     document.querySelectorAll('.lang-btn').forEach(btn => {
-      if (btn.getAttribute('data-lang') === lang) {
-        btn.classList.add('active');
-        btn.style.color = 'var(--text)';
-        btn.style.fontWeight = 'bold';
-      } else {
-        btn.classList.remove('active');
-        btn.style.color = 'var(--text2)';
-        btn.style.fontWeight = 'normal';
-      }
+      const active = btn.getAttribute('data-lang') === lang;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
     });
+
+    window.dispatchEvent(new CustomEvent('lx8:languagechange', { detail: { lang } }));
   }
 
   window.lx8SetLanguage = function(lang) {
@@ -55,31 +51,30 @@
     const nav = document.getElementById('nav');
     if (nav) {
       const switcher = document.createElement('div');
-      switcher.style.cssText = 'display:flex; gap:8px; margin-left:15px; font-size:0.8rem; border-left: 1px solid var(--border); padding-left: 15px; align-items:center;';
+      switcher.className = 'lang-switcher';
       
       const langs = [
-        { id: 'en', label: 'EN' },
-        { id: 'pt-BR', label: 'PT' },
-        { id: 'de', label: 'DE' }
+        { id: 'en', label: 'EN', name: 'English' },
+        { id: 'pt-BR', label: 'PT', name: 'Português' },
+        { id: 'de', label: 'DE', name: 'Deutsch' }
       ];
       
       langs.forEach((l, i) => {
         const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = 'lang-btn';
         btn.setAttribute('data-lang', l.id);
+        btn.setAttribute('aria-label', l.name);
+        btn.setAttribute('aria-pressed', String(l.id === currentLang));
         btn.textContent = l.label;
-        btn.style.cssText = 'background:none; border:none; cursor:pointer; color:var(--text2); transition: color 0.2s;';
-        if (l.id === currentLang) {
-          btn.style.color = 'var(--text)';
-          btn.style.fontWeight = 'bold';
-        }
+        if (l.id === currentLang) btn.classList.add('active');
         btn.onclick = () => window.lx8SetLanguage(l.id);
         switcher.appendChild(btn);
         
         if (i < langs.length - 1) {
           const sep = document.createElement('span');
           sep.textContent = '|';
-          sep.style.color = 'var(--border)';
+          sep.setAttribute('aria-hidden', 'true');
           switcher.appendChild(sep);
         }
       });

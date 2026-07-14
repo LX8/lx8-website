@@ -1,4 +1,5 @@
-name: QA — html-validate · link check · Lighthouse
+name: Public website QA
+
 on:
   push:
     branches: [main]
@@ -8,78 +9,53 @@ permissions:
   contents: read
 
 jobs:
-  html-validate:
-    name: HTML validate
+  verify:
+    name: Source, routes and HTML
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - name: Install html-validate
-        run: npm install -g html-validate@^9.0.0
-      - name: Run on every .html file
-        run: |
-          shopt -s globstar nullglob
-          files=( **/*.html )
-          if [ "${#files[@]}" -eq 0 ]; then
-            echo "No HTML files."; exit 0
-          fi
-          # --max-warnings 200 lets us land minor stylistic warnings (button type, etc.)
-          # without blocking; only errors fail. The project config in .htmlvalidate.json
-          # demotes rules unsuited to hand-crafted scoped-CSS single-file pages.
-          html-validate --max-warnings 200 "${files[@]}"
-
-  link-check:
-    name: Link check (internal only)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: lychee (offline, internal links only)
-        uses: lycheeverse/lychee-action@v2
         with:
-          # --root-dir lets lychee resolve root-relative links like /about.html
-          # against the repo root rather than the filesystem root.
-          # --exclude '^https?://' skips external URLs; CI shouldn't fail because
-          # LinkedIn rate-limits us.
-          args: |
-            --offline --no-progress --include-fragments
-            --root-dir "$GITHUB_WORKSPACE"
-            --exclude "^mailto:"
-            --exclude "^https?://"
-            "**/*.html" "**/*.md"
-          fail: true
+          node-version: '24'
+      - name: Verify public website invariants
+        run: python3 scripts/verify_public_site.py
+      - name: Validate authored HTML surfaces
+        run: |
+          npm install --global html-validate@^9.0.0
+          html-validate --max-warnings 200 \
+            index.html 404.html \
+            about/index.html aimem/index.html changelog/index.html \
+            courses/index.html impressum/index.html now/index.html \
+            privacy/index.html products/index.html research/index.html \
+            shop/index.html team/index.html theory/index.html tupa/index.html
 
   lighthouse:
-    name: Lighthouse CI (homepage + algo + tupa + aimem)
+    name: Lighthouse smoke test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - name: Install Lighthouse CI
-        run: npm install -g @lhci/cli@0.14.x
-      - name: Run Lighthouse against four key pages
-        env:
-          LHCI_BUILD_CONTEXT__CURRENT_BRANCH: ${{ github.head_ref || github.ref_name }}
+        with:
+          node-version: '24'
+      - name: Audit representative routes
         run: |
-          # Serve the static site locally then audit.
-          npx --yes http-server -p 8080 -s . &
-          SERVER_PID=$!
+          npm install --global @lhci/cli@0.14.x http-server@14
+          http-server -p 8080 -c-1 . &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           sleep 2
           lhci collect \
             --url=http://localhost:8080/ \
-            --url=http://localhost:8080/algorithms.html \
-            --url=http://localhost:8080/tupa.html \
-            --url=http://localhost:8080/aimem.html \
+            --url=http://localhost:8080/algorithms/ \
+            --url=http://localhost:8080/tupa/ \
+            --url=http://localhost:8080/aimem/ \
             --numberOfRuns=1 \
             --settings.preset=desktop
-          lhci upload --target=filesystem --outputDir=./lhci-reports || true
-          kill $SERVER_PID || true
-      - name: Upload Lighthouse reports as artifact
+      - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-reports
-          path: lhci-reports/
+          path: .lighthouseci/
           retention-days: 14
           if-no-files-found: ignore

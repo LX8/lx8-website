@@ -3,9 +3,7 @@ name: Master SRE Orchestrator
 on:
   repository_dispatch:
     types: [lx8-release]
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   orchestrate-deploy:

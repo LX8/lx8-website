@@ -1,1113 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Zero-Cost Security Hardening -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; base-uri 'self'; frame-src 'self' https://lx8-labs-website.firebaseapp.com;">
-  <meta name="referrer" content="no-referrer">
-  <script>if (window !== window.top) window.top.location = window.location;</script>
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lx8 Labs — DevOps · AI · Research</title>
-  <meta name="description" content="Lx8 Labs — DevOps consulting, AI-powered tools, courses, and open research. Founded 2013 by Alexei Ferreira." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.bunny.net; font-src 'self' https://fonts.bunny.net; img-src 'self' data:; connect-src 'self'; frame-src 'self'; base-uri 'self'; form-action 'self' mailto:;" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="theme-color" content="#0a0b0d" />
+  <title>Lx8 Labs | Software, research and intelligent systems</title>
+  <meta name="description" content="Lx8 Labs builds local-first intelligence, verifiable memory, creative software and research tools." />
   <link rel="canonical" href="https://lx8labs.com/" />
-
-  <!-- Favicon -->
-  <link rel="icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" type="image/png" />
-  <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/7157081?v=4" />
-
-  <!-- PWA -->
+  <link rel="icon" href="/img/lx8-mark.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/img/lx8-mark.png" />
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#6366f1" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Lx8 Labs" />
-
-  <!-- Structured data -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lx8labs.com/" />
+  <meta property="og:title" content="Lx8 Labs" />
+  <meta property="og:description" content="Software, research and intelligent systems built with evidence." />
+  <meta property="og:image" content="https://lx8labs.com/img/lx8-mark.png" />
+  <meta name="twitter:card" content="summary" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://lx8labs.com/#org",
+        "@id": "https://lx8labs.com/#organization",
         "name": "Lx8 Labs",
-        "alternateName": "Lx8",
-        "url": "https://lx8labs.com",
-        "logo": "img/logo-dark.png",
-        "foundingDate": "2013",
-        "description": "DevOps consulting, AI-powered tools, courses, and open research. A Bell Labs-inspired studio.",
-        "sameAs": ["https://github.com/LX8"],
-        "founder": {
-          "@type": "Person",
-          "name": "Alexei Lemos Cavalcante Ferreira",
-          "jobTitle": "Founder · Senior DevOps & AI Engineer"
-        }
+        "url": "https://lx8labs.com/",
+        "logo": "https://lx8labs.com/img/lx8-mark.png",
+        "description": "Software and research studio building local-first intelligence, verifiable memory and creative tools.",
+        "sameAs": ["https://github.com/LX8"]
       },
       {
         "@type": "WebSite",
-        "@id": "https://lx8labs.com/#site",
-        "url": "https://lx8labs.com",
+        "@id": "https://lx8labs.com/#website",
+        "url": "https://lx8labs.com/",
         "name": "Lx8 Labs",
-        "publisher": { "@id": "https://lx8labs.com/#org" },
-        "inLanguage": "en-US"
-      },
-      {
-        "@type": "WebApplication",
-        "name": "Algorithm Lab",
-        "url": "https://lx8labs.com/algorithms.html",
-        "description": "39 classic algorithms as interactive 3D visualizations with synchronized pseudocode and live variable inspector. Spans 2,300+ years from Euclid's GCD to Tim Sort.",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Web Browser",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "publisher": { "@id": "https://lx8labs.com/#org" }
+        "publisher": { "@id": "https://lx8labs.com/#organization" },
+        "inLanguage": ["en", "pt-BR", "de"]
       }
     ]
   }
   </script>
-
-  <!-- Open Graph / Social -->
-  <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://lx8labs.com/" />
-  <meta property="og:title"       content="Lx8 Labs — DevOps · AI · Research" />
-  <meta property="og:description" content="A Bell Labs-inspired studio for DevOps, AI tools, courses and open research." />
-  <meta property="og:image"       content="https://avatars.githubusercontent.com/u/7157081?v=4" />
-  <meta name="twitter:card"       content="summary_large_image" />
-  <meta name="twitter:site"       content="@lx8labs" />
-  <meta name="twitter:title"      content="Lx8 Labs" />
-  <meta name="twitter:description" content="Research · Tools · Ideas" />
-  <meta name="twitter:image"      content="https://avatars.githubusercontent.com/u/7157081?v=4" />
-  <link rel="preconnect" href="https://fonts.bunny.net" />
-  <link href="https://fonts.bunny.net/css?family=Fraunces:ital,wght@1,400;0,500&family=Inter:300,400,500,600&family=Space+Grotesk:400,500,600,700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:         #000000;
-      --bg1:        rgba(255,255,255,0.025);
-      --bg2:        rgba(255,255,255,0.05);
-      --border:     rgba(255,255,255,0.07);
-      --border-hi:  rgba(129,140,248,0.28);
-      --ind:        #6366f1;
-      --ind4:       #818cf8;
-      --ind3:       #a5b4fc;
-      --ind-d:      rgba(99,102,241,0.12);
-      --blue:       #3b82f6;
-      --blue4:      #60a5fa;
-      --green:      #10b981;
-      --green4:     #34d399;
-      --amber:      #f59e0b;
-      --text:       #f1f5f9;
-      --text2:      #94a3b8;
-      --text3:      #475569;
-      --r:          14px;
-      --r-sm:       8px;
-      /* Dreamy aesthetic tokens (PR C) */
-      --font-display: 'Fraunces', 'EB Garamond', Georgia, serif;
-      --ease-dream:   cubic-bezier(0.22, 1, 0.36, 1);
-      --ease-spring:  cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; font-feature-settings: 'ss01', 'cv11', 'cv10'; }
-    .display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.025em; }
-    .display em { font-style: italic; color: var(--amber); }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: var(--ind); border-radius: 2px; }
-
-
-
-    /* ── NAV ── */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.4rem 2.5rem; transition: all 0.3s; }
-    nav.solid { background: rgba(0,0,0,0.82); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0.85rem 2.5rem; }
-    .logo-a { display: flex; align-items: center; gap: 9px; text-decoration: none; }
-    .logo-img { width: 34px; height: 34px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1.5px solid rgba(129,140,248,0.5); box-shadow: 0 0 10px rgba(99,102,241,0.35); background: #111; }
-    .logo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .logo-txt { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 600; color: #fff; }
-    .logo-txt span { color: var(--ind4); }
-    .nav-links { display: flex; align-items: center; gap: 0.2rem; }
-    .nl { color: var(--text2); text-decoration: none; font-size: 0.82rem; font-weight: 500; padding: 0.4rem 0.8rem; border-radius: var(--r-sm); transition: color 0.2s, background 0.2s; }
-    .nl:hover { color: var(--text); background: var(--bg2); }
-    .nl-cta { margin-left: 0.4rem; background: var(--ind); color: #fff !important; padding: 0.42rem 1rem; border-radius: var(--r-sm); font-weight: 600; box-shadow: 0 0 0 rgba(99,102,241,0); transition: all 0.2s !important; }
-    .nl-cta:hover { background: #4f51e8 !important; box-shadow: 0 4px 20px rgba(99,102,241,0.45) !important; transform: translateY(-1px); }
-    /* Hamburger */
-    .ham { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; border-radius: 6px; background: none; border: none; }
-    .ham span { display: block; width: 22px; height: 2px; background: var(--text2); border-radius: 2px; transition: all 0.25s; }
-    .ham.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .ham.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .ham.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    /* Mobile nav drawer */
-    .mobile-nav { display: none; position: fixed; inset: 0; top: 0; background: rgba(0,0,0,0.97); backdrop-filter: blur(24px); z-index: 199; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; }
-    .mobile-nav.open { display: flex; }
-    .mobile-nav a { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text2); text-decoration: none; padding: 0.75rem 2rem; border-radius: 12px; transition: all 0.2s; }
-    .mobile-nav a:hover { color: #fff; background: rgba(99,102,241,0.12); }
-    .mobile-nav .nl-cta { color: #fff !important; background: var(--ind); font-size: 1.1rem; margin-top: 1rem; }
-
-    /* ── HERO ── */
-    #hero { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 7rem 1.5rem 4rem; }
-    .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border-hi); background: var(--ind-d); border-radius: 999px; padding: 5px 14px; font-size: 0.72rem; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ind3); margin-bottom: 2rem; }
-    .chip-dot { width: 6px; height: 6px; background: var(--ind4); border-radius: 50%; box-shadow: 0 0 6px var(--ind4); animation: blink 2s ease-in-out infinite; }
-    @keyframes blink { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.35; transform:scale(0.6); } }
-    h1.hero-h { font-family: var(--font-display); font-size: clamp(3rem,7.5vw,7rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1; margin-bottom: 1.5rem; }
-    h1.hero-h .t1 { display: block; color: #fff; font-weight: 500; }
-    h1.hero-h .t2 { display: block; font-style: italic; font-weight: 400; background: linear-gradient(120deg, var(--ind3), var(--blue4), #67e8f9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200%; animation: gf 10s ease-in-out infinite alternate; }
-    @keyframes gf { from { background-position: 0%; } to { background-position: 100%; } }
-    .hero-sub { max-width: 540px; font-size: 1.02rem; line-height: 1.75; color: var(--text2); margin-bottom: 2.5rem; }
-    .hero-sub strong { color: var(--text); font-weight: 500; }
-    .hero-sub em { color: var(--ind3); font-style: normal; }
-    .hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
-    .btn { display: inline-flex; align-items: center; gap: 7px; font-size: 0.875rem; font-weight: 600; padding: 0.7rem 1.4rem; border-radius: var(--r-sm); text-decoration: none; cursor: pointer; border: none; transition: all 0.2s; }
-    .btn-p { background: var(--ind); color: #fff; box-shadow: 0 4px 18px rgba(99,102,241,0.35); }
-    .btn-p:hover { background: #4f51e8; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(99,102,241,0.5); }
-    .btn-g { background: var(--bg1); color: var(--text2); border: 1px solid var(--border); }
-    .btn-g:hover { border-color: var(--border-hi); color: var(--text); transform: translateY(-2px); background: var(--bg2); }
-    .scroll-hint { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .sh-txt { font-size: 0.62rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text3); }
-    .sh-line { width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--ind4)); animation: sl 2s ease-in-out infinite; }
-    @keyframes sl { 0% { transform:scaleY(0); transform-origin:top; opacity:1; } 45% { transform:scaleY(1); transform-origin:top; } 50% { transform:scaleY(1); transform-origin:bottom; } 100% { transform:scaleY(0); transform-origin:bottom; opacity:0; } }
-    #stars { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-    #hero > *:not(#stars):not(.scroll-hint) { position: relative; z-index: 1; }
-    /* Tech stack strip */
-    .tech-strip { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: -0.5rem; margin-bottom: 2rem; }
-    .ts { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px; padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: var(--text3); transition: all 0.2s; }
-    .ts:hover { border-color: rgba(129,140,248,0.4); color: var(--ind3); background: rgba(99,102,241,0.08); }
-    /* Hero stats strip */
-    .stats-strip { display: flex; gap: 0; align-items: stretch; margin-bottom: 2.5rem; border: 1px solid var(--border); background: rgba(10,10,30,0.45); border-radius: var(--r); overflow: hidden; max-width: 760px; }
-    .stat-cell { flex: 1; padding: 1rem 1.4rem; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; transition: background 0.3s; }
-    .stat-cell + .stat-cell { border-left: 1px solid var(--border); }
-    .stat-cell:hover { background: rgba(99,102,241,0.05); }
-    .stat-cell-n { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; color: #fff; line-height: 1; letter-spacing: -1px; background: linear-gradient(120deg, #fff, var(--ind3)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .stat-cell-l { font-size: 0.66rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text3); }
-    /* Partners strip — honest placeholder slots */
-    .partners-strip { max-width: 660px; margin: 0 auto 2.5rem; opacity: 0.92; }
-    .partners-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text3); text-align: center; margin-bottom: 1rem; }
-    .partners-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 0.9rem; }
-    .logo-slot { aspect-ratio: 5/2; border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px; background: rgba(255,255,255,0.015); display: flex; align-items: center; justify-content: center; transition: border-color 0.6s var(--ease-dream); }
-    .logo-slot:hover { border-color: rgba(129,140,248,0.3); }
-    .logo-slot::after { content: '·'; color: var(--text3); font-size: 1.4rem; opacity: 0.4; }
-    .partners-cta { font-family: var(--font-display); font-style: italic; font-size: 0.86rem; color: var(--text3); text-align: center; }
-    .partners-cta a { color: var(--ind4); text-decoration: none; transition: color 0.4s var(--ease-dream); }
-    .partners-cta a:hover { color: var(--ind3); }
-    @media (max-width: 600px) { .partners-row { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 600px) {
-      .stats-strip { flex-direction: column; }
-      .stat-cell + .stat-cell { border-left: none; border-top: 1px solid var(--border); }
-    }
-    /* Domain badge */
-    .domain-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--text3); margin-top: 1.5rem; }
-    .domain-badge a { color: var(--ind4); text-decoration: none; font-weight: 600; }
-    .domain-badge a:hover { text-decoration: underline; }
-
-    /* ── LAYOUT HELPERS ── */
-    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent); }
-    .section { position: relative; z-index: 1; }
-    .inner { max-width: 1140px; margin: 0 auto; padding: 5.5rem 1.75rem; }
-    .lbl { display: inline-flex; align-items: center; gap: 8px; font-size: 0.69rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ind4); margin-bottom: 0.9rem; }
-    .lbl::before { content: ''; width: 16px; height: 1px; background: var(--ind4); }
-    h2.sh { font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.9rem,3.5vw,2.75rem); font-weight: 700; letter-spacing: -1.2px; color: #fff; line-height: 1.1; margin-bottom: 0.9rem; }
-    .sdesc { color: var(--text2); font-size: 1rem; max-width: 500px; line-height: 1.7; }
-
-    /* ── PILLARS ── */
-    #pillars { background: rgba(3,3,14,0.6); }
-    .pillars-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-top: 0; }
-    .pillar { background: var(--bg); padding: 2.2rem 2rem; display: flex; flex-direction: column; gap: 0.75rem; transition: background 0.3s; }
-    .pillar:hover { background: rgba(10,10,30,0.9); }
-    .pillar-icon { font-size: 1.75rem; }
-    .pillar-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #fff; }
-    .pillar-desc { font-size: 0.875rem; color: var(--text2); line-height: 1.6; }
-
-    /* ── ABOUT ── */
-    #about { background: linear-gradient(180deg, transparent, rgba(10,8,28,0.5) 50%, transparent); }
-    .about-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem; align-items: center; margin-top: 3rem; }
-    .about-card { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); padding: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; }
-    .about-avatar { width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, var(--ind), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 0 30px rgba(99,102,241,0.35); }
-    .about-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #fff; }
-    .about-role { font-size: 0.8rem; color: var(--ind4); font-weight: 600; letter-spacing: 0.5px; }
-    .about-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
-    .tag { font-size: 0.68rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
-    .tag-i { background: var(--ind-d); color: var(--ind3); border: 1px solid rgba(99,102,241,0.2); }
-    .tag-b { background: rgba(59,130,246,0.1); color: var(--blue4); border: 1px solid rgba(59,130,246,0.18); }
-    .tag-g { background: rgba(16,185,129,0.1); color: var(--green4); border: 1px solid rgba(16,185,129,0.18); }
-    .about-body p { color: var(--text2); font-size: 0.97rem; line-height: 1.8; margin-bottom: 0.9rem; }
-    .about-body strong { color: var(--text); font-weight: 500; }
-    .about-body em { color: var(--ind3); font-style: normal; }
-
-    /* ── COURSES ── */
-    #courses { background: rgba(3,3,14,0.5); }
-    .courses-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 3rem; }
-    .course-card { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); padding: 1.75rem; display: flex; flex-direction: column; gap: 0.85rem; transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit; }
-    .course-card:hover { border-color: rgba(129,140,248,0.3); transform: translateY(-3px); box-shadow: 0 10px 36px rgba(0,0,0,0.4); }
-    .course-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-    .ci-i { background: var(--ind-d); border: 1px solid rgba(99,102,241,0.2); }
-    .ci-b { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); }
-    .ci-g { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); }
-    .ci-a { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); }
-    .course-level { font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); }
-    .course-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; color: #fff; line-height: 1.3; }
-    .course-desc { font-size: 0.84rem; color: var(--text2); line-height: 1.6; flex: 1; }
-    .course-meta { display: flex; align-items: center; justify-content: space-between; padding-top: 0.6rem; border-top: 1px solid var(--border); }
-    .course-dur { font-size: 0.75rem; color: var(--text3); }
-    .course-status { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 999px; }
-    .cs-live { background: rgba(16,185,129,0.12); color: var(--green4); border: 1px solid rgba(16,185,129,0.2); }
-    .cs-soon { background: var(--bg2); color: var(--text3); border: 1px solid var(--border); }
-
-    /* ── PROJECTS (bento) ── */
-    #projects { }
-    .bento { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 3rem; }
-    .card { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); padding: 1.75rem; display: flex; flex-direction: column; gap: 0.9rem; text-decoration: none; color: inherit; position: relative; overflow: hidden; transition: all 0.3s; }
-    .card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(99,102,241,0.05), transparent 60%); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-    .card:hover { border-color: rgba(129,140,248,0.3); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
-    .card:hover::after { opacity: 1; }
-    .card-feat { grid-column: span 2; background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98)); border-color: rgba(99,102,241,0.2); }
-    .card-feat::after { opacity: 1; background: radial-gradient(ellipse at 15% 20%, rgba(99,102,241,0.08), transparent 60%); }
-    .card-ico { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-    .ci-ghost { background: var(--bg2); border: 1px dashed rgba(255,255,255,0.1); }
-    .card-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #fff; }
-    .card-feat .card-name { font-size: 1.45rem; }
-    .card-desc { font-size: 0.85rem; color: var(--text2); line-height: 1.65; flex: 1; }
-    .pills { display: flex; gap: 5px; flex-wrap: wrap; }
-    .pill { font-size: 0.67rem; font-weight: 600; padding: 2px 9px; border-radius: 999px; }
-    .pi { background: var(--ind-d); color: var(--ind3); border: 1px solid rgba(99,102,241,0.2); }
-    .pb { background: rgba(59,130,246,0.1); color: var(--blue4); border: 1px solid rgba(59,130,246,0.18); }
-    .pg { background: rgba(16,185,129,0.1); color: var(--green4); border: 1px solid rgba(16,185,129,0.18); }
-    .pgr { background: var(--bg2); color: var(--text3); border: 1px solid var(--border); }
-    .card-lnk { display: inline-flex; align-items: center; gap: 6px; font-size: 0.79rem; font-weight: 600; color: var(--ind4); padding-top: 0.5rem; border-top: 1px solid var(--border); margin-top: auto; text-decoration: none; }
-    .card-lnk svg { transition: transform 0.2s; }
-    .card:hover .card-lnk svg { transform: translateX(4px); }
-    .soon-badge { display: inline-block; font-size: 0.64rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); border: 1px dashed rgba(255,255,255,0.1); padding: 2px 9px; border-radius: 999px; }
-
-    /* ── CONSULTING ── */
-    #consulting { background: rgba(3,3,14,0.5); }
-    .consult-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 3rem; }
-    .consult-list { display: flex; flex-direction: column; gap: 1rem; }
-    .consult-item { display: flex; gap: 1rem; padding: 1.25rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); transition: border-color 0.3s; }
-    .consult-item:hover { border-color: var(--border-hi); }
-    .consult-item-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
-    .consult-item-name { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
-    .consult-item-desc { font-size: 0.82rem; color: var(--text2); line-height: 1.6; }
-    .consult-cta-box { background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98)); border: 1px solid var(--border-hi); border-radius: var(--r); padding: 2.5rem; display: flex; flex-direction: column; gap: 1.25rem; position: sticky; top: 100px; }
-    .consult-cta-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #fff; line-height: 1.3; }
-    .consult-cta-title span { color: var(--ind3); }
-    .consult-cta-desc { font-size: 0.88rem; color: var(--text2); line-height: 1.7; }
-    .consult-cta-points { display: flex; flex-direction: column; gap: 0.6rem; }
-    .ccp { display: flex; align-items: flex-start; gap: 8px; font-size: 0.84rem; color: var(--text2); }
-    .ccp::before { content: '✓'; color: var(--green4); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-
-    /* ── THEORY ── */
-    #theory { position: relative; z-index: 1; height: 100vh; display: flex; flex-direction: column; }
-    .th-top { padding: 3rem 1.75rem 1.5rem; max-width: 1140px; margin: 0 auto; width: 100%; }
-    .th-wrap { flex: 1; position: relative; }
-    .th-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
-    .th-hint { position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.75); backdrop-filter: blur(12px); border: 1px solid var(--border-hi); border-radius: 999px; padding: 5px 15px; font-size: 0.71rem; letter-spacing: 1px; color: var(--ind3); pointer-events: none; transition: opacity 1.2s; z-index: 10; }
-    .th-hint.gone { opacity: 0; }
-
-    /* ── FOOTER ── */
-    footer { position: relative; z-index: 1; background: var(--bg); border-top: 1px solid var(--border); padding: 2.5rem 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-    .ft-left { display: flex; align-items: center; gap: 9px; }
-    .ft-logo { width: 28px; height: 28px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(129,140,248,0.4); background: #111; }
-    .ft-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .ft-copy { font-size: 0.8rem; color: var(--text3); display: flex; flex-direction: column; gap: 2px; }
-    .ft-links { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
-    .ft-links > a.text-link { font-size: 0.8rem; font-weight: 500; color: var(--text3); text-decoration: none; transition: color 0.2s; }
-    .ft-links > a.text-link:hover { color: var(--ind4); }
-    .social-row { display: flex; gap: 12px; margin-left: 1.5rem; padding-left: 1.5rem; border-left: 1px solid var(--border); }
-    .social-icon { color: var(--text3); transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
-    .social-icon:hover { color: #fff; background: var(--bg2); border-color: var(--border-hi); transform: translateY(-2px); }
-
-    /* ── SCROLL REVEAL ── */
-    .r { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; will-change: transform, opacity; }
-    .r.in { opacity: 1; transform: translateY(0); }
-    .r.d1 { transition-delay: 0.07s; } .r.d2 { transition-delay: 0.14s; } .r.d3 { transition-delay: 0.21s; }
-    .r.d4 { transition-delay: 0.28s; } .r.d5 { transition-delay: 0.35s; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 1024px) {
-      .courses-grid { grid-template-columns: 1fr 1fr; }
-      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-    }
-    @media (max-width: 860px) {
-      nav { padding: 1.1rem 1.25rem; }
-      nav.solid { padding: 0.75rem 1.25rem; }
-      .nav-links { display: none; }
-      .ham { display: flex; }
-      .bento { grid-template-columns: 1fr 1fr; }
-      .card-feat { grid-column: span 2; }
-      .pillars-grid { grid-template-columns: 1fr; gap: 0; }
-      .consult-grid { grid-template-columns: 1fr; }
-      .consult-cta-box { position: static; }
-    }
-    @media (max-width: 600px) {
-      h1.hero-h { letter-spacing: -2px; }
-      .inner { padding: 3.5rem 1.1rem; }
-      .bento { grid-template-columns: 1fr; }
-      .card-feat { grid-column: span 1; }
-      .courses-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; }
-    }
-  </style>
-  <link rel="stylesheet" href="/global.css" />
+  <link rel="stylesheet" href="/homepage.css?v=20260714-3" />
+  <script defer src="/i18n/translations.js?v=20260714-3"></script>
+  <script defer src="/i18n/engine.js?v=20260714-3"></script>
+  <script defer src="/a11y.js?v=20260714-3"></script>
+  <script defer src="/homepage.js?v=20260714-3"></script>
 </head>
 <body>
-<script defer src="/i18n/translations.js"></script>
-<script defer src="/i18n/engine.js"></script>
-<script defer src="/a11y.js"></script>
-<script defer src="/bg-engine.js"></script>
+  <a class="skip-link" href="#main">Skip to content</a>
 
+  <header class="site-header" id="site-header">
+    <nav class="nav-shell" id="nav" aria-label="Primary navigation">
+      <a class="brand" href="/" aria-label="Lx8 Labs home">
+        <img src="/img/lx8-mark.png" alt="" width="44" height="44" />
+        <span>Lx8 Labs</span>
+      </a>
 
+      <div class="nav-links" id="nav-links">
+        <a href="/products/" data-i18n="nav.products">Products</a>
+        <a href="/research/" data-i18n="nav.research">Research</a>
+        <a href="/changelog/" data-i18n="nav.log">Log</a>
+        <a href="/team/" data-i18n="nav.studio">Studio</a>
+        <a class="nav-command" href="#services" data-i18n="nav.work">Work With Us</a>
+      </div>
 
-<!-- ── MOBILE DRAWER ── -->
-<div class="mobile-nav" id="mobile-nav">
-  <a href="/products/" onclick="closeMobileNav()">Products</a>
-  <a href="/shop/" onclick="closeMobileNav()">Shop</a>
-  <a href="/courses/" onclick="closeMobileNav()">Learn</a>
-  <a href="/research/" onclick="closeMobileNav()">Research</a>
-  <a href="/changelog/" onclick="closeMobileNav()">Log</a>
-  <a href="/team/" onclick="closeMobileNav()">Studio</a>
-  <a href="/index.html#consulting" class="nl-cta" onclick="closeMobileNav()" data-i18n="nav.work">Work With Us</a>
-</div>
+      <button class="menu-button" id="menu-button" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
 
-<!-- ── NAV ── -->
-<nav id="nav">
-  <a href="#hero" class="logo-a">
-    <div class="logo-img">
-      <img src="img/logo-dark.png" alt="Lx8 Labs" />
+    <div class="mobile-nav" id="mobile-nav" hidden>
+      <a href="/products/" data-i18n="nav.products">Products</a>
+      <a href="/research/" data-i18n="nav.research">Research</a>
+      <a href="/changelog/" data-i18n="nav.log">Log</a>
+      <a href="/team/" data-i18n="nav.studio">Studio</a>
+      <a href="#services" data-i18n="nav.work">Work With Us</a>
     </div>
-    <span class="logo-txt">Lx8 <span>Labs</span></span>
-  </a>
-  <div class="nav-links">
-    <a href="/products/" class="nl" data-i18n="nav.products">Products</a>
-    <a href="/shop/"     class="nl" data-i18n="nav.shop">Shop</a>
-    <a href="/courses/"  class="nl" data-i18n="nav.learn">Learn</a>
-    <a href="/research/" class="nl" data-i18n="nav.research">Research</a>
-    <a href="/changelog/" class="nl" data-i18n="nav.log">Log</a>
-    <a href="/team/"     class="nl" data-i18n="nav.studio">Studio</a>
-    <a href="/index.html#consulting" class="nl nl-cta" data-i18n="nav.work">Work With Us</a>
-  </div>
-  <button type="button" class="ham" id="ham-btn" aria-label="Menu" onclick="toggleMobileNav()">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
+  </header>
 
-<!-- ── HERO ── -->
-<section id="hero">
-  <canvas id="stars"></canvas>
-  <div class="chip"><div class="chip-dot"></div><span data-i18n="hero.chip">DevOps · AI · Research · lx8labs.com</span></div>
-  <h1 class="hero-h">
-    <span class="t1" data-i18n="hero.title1">Lx8 Labs</span>
-    <span class="t2" data-i18n="hero.title2">Beautiful minds,<br/>world impact.</span>
-  </h1>
-  <p class="hero-sub">
-    <strong>Lx8 Labs</strong> — a small studio in the Bell Labs lineage. We build
-    <strong>engineering tools</strong>, ship <strong>open-source research</strong>, and
-    run <strong>fixed-scope consulting</strong> for teams that take operability seriously.
-    <br/><em>Small, fast, honest software.</em>
-  </p>
-  <div class="tech-strip">
-    <span class="ts">Kubernetes</span><span class="ts">Terraform</span>
-    <span class="ts">Python</span><span class="ts">Go</span>
-    <span class="ts">GitHub Actions</span><span class="ts">AWS</span>
-    <span class="ts">GCP</span><span class="ts">Three.js</span>
-    <span class="ts">Unity 6</span><span class="ts">LLMs</span>
-  </div>
-  <div class="stats-strip">
-    <div class="stat-cell">
-      <div class="stat-cell-n">39</div>
-      <div class="stat-cell-l">Algorithms · 3D</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-cell-n">2,300+</div>
-      <div class="stat-cell-l">Years of CS history</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-cell-n">13</div>
-      <div class="stat-cell-l">Years of DevOps</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-cell-n">∞</div>
-      <div class="stat-cell-l">Curiosity</div>
-    </div>
-  </div>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="home.hero.eyebrow">Software · Research · Intelligence</p>
+        <h1 id="hero-title">Lx8 Labs</h1>
+        <p class="hero-lead" data-i18n="home.hero.lead">We build local-first intelligence, verifiable memory and creative software for people doing difficult work.</p>
+        <p class="hero-note" data-i18n="home.hero.note">Products are developed in public where possible and described according to their current evidence.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="/products/">
+            <span data-i18n="home.hero.products">Explore products</span><span aria-hidden="true">→</span>
+          </a>
+          <a class="button button-secondary" href="https://github.com/LX8" target="_blank" rel="noopener">
+            <span>GitHub</span><span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual" role="img" aria-label="Lx8 Labs symbol">
+        <img src="/img/lx8-mark.png" alt="Lx8 Labs symbol" width="1024" height="1024" />
+      </div>
+    </section>
 
-  <!-- Currently working with — honest placeholder strip -->
-  <section class="partners-strip">
-    <p class="partners-h" data-i18n="hero.partners">Currently working with</p>
-    <div class="partners-row">
-      <div class="logo-slot" aria-hidden="true"></div>
-      <div class="logo-slot" aria-hidden="true"></div>
-      <div class="logo-slot" aria-hidden="true"></div>
-      <div class="logo-slot" aria-hidden="true"></div>
-    </div>
-    <p class="partners-cta"><a href="#consulting" data-i18n="hero.partners_cta">Talk to us if your logo should be here →</a></p>
-  </section>
+    <section class="evidence-strip" aria-label="Current public evidence">
+      <div>
+        <span class="evidence-label" data-i18n="home.evidence.identity">Identity</span>
+        <strong>Lx8 Labs</strong>
+        <span data-i18n="home.evidence.identity_state">repository verified</span>
+      </div>
+      <div>
+        <span class="evidence-label" data-i18n="home.evidence.products">Products</span>
+        <strong>4</strong>
+        <span data-i18n="home.evidence.products_state">public surfaces</span>
+      </div>
+      <div>
+        <span class="evidence-label" data-i18n="home.evidence.languages">Languages</span>
+        <strong>EN · PT · DE</strong>
+        <span data-i18n="home.evidence.languages_state">interface ready</span>
+      </div>
+      <div>
+        <span class="evidence-label" data-i18n="home.evidence.domain">Domain</span>
+        <strong>lx8labs.com</strong>
+        <span data-i18n="home.evidence.domain_state">publication recovery</span>
+      </div>
+    </section>
 
-  <div class="hero-btns">
-    <a href="#courses" class="btn btn-p">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <span data-i18n="btn.courses">Explore Courses</span>
+    <section class="section products-section" id="products" aria-labelledby="products-title">
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="home.products.eyebrow">Product family</p>
+        <h2 id="products-title" data-i18n="home.products.title">Systems with a reason to exist.</h2>
+        <p data-i18n="home.products.lead">Each product has a defined role, an honest state and a path to evidence.</p>
+      </div>
+
+      <div class="product-list">
+        <article class="product-row product-tupa">
+          <div class="product-index">01</div>
+          <div class="product-body">
+            <div class="product-meta"><span>Tupã</span><span data-i18n="home.status.development">active development</span></div>
+            <h3 data-i18n="home.tupa.title">Intelligence for work and creation</h3>
+            <p data-i18n="home.tupa.copy">A local-first family of applications for personal context, company operations, engineering and creative work.</p>
+          </div>
+          <a class="icon-link" href="/tupa/" aria-label="Open Tupã"><span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="product-row product-aimem">
+          <div class="product-index">02</div>
+          <div class="product-body">
+            <div class="product-meta"><span>aimem</span><span data-i18n="home.status.repository">repository backed</span></div>
+            <h3 data-i18n="home.aimem.title">Memory that remains yours</h3>
+            <p data-i18n="home.aimem.copy">Canonical, local-first memory that helps AI tools share durable context without making a cloud service the source of truth.</p>
+          </div>
+          <a class="icon-link" href="/aimem/" aria-label="Open aimem"><span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="product-row product-algorithms">
+          <div class="product-index">03</div>
+          <div class="product-body">
+            <div class="product-meta"><span>Algorithm Lab</span><span data-i18n="home.status.available">available</span></div>
+            <h3 data-i18n="home.algorithms.title">Computer science you can inspect</h3>
+            <p data-i18n="home.algorithms.copy">Interactive visual explanations that connect algorithm history, executable state and three-dimensional models.</p>
+          </div>
+          <a class="icon-link" href="/algorithms/" aria-label="Open Algorithm Lab"><span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="product-row product-bipartite">
+          <div class="product-index">04</div>
+          <div class="product-body">
+            <div class="product-meta"><span>The Bipartite Universe</span><span data-i18n="home.status.research">research program</span></div>
+            <h3 data-i18n="home.bipartite.title">A visual route into difficult physics</h3>
+            <p data-i18n="home.bipartite.copy">Books, models and interactive material that make the underlying arguments available for inspection.</p>
+          </div>
+          <a class="icon-link" href="/bipartitebook/" aria-label="Open The Bipartite Universe"><span aria-hidden="true">→</span></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section practice-section" id="services" aria-labelledby="services-title">
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="home.services.eyebrow">Engineering practice</p>
+        <h2 id="services-title" data-i18n="home.services.title">From unclear systems to controlled execution.</h2>
+        <p data-i18n="home.services.lead">We work where software architecture, AI, infrastructure and governance meet.</p>
+      </div>
+
+      <div class="practice-grid">
+        <article>
+          <span class="practice-code">ARCH</span>
+          <h3 data-i18n="home.services.arch.title">Architecture</h3>
+          <p data-i18n="home.services.arch.copy">System design, technical decisions and migration plans with explicit trade-offs.</p>
+        </article>
+        <article>
+          <span class="practice-code">AI</span>
+          <h3 data-i18n="home.services.ai.title">Applied intelligence</h3>
+          <p data-i18n="home.services.ai.copy">Local and cloud AI systems with evaluation, privacy boundaries and measurable outcomes.</p>
+        </article>
+        <article>
+          <span class="practice-code">SRE</span>
+          <h3 data-i18n="home.services.sre.title">Reliable operations</h3>
+          <p data-i18n="home.services.sre.copy">Delivery, observability, security and recovery designed as one operational system.</p>
+        </article>
+        <article>
+          <span class="practice-code">R&amp;D</span>
+          <h3 data-i18n="home.services.rd.title">Product research</h3>
+          <p data-i18n="home.services.rd.copy">Prototypes and experiments that turn uncertain ideas into inspectable evidence.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section studio-section" aria-labelledby="studio-title">
+      <div class="studio-statement">
+        <p class="eyebrow" data-i18n="home.studio.eyebrow">How we work</p>
+        <h2 id="studio-title" data-i18n="home.studio.title">Small enough to think. Rigorous enough to scale.</h2>
+      </div>
+      <div class="studio-copy">
+        <p data-i18n="home.studio.copy1">Lx8 Labs is led by Alexei Ferreira and organized around products, research and bounded specialist collaboration.</p>
+        <p data-i18n="home.studio.copy2">Claims, releases and important decisions are tied to evidence. External actions remain approval controlled.</p>
+        <a class="text-link" href="/team/"><span data-i18n="home.studio.link">About the studio</span><span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <section class="contact-section" aria-labelledby="contact-title">
+      <p class="eyebrow" data-i18n="home.contact.eyebrow">Start a conversation</p>
+      <h2 id="contact-title" data-i18n="home.contact.title">Bring the difficult problem.</h2>
+      <p data-i18n="home.contact.copy">For product work, research collaboration or engineering support, contact the founder through a verified public channel.</p>
+      <div class="contact-actions">
+        <a class="button button-primary" href="https://www.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">↗</span></a>
+        <a class="button button-secondary" href="https://github.com/LX8" target="_blank" rel="noopener">GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="/">
+      <img src="/img/lx8-mark.png" alt="" width="38" height="38" />
+      <span>Lx8 Labs</span>
     </a>
-    <a href="#consulting" class="btn btn-g">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span data-i18n="btn.work">Work With Us</span>
-    </a>
-    <a href="https://github.com/LX8" target="_blank" class="btn btn-g">
-      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.68.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
-      GitHub
-    </a>
-  </div>
-  <div class="scroll-hint">
-    <span class="sh-txt" data-i18n="hero.scroll">Scroll</span>
-    <div class="sh-line"></div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── PILLARS ── -->
-<section id="pillars" class="section">
-  <div class="inner" style="padding-top:3.5rem; padding-bottom:3.5rem;">
-    <div class="pillars-grid">
-      <div class="pillar r d1">
-        <div class="pillar-icon">📚</div>
-        <div class="pillar-name" data-i18n="pillars.courses">Courses</div>
-        <div class="pillar-desc">Hands-on courses in DevOps, Cloud, Kubernetes, and AI — built by engineers, for engineers.</div>
-      </div>
-      <div class="pillar r d2">
-        <div class="pillar-icon">🛠️</div>
-        <div class="pillar-name" data-i18n="pillars.products">Products</div>
-        <div class="pillar-desc">Developer tools, IDE environments, and research software built to last. Starting with Tupã IDE.</div>
-      </div>
-      <div class="pillar r d3">
-        <div class="pillar-icon">🤝</div>
-        <div class="pillar-name" data-i18n="pillars.consulting">Consulting</div>
-        <div class="pillar-desc">Strategic IT consulting: DevOps transformations, AI integration, and cloud architecture for teams that want to move fast.</div>
-      </div>
+    <p>© <span id="current-year">2026</span> Lx8 Labs</p>
+    <div class="footer-links">
+      <a href="/impressum/" data-i18n="footer.impressum">Impressum</a>
+      <a href="/privacy/" data-i18n="footer.privacy">Privacy Policy</a>
+      <a href="https://github.com/LX8" target="_blank" rel="noopener">GitHub</a>
     </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── ABOUT ── -->
-<section id="about" class="section">
-  <div class="inner">
-    <div class="lbl r" data-i18n="about.lbl">The founder</div>
-    <h2 class="sh r d1" data-i18n="about.title">Behind Lx8 Labs</h2>
-    <div class="about-grid">
-      <div class="about-card r d1">
-        <div class="about-avatar">⚡</div>
-        <div class="about-name">Alexei Ferreira</div>
-        <div class="about-role" data-i18n="about.role">Founder · Lx8 Labs</div>
-        <div class="about-tags">
-          <span class="tag tag-i">DevOps</span>
-          <span class="tag tag-b">Cloud</span>
-          <span class="tag tag-b">Kubernetes</span>
-          <span class="tag tag-g">AI/ML</span>
-          <span class="tag tag-i">Physics</span>
-          <span class="tag" style="background:rgba(245,158,11,0.1);color:#fcd34d;border:1px solid rgba(245,158,11,0.2);">Founded 2013</span>
-        </div>
-      </div>
-      <div class="about-body r d2">
-        <p>
-          <strong>Lx8 Labs</strong> was built around the intersections of <strong>DevOps, AI, and theoretical
-          physics</strong> — three lineages that don't usually share a roof. The studio is a single
-          small institution carrying that work forward, piece by piece, project by project.
-        </p>
-        <p>
-          My work spans cloud infrastructure, developer tooling (Tupã IDE), and original research
-          on light-gravity interactions. I believe the best engineers understand the fundamentals deeply —
-          which is why every course and product I build starts from first principles.
-        </p>
-        <p>
-          <em>Lx8 Labs is inspired by Bell Labs</em>: a place where scientific curiosity and
-          engineering excellence coexist. We're just getting started.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── COURSES ── -->
-<section id="courses" class="section">
-  <div class="inner">
-    <div class="lbl r" data-i18n="section.learn">Learn</div>
-    <h2 class="sh r d1" data-i18n="section.courses">Courses</h2>
-    <p class="sdesc r d2">Practical, in-depth courses built by a DevOps engineer. No fluff — just what works in production.</p>
-
-    <div class="courses-grid">
-
-      <a href="#" class="course-card r d1">
-        <div class="course-icon ci-i">🐳</div>
-        <div class="course-level">Foundations</div>
-        <div class="course-name">DevOps Fundamentals</div>
-        <div class="course-desc">CI/CD pipelines, containerisation with Docker, Git workflows, and the DevOps mindset — from zero to production-ready.</div>
-        <div class="course-meta">
-          <span class="course-dur">~12 hours</span>
-          <span class="course-status cs-live">Available</span>
-        </div>
-      </a>
-
-      <a href="#" class="course-card r d2">
-        <div class="course-icon ci-b">☸️</div>
-        <div class="course-level">Intermediate</div>
-        <div class="course-name">Kubernetes in Production</div>
-        <div class="course-desc">Deploy, scale, and operate containerised workloads on Kubernetes. Covers Helm, Ingress, auto-scaling, and real-world cluster operations.</div>
-        <div class="course-meta">
-          <span class="course-dur">~16 hours</span>
-          <span class="course-status cs-live">Available</span>
-        </div>
-      </a>
-
-      <a href="#" class="course-card r d3">
-        <div class="course-icon ci-g">🤖</div>
-        <div class="course-level">Advanced</div>
-        <div class="course-name">AI in Production</div>
-        <div class="course-desc">Taking AI/ML models from notebook to scalable APIs. MLOps pipelines, model serving, monitoring, and cost optimisation on the cloud.</div>
-        <div class="course-meta">
-          <span class="course-dur">~20 hours</span>
-          <span class="course-status cs-live">Available</span>
-        </div>
-      </a>
-
-      <a href="#" class="course-card r d1">
-        <div class="course-icon ci-b">☁️</div>
-        <div class="course-level">Intermediate</div>
-        <div class="course-name">Cloud Architecture</div>
-        <div class="course-desc">Designing resilient, cost-efficient architectures on AWS, GCP, and Azure. Infrastructure as Code with Terraform and best practices for multi-cloud.</div>
-        <div class="course-meta">
-          <span class="course-dur">~14 hours</span>
-          <span class="course-status cs-soon">Coming soon</span>
-        </div>
-      </a>
-
-      <a href="#" class="course-card r d2">
-        <div class="course-icon ci-a">🔐</div>
-        <div class="course-level">Intermediate</div>
-        <div class="course-name">DevSecOps</div>
-        <div class="course-desc">Security embedded into the pipeline. Vulnerability scanning, secrets management, policy enforcement, and compliance automation.</div>
-        <div class="course-meta">
-          <span class="course-dur">~10 hours</span>
-          <span class="course-status cs-soon">Coming soon</span>
-        </div>
-      </a>
-
-      <a href="#" class="course-card r d3">
-        <div class="course-icon ci-i">🔭</div>
-        <div class="course-level">Research</div>
-        <div class="course-name">Physics for Engineers</div>
-        <div class="course-desc">Applied theoretical physics — from special relativity to gravitomagnetics — explained for software engineers who want to understand the universe.</div>
-        <div class="course-meta">
-          <span class="course-dur">~8 hours</span>
-          <span class="course-status cs-soon">Coming soon</span>
-        </div>
-      </a>
-
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── ALGORITHM LAB ── -->
-<section id="algo-lab" class="section" style="padding-bottom:0;">
-  <div class="inner">
-    <div class="lbl r" data-i18n="algo.lbl">Learning · Interactive</div>
-    <h2 class="sh r d1" data-i18n="algo.title">Algorithm Lab</h2>
-    <p class="sdesc r d2">39 classic algorithms as interactive 3D visualizations — from Euclid's GCD (300 BCE) to Tim Sort (2002). Watch the source code highlight in lock-step with the 3D scene as live variables update.</p>
-
-    <div class="al-features r d3">
-      <div class="al-feat">
-        <div class="al-feat-ico">⏱</div>
-        <div class="al-feat-h">Chronological view</div>
-        <div class="al-feat-d">Browse algorithms grouped by era — Ancient, 1950s "Big Bang", 1960s Theory Era, modern.</div>
-      </div>
-      <div class="al-feat">
-        <div class="al-feat-ico">{ }</div>
-        <div class="al-feat-h">Synchronized code</div>
-        <div class="al-feat-d">Pseudocode highlights the executing line as the visualization runs. Slow down to follow along.</div>
-      </div>
-      <div class="al-feat">
-        <div class="al-feat-ico">⚙</div>
-        <div class="al-feat-h">Live variables</div>
-        <div class="al-feat-d">A "STATE" panel shows current values of <code>i</code>, <code>j</code>, <code>arr[mid]</code>, distances, memo tables — anything that matters.</div>
-      </div>
-      <div class="al-feat">
-        <div class="al-feat-ico">🎓</div>
-        <div class="al-feat-h">Origin stories</div>
-        <div class="al-feat-d">Every algorithm shows year, creator and a one-paragraph history — Hoare in Moscow, Williams' 1964 heap, Hunt &amp; McIlroy at Bell Labs.</div>
-      </div>
-    </div>
-
-    <div class="al-cats r d4">
-      <span class="al-cat" style="--c:#818cf8">Sorting · 13</span>
-      <span class="al-cat" style="--c:#22c55e">Searching · 4</span>
-      <span class="al-cat" style="--c:#f59e0b">Graph · 7</span>
-      <span class="al-cat" style="--c:#a78bfa">Trees · 4</span>
-      <span class="al-cat" style="--c:#67e8f9">Math · 3</span>
-      <span class="al-cat" style="--c:#fb7185">Dynamic Programming · 6</span>
-      <span class="al-cat" style="--c:#fbbf24">Strings · 2</span>
-    </div>
-  </div>
-
-  <div class="al-frame r d5">
-    <div class="al-frame-bar">
-      <span class="al-frame-dot d-r"></span>
-      <span class="al-frame-dot d-y"></span>
-      <span class="al-frame-dot d-g"></span>
-      <span class="al-frame-url">lx8labs.com / algorithms</span>
-      <a class="al-frame-open" href="/algorithms/" target="_blank" rel="noopener" aria-label="Open in new tab">↗</a>
-    </div>
-    <iframe src="/algorithms/" title="Algorithm Lab — 3D Visualizer"
-      allow="fullscreen" loading="lazy" decoding="async"
-      style="width:100%; flex: 1; border:none; display:block;"></iframe>
-  </div>
-</section>
-
-<style>
-  .al-features { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 3rem; }
-  .al-feat { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); padding: 1.4rem 1.25rem; transition: all 0.3s; }
-  .al-feat:hover { border-color: rgba(129,140,248,0.3); transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.4); }
-  .al-feat-ico { width: 38px; height: 38px; border-radius: 10px; background: var(--ind-d); border: 1px solid rgba(99,102,241,0.25); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; color: var(--ind3); margin-bottom: 0.85rem; }
-  .al-feat-h { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; }
-  .al-feat-d { font-size: 0.78rem; color: var(--text2); line-height: 1.6; }
-  .al-feat-d code { font-family: 'Space Grotesk', monospace; font-size: 0.74rem; background: rgba(99,102,241,0.12); color: var(--ind3); padding: 1px 5px; border-radius: 4px; }
-
-  .al-cats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
-  .al-cat { font-family: 'Space Grotesk', sans-serif; font-size: 0.74rem; font-weight: 700; padding: 5px 12px; border-radius: 999px; color: var(--c); background: color-mix(in srgb, var(--c) 10%, transparent); border: 1px solid color-mix(in srgb, var(--c) 25%, transparent); letter-spacing: 0.04em; }
-
-  .al-frame { margin: 4rem auto; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); background: #050511; box-shadow: 0 40px 100px rgba(99,102,241,0.12); width: 100%; max-width: 900px; aspect-ratio: 1 / 1; display: flex; flex-direction: column; }
-  .al-frame-bar { display: flex; align-items: center; gap: 8px; padding: 0.55rem 0.95rem; background: #07070f; border-bottom: 1px solid var(--border); }
-  .al-frame-dot { width: 11px; height: 11px; border-radius: 50%; }
-  .d-r { background: #ef4444; } .d-y { background: #f59e0b; } .d-g { background: #10b981; }
-  .al-frame-url { font-family: 'Space Grotesk', monospace; font-size: 0.74rem; color: var(--text3); flex: 1; transform: translateY(1px); }
-  .al-frame-open { color: var(--text3); text-decoration: none; font-size: 0.85rem; padding: 2px 8px; border-radius: 5px; transition: all 0.2s; }
-  .al-frame-open:hover { color: var(--ind4); background: var(--bg2); }
-
-  @media (max-width: 1024px) { .al-features { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 600px) { .al-features { grid-template-columns: 1fr; } }
-</style>
-
-<div class="divider"></div>
-
-
-<!-- ── SHOP & CREATIONS ── -->
-<section id="shop" class="section">
-  <div class="inner">
-    <div class="lbl r" data-i18n="shop.lbl">Shop & Books</div>
-    <h2 class="sh r d1" data-i18n="shop.title">Physical creations & texts.</h2>
-    <p class="sdesc r d2">Hardware kits born from our studio, comprehensive books, and partner collaborations.</p>
-
-    <div class="projects-grid" style="margin-bottom: 2rem;">
-      <a href="/shop/" class="p-card bento r d1" style="grid-column: span 6; display: none;">
-        <div class="bento-bg" style="background: radial-gradient(circle at top right, rgba(167,139,250,0.1), transparent 70%);"></div>
-        <div class="bento-content">
-          <div class="p-head">
-            <div class="p-icon">📖</div>
-            <div class="p-meta">
-              <span class="p-label">Book (Publishing Soon)</span>
-              <h3 class="p-name">The Bipartite Universe</h3>
-            </div>
-          </div>
-          <p class="p-desc">Our foundational text detailing the interaction between photons and gravity at the quantum scale.</p>
-        </div>
-      </a>
-
-      <a href="/shop/" class="p-card bento r d2" style="grid-column: span 6;">
-        <div class="bento-bg" style="background: radial-gradient(circle at top right, rgba(96,165,250,0.1), transparent 70%);"></div>
-        <div class="bento-content">
-          <div class="p-head">
-            <div class="p-icon">⎈</div>
-            <div class="p-meta">
-              <span class="p-label">Kit (In R&D)</span>
-              <h3 class="p-name">Aegis Swarm Mini</h3>
-            </div>
-          </div>
-          <p class="p-desc">A 3-node starter kit for exploring local LLM-driven topology adaptation and mesh networking.</p>
-        </div>
-      </a>
-    </div>
-    
-    <div style="text-align: center;" class="r d3">
-      <a href="/shop/" class="btn btn-p" style="background: var(--bg2); color: var(--text); box-shadow: none; border: 1px solid var(--border);" data-i18n="shop.browse">Browse the Full Shop →</a>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-<!-- ── PROJECTS ── -->
-<section id="projects" class="section">
-  <div class="inner">
-    <div class="lbl r" data-i18n="projects.lbl">What we build</div>
-    <h2 class="sh r d1" data-i18n="projects.title">Projects</h2>
-    <p class="sdesc r d2">Each project is a bet on a future that doesn't exist yet.</p>
-
-    <div class="bento">
-
-      <div class="card r d2" style="cursor:pointer; display: none;" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">
-        <div class="card-ico ci-b">🔭</div>
-        <div class="card-name">Bipartite Theory</div>
-        <p class="card-desc">Three-channel taxonomy of light–gravity coupling. An original research framework by Alexei Ferreira (2026) with interactive 3D visualization.</p>
-        <div class="pills">
-          <span class="pill pb">Physics</span>
-          <span class="pill pg">Interactive</span>
-        </div>
-        <span class="card-lnk">
-          View visualization
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </span>
-      </div>
-
-      <div class="card r d2">
-        <div class="card-ico ci-ghost">🧠</div>
-        <span class="soon-badge">Coming soon</span>
-        <div class="card-name" style="color:var(--text3)">aimem</div>
-        <p class="card-desc" style="color:var(--text3)">Local-first AI memory and semantic indexing engine.</p>
-      </div>
-
-      <div class="card r d3">
-        <div class="card-ico ci-ghost">🔮</div>
-        <span class="soon-badge">Coming soon</span>
-        <div class="card-name" style="color:var(--text3)">mattermem</div>
-        <p class="card-desc" style="color:var(--text3)">A state memory and computational framework.</p>
-      </div>
-
-      <div class="card r d4">
-        <div class="card-ico ci-ghost">🌐</div>
-        <span class="soon-badge">Coming soon</span>
-        <div class="card-name" style="color:var(--text3)">Project Atlas</div>
-        <p class="card-desc" style="color:var(--text3)">Infrastructure for ideas that scale globally.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── CONSULTING ── -->
-<section id="consulting" class="section">
-  <div class="inner">
-    <div class="lbl r">Services</div>
-    <h2 class="sh r d1">IT Consulting</h2>
-    <p class="sdesc r d2">Strategic engineering guidance from someone who's shipped it in production. No jargon — just results.</p>
-
-    <div class="consult-grid">
-      <div class="consult-list">
-
-        <div class="consult-item r d1">
-          <div class="consult-item-icon">⚙️</div>
-          <div>
-            <div class="consult-item-name">DevOps Transformation</div>
-            <div class="consult-item-desc">Audit your current pipeline, introduce CI/CD, containerisation, and IaC. We bring engineering best practices to teams at any stage.</div>
-          </div>
-        </div>
-
-        <div class="consult-item r d2">
-          <div class="consult-item-icon">☁️</div>
-          <div>
-            <div class="consult-item-name">Cloud Architecture & Migration</div>
-            <div class="consult-item-desc">Design and execute cloud strategies on AWS, GCP, or Azure. From lift-and-shift to cloud-native re-architecture.</div>
-          </div>
-        </div>
-
-        <div class="consult-item r d3">
-          <div class="consult-item-icon">🤖</div>
-          <div>
-            <div class="consult-item-name">AI Integration</div>
-            <div class="consult-item-desc">Help your team identify where AI adds real value, then build, deploy, and monitor the models in production without hype.</div>
-          </div>
-        </div>
-
-        <div class="consult-item r d4">
-          <div class="consult-item-icon">🔐</div>
-          <div>
-            <div class="consult-item-name">Security & Compliance</div>
-            <div class="consult-item-desc">Security embedded into the SDLC — secrets management, vulnerability scanning, and policy automation for regulated industries.</div>
-          </div>
-        </div>
-
-        <div class="consult-item r d5">
-          <div class="consult-item-icon">📊</div>
-          <div>
-            <div class="consult-item-name">Observability & SRE</div>
-            <div class="consult-item-desc">Set up full-stack observability: metrics, logs, traces. Define SLOs and build on-call processes that don't burn out your team.</div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="consult-cta-box r d2">
-        <div class="consult-cta-title">Ready to work with<br/><span>a senior DevOps engineer</span>?</div>
-        <div class="consult-cta-desc">Whether you need a short audit, ongoing advisory, or hands-on implementation — let's talk about what your team actually needs.</div>
-        <div class="consult-cta-points">
-          <div class="ccp">Free 30-minute discovery call</div>
-          <div class="ccp">Fixed-scope or retainer engagements</div>
-          <div class="ccp">Remote-first, global availability</div>
-          <div class="ccp">Real experience: shipped in production</div>
-        </div>
-        <a href="mailto:contact@lx8.io" class="btn btn-p" style="width:100%; justify-content:center; margin-top:0.5rem;">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          Get in Touch
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── UNITY LAB ── -->
-<section id="unity-lab" class="section" style="padding-bottom:0;">
-  <div class="inner">
-    <div class="lbl r">Interactive · Unity 6</div>
-    <h2 class="sh r d1">Unity Experience</h2>
-    <p class="sdesc r d2">Real-time 3D built with Unity 6 — physics, game mechanics, and interactive simulations running natively in the browser via WebGL.</p>
-  </div>
-  <div style="margin-top:2rem; border-radius:16px; overflow:hidden; border:1px solid var(--border); height:88vh;">
-    <iframe src="unity.html" title="Unity 6 WebGL Experience"
-      allow="fullscreen" loading="lazy" decoding="async"
-      style="width:100%; height:100%; border:none; display:block;"></iframe>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── THEORY VIZ ── -->
-<section id="theory" class="section" style="display: none;">
-  <div class="th-top">
-    <div class="lbl r">Research · Bipartite Theory</div>
-    <h2 class="sh r d1">Light, Gravity &amp; Time</h2>
-    <p class="sdesc r d2">The three-channel taxonomy of light–gravity coupling — interactive 3D exploration of mass density, angular momentum, and the cosmological constant.</p>
-  </div>
-  <div class="th-wrap">
-    <div class="th-hint" id="th-hint">↕ Drag to rotate · Scroll to zoom</div>
-    <iframe src="theory.html" title="Light, Gravity & Time Visualization" allow="fullscreen" loading="lazy" decoding="async"></iframe>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-
-<!-- ── MEDIA & YOUTUBE ── -->
-<section id="media" class="section" style="padding-bottom: 0;">
-  <div class="inner">
-    <div class="lbl r">Media</div>
-    <h2 class="sh r d1">Watch & Learn.</h2>
-    <p class="sdesc r d2">Video breakdowns of complex engineering patterns, physics visualizations, and studio logs.</p>
-
-    <div class="projects-grid">
-      <a href="https://youtube.com/@AlexeiFerreira" target="_blank" class="p-card bento r d3" style="grid-column: span 12; min-height: 200px; display: flex; align-items: center; justify-content: center; text-align: center; border-color: rgba(239, 68, 68, 0.4);">
-        <div class="bento-bg" style="background: radial-gradient(circle at center, rgba(239,68,68,0.1), transparent 70%);"></div>
-        <div class="bento-content" style="align-items: center;">
-          <div class="p-icon" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; font-size: 2rem; width: 64px; height: 64px; margin-bottom: 1rem;">▶</div>
-          <h3 class="p-name" style="font-size: 1.5rem;">Lx8 Labs on YouTube</h3>
-          <p class="p-desc">Subscribe for high-density engineering tutorials, AI workflows, and physics visualizations.</p>
-        </div>
-      </a>
-    </div>
-  </div>
-</section>
-<!-- ── INSIGHTS / NEWSLETTER ── -->
-<section id="insights" class="section">
-  <div class="inner">
-    <div class="lbl r">Insights · Newsletter</div>
-    <h2 class="sh r d1">Field notes from the lab.</h2>
-    <p class="sdesc r d2">Once or twice a month: a deep technical write-up on whatever we just shipped or learned. DevOps post-mortems, AI experiments, paper breakdowns. No marketing drips.</p>
-
-    <div class="news-grid r d3">
-      <article class="news-card preview-card">
-        <div class="news-tag">Coming soon</div>
-        <h3>Why I rewrote our deploy pipeline in Go</h3>
-        <p>From 7-minute Bash spaghetti to a 90-second Go binary. The case for treating CI scripts as real software.</p>
-        <span class="news-meta">DevOps · ~10 min read</span>
-      </article>
-      <article class="news-card preview-card">
-        <div class="news-tag">Coming soon</div>
-        <h3>Building a 3D algorithm visualizer in pure HTML</h3>
-        <p>Three.js + 350 lines of CSS. No framework. Why constraints made this site faster than every framework alternative.</p>
-        <span class="news-meta">Engineering · ~12 min read</span>
-      </article>
-      <article class="news-card preview-card">
-        <div class="news-tag">Coming soon</div>
-        <h3>Lessons from 13 years of consulting</h3>
-        <p>What changes when you stop selling time and start selling outcomes — and why most engineers should try it.</p>
-        <span class="news-meta">Consulting · ~8 min read</span>
-      </article>
-    </div>
-
-    <div class="news-signup r d4">
-      <div class="news-signup-text">
-        <h3>Get the next one in your inbox.</h3>
-        <p>One email per article. Unsubscribe with a click. No tracking pixels.</p>
-      </div>
-      <form id="news-form" class="news-form" action="https://formspree.io/f/REPLACE_WITH_FORM_ID" method="POST">
-        <input type="email" name="email" placeholder="you@domain.com" required />
-        <input type="hidden" name="_subject" value="Lx8 Labs newsletter signup" />
-        <input type="hidden" name="source" value="lx8labs.com/#insights" />
-        <button type="submit" class="btn btn-p">Subscribe →</button>
-      </form>
-      <div class="news-success" id="news-success">✓ Subscribed. We'll be in touch.</div>
-    </div>
-  </div>
-</section>
-
-<style>
-  #insights { background: linear-gradient(180deg, transparent, rgba(10,8,28,0.4) 50%, transparent); }
-  .news-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 3rem; margin-bottom: 2.5rem; }
-  .news-card { padding: 1.6rem 1.4rem; background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r); transition: all 0.3s; cursor: pointer; }
-  .news-card:hover { transform: translateY(-3px); border-color: rgba(129,140,248,0.3); box-shadow: 0 12px 36px rgba(0,0,0,0.4); }
-  .preview-card { opacity: 0.85; }
-  .news-tag { display: inline-block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); padding: 3px 9px; border: 1px dashed var(--border); border-radius: 999px; margin-bottom: 0.9rem; }
-  .news-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.55rem; line-height: 1.35; }
-  .news-card p { font-size: 0.84rem; color: var(--text2); line-height: 1.65; margin-bottom: 0.85rem; }
-  .news-meta { font-size: 0.72rem; color: var(--text3); }
-  .news-signup { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; padding: 2rem 2.25rem; background: linear-gradient(135deg, rgba(10,8,32,0.95), rgba(4,4,16,0.98)); border: 1px solid var(--border-hi); border-radius: var(--r); }
-  .news-signup-text h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
-  .news-signup-text p { font-size: 0.85rem; color: var(--text2); }
-  .news-form { display: flex; gap: 8px; flex: 1; min-width: 280px; max-width: 460px; }
-  .news-form input { flex: 1; min-width: 0; padding: 0.7rem 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--text); font-family: inherit; font-size: 0.9rem; }
-  .news-form input:focus { outline: none; border-color: var(--ind3); }
-  .news-success { width: 100%; color: var(--green4); font-size: 0.85rem; display: none; }
-  .news-success.show { display: block; }
-  @media (max-width: 1024px) { .news-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 600px) {
-    .news-grid { grid-template-columns: 1fr; }
-    .news-signup { flex-direction: column; align-items: stretch; padding: 1.5rem; }
-  }
-</style>
-
-<!-- ── FOOTER ── -->
-<footer>
-  <div class="ft-left">
-    <div class="ft-logo">
-      <img src="img/logo-dark.png" alt="Lx8 Labs" />
-    </div>
-    <span class="ft-copy">© 2013–2026 Lx8 Labs · Founded by Alexei Ferreira · <a href="https://lx8labs.com" style="color:var(--ind4);text-decoration:none;">lx8labs.com</a></span>
-  </div>
-  <div class="ft-links">
-    <a href="/" class="text-link">Home</a>
-    <a href="/shop/" class="text-link">Shop & Books</a>
-    <a href="/courses/" class="text-link">Courses</a>
-    <a href="/products/" class="text-link">Products</a>
-    <a href="/changelog/" class="text-link">Log</a>
-    
-    
-    
-    <a href="/team/" class="text-link">Studio</a>
-    <a href="/index.html#consulting" class="text-link">Consulting</a>
-    
-    <div class="social-row">
-      <a href="https://github.com/LX8" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.68.82.57C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
-      </a>
-      <a href="https://de.linkedin.com/in/lx8-alexei" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-      </a>
-      <a href="https://youtube.com/@AlexeiFerreira" target="_blank" rel="noopener" class="social-icon" aria-label="YouTube">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.5 6.2c-.2-1-.9-1.7-1.9-1.9C19.9 4 12 4 12 4s-7.9 0-9.6.3c-1 .2-1.7.9-1.9 1.9C.1 8.1 0 12 0 12s.1 3.9.4 5.8c.2 1 .9 1.7 1.9 1.9 1.7.3 9.6.3 9.6.3s7.9 0 9.6-.3c1-.2 1.7-.9 1.9-1.9.4-1.9.4-5.8.4-5.8s0-3.9-.3-5.8zM9.5 15.5V8.5l6.5 3.5-6.5 3.5z"/></svg>
-      </a>
-    </div>
-  </div>
-</footer>
-
-<script>
-  // Nav solid on scroll
-  const nav = document.getElementById('nav');
-  addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 50), { passive: true });
-
-  // Scroll reveal
-  const ro = new IntersectionObserver(es => {
-    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); ro.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.r').forEach(el => ro.observe(el));
-
-  // Newsletter form
-  const newsForm = document.getElementById('news-form');
-  if (newsForm) {
-    newsForm.addEventListener('submit', async e => {
-      const action = newsForm.action;
-      const successEl = document.getElementById('news-success');
-      if (action.includes('REPLACE_WITH_FORM_ID')) {
-        e.preventDefault();
-        const email = newsForm.querySelector('input[type=email]').value;
-        location.href = `mailto:hi@lx8labs.com?subject=Lx8%20Labs%20newsletter&body=${encodeURIComponent('Email: ' + email)}`;
-        return;
-      }
-      e.preventDefault();
-      try {
-        const res = await fetch(action, { method: 'POST', body: new FormData(newsForm), headers: { 'Accept': 'application/json' } });
-        if (res.ok) { newsForm.style.display = 'none'; successEl.classList.add('show'); }
-      } catch (_) { newsForm.submit(); }
-    });
-  }
-
-  // Theory hint fade
-  const hint = document.getElementById('th-hint');
-  new IntersectionObserver(es => {
-    if (es[0].isIntersecting) {
-      hint.classList.remove('gone');
-      setTimeout(() => hint.classList.add('gone'), 4000);
-    }
-  }, { threshold: 0.3 }).observe(document.getElementById('theory'));
-
-  // ── STAR FIELD ────────────────────────────────────────────────────────
-  (function() {
-    const cvs = document.getElementById('stars');
-    const ctx = cvs.getContext('2d');
-    let W, H, stars = [];
-    const N = 160;
-
-    function resize() {
-      W = cvs.width  = cvs.offsetWidth;
-      H = cvs.height = cvs.offsetHeight;
-    }
-
-    function init() {
-      stars = Array.from({length: N}, () => ({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: Math.random() * 1.2 + 0.2,
-        a: Math.random(),
-        speed: Math.random() * 0.003 + 0.001,
-        drift: (Math.random() - 0.5) * 0.04,
-      }));
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, W, H);
-      for (const s of stars) {
-        s.a += s.speed;
-        s.x += s.drift;
-        if (s.x < 0) s.x = W;
-        if (s.x > W) s.x = 0;
-        const alpha = (Math.sin(s.a) * 0.5 + 0.5) * 0.7 + 0.1;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(180,185,255,${alpha})`;
-        ctx.fill();
-      }
-      requestAnimationFrame(draw);
-    }
-
-    resize(); init(); draw();
-    window.addEventListener('resize', () => { resize(); init(); });
-  })();
-
-  // ── MOBILE NAV ────────────────────────────────────────────────────────
-  function toggleMobileNav() {
-    const mn  = document.getElementById('mobile-nav');
-    const btn = document.getElementById('ham-btn');
-    const open = mn.classList.toggle('open');
-    btn.classList.toggle('open', open);
-    document.body.style.overflow = open ? 'hidden' : '';
-  }
-  function closeMobileNav() {
-    document.getElementById('mobile-nav').classList.remove('open');
-    document.getElementById('ham-btn').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  // close on Escape
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileNav(); });
-
-</script>
+  </footer>
 </body>
 </html>

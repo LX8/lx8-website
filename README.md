@@ -1,14 +1,13 @@
 # Lx8 Labs Web Platform
 
-[![Deploy Status](https://img.shields.io/badge/deploy-active-success.svg)](https://lx8labs.com)
+[![Deploy Status](https://img.shields.io/badge/deploy-recovery-orange.svg)](https://lx8labs.com)
 [![Architecture](https://img.shields.io/badge/architecture-static--html-blue.svg)]()
-[![Performance](https://img.shields.io/badge/lighthouse-100-brightgreen.svg)]()
 
 The official web platform and digital storefront for **Lx8 Labs**, encompassing the Tupã IDE ecosystem, the Bipartite Universe course architecture, and laboratory insights.
 
 ## Architecture & Stack
 
-The platform is designed with a strict zero-build-step philosophy, prioritizing raw performance, minimal dependencies, and semantic HTML/CSS over heavy JavaScript frameworks.
+The public site is a static HTML/CSS/JavaScript surface. GitHub Pages is the credential-free recovery origin; Cloudflare Pages remains the intended production origin after account authorization and a verified cutover.
 
 * **Frontend Engine:** Vanilla HTML5 / CSS3.
 * **Design Language:** Tactile Brutalism, featuring progressive disclosure mechanisms (horizontal scroll-snap carousels) to minimize cognitive load.
@@ -50,7 +49,7 @@ The website codebase operates as the central control plane inside the larger `~/
 Lx8 Labs utilizes an intelligent, zero-cost CI/CD SRE pipeline powered by GitHub Actions and a centralized Python deployment engine.
 
 1. **Product Registry**: Maintain the product subdomains and version tracks in `lx8_registry.yaml`.
-2. **Automated CI/CD**: Pushing to the `main` branch automatically triggers the `.github/workflows/deploy.yml` pipeline.
+2. **Controlled deployment**: GitHub Pages publishes the static source without Jekyll. Cloudflare and Firebase workflows are manual until credentials and the canonical provider are approved.
 3. **Smart Deploy Engine (`scripts/deploy.py`)**:
    - Analyzes codebase hashes to identify which subdomains have modified files.
    - Automatically bumps Semantic Versions and generates a `version.json` payload for auditing.
@@ -61,6 +60,12 @@ Lx8 Labs utilizes an intelligent, zero-cost CI/CD SRE pipeline powered by GitHub
 To manually force a global deploy locally:
 ```bash
 python3 scripts/deploy.py --force
+```
+
+Validate the public surface before deployment:
+
+```bash
+python3 scripts/verify_public_site.py
 ```
 
 ## Local Development
