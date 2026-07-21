@@ -25,13 +25,18 @@ PUBLIC_ROUTES = (
     "/impressum/",
     "/privacy/",
 )
-FORBIDDEN_HOMEPAGE_TEXT = (
+# Placeholders and unverified claims that must never reach ANY published page.
+# These are checked site-wide (not just the homepage): a test-mode payment link
+# on /shop/ takes money-intent nowhere just as badly as one on /. Directories
+# holding generated or vendored output are skipped.
+FORBIDDEN_TEXT = (
     'href="#"',
     "buy.stripe.com/test",
     "contact@lx8.io",
     "Founded 2013",
     'name="twitter:site"',
 )
+SCAN_EXCLUDE_DIRS = {".git", "node_modules", "dist", "build", "vendor", ".wrangler"}
 
 
 class ReferenceParser(HTMLParser):
@@ -70,6 +75,15 @@ def fail(message: str, errors: list[str]) -> None:
     errors.append(message)
 
 
+def published_html_files() -> list[Path]:
+    """Every hand-authored .html page that ships, newest pages included for free."""
+    return sorted(
+        path
+        for path in ROOT.rglob("*.html")
+        if not (set(path.relative_to(ROOT).parts) & SCAN_EXCLUDE_DIRS)
+    )
+
+
 def verify() -> list[str]:
     errors: list[str] = []
     index = ROOT / "index.html"
@@ -92,9 +106,18 @@ def verify() -> list[str]:
         if path is not None and not path.exists():
             fail(f"Homepage {kind} does not resolve: {reference}", errors)
 
-    for forbidden in FORBIDDEN_HOMEPAGE_TEXT:
-        if forbidden in html:
-            fail(f"Homepage contains forbidden placeholder or unverified claim: {forbidden}", errors)
+    # Site-wide, not homepage-only: the dead `buy.stripe.com/test` CTAs that
+    # shipped on /shop/ and /theory/ were invisible to this gate precisely
+    # because it only ever read index.html.
+    for page in published_html_files():
+        page_html = page.read_text(encoding="utf-8", errors="replace")
+        for forbidden in FORBIDDEN_TEXT:
+            if forbidden in page_html:
+                fail(
+                    f"{page.relative_to(ROOT)} contains forbidden placeholder or "
+                    f"unverified claim: {forbidden}",
+                    errors,
+                )
 
     jsonld_blocks = re.findall(
         r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
